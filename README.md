@@ -242,9 +242,9 @@ properly linked and installed.
 
 ## Building Standalone Chemistry Engines with Alquimia
 
-The Alquimia build system also supports building the standalone executables for its backend chemistry engines (CrunchFlow and PFLOTRAN) alongside the core Alquimia interface libraries, alongside PETSc and HDF5 if needed. 
+The Alquimia build system also supports building the standalone executables for its backend chemistry engines (CrunchFlow and PFLOTRAN) alongside the core Alquimia interface libraries as needed. 
 
-#### How to Enable Standalone Builds
+### How to Enable Standalone Builds
 
 When configuring Alquimia with CMake via the Superbuild, you can enable the standalone builds by passing the `-DALQUIMIA_BUILD_STANDALONE_ENGINES=ON` flag. 
 
