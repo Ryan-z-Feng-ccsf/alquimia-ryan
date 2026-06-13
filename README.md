@@ -1,4 +1,4 @@
-# Status
+## Status
 
 [![Alquimia CI](https://github.com/LBL-EESA/alquimia-dev/actions/workflows/dev.yml/badge.svg)](https://github.com/LBL-EESA/alquimia-dev/actions/workflows/dev.yml)
 
