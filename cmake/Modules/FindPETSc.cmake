@@ -112,10 +112,24 @@ find_package_multipass (PETSc petsc_config_current
 
 # Determine whether the PETSc layout is old-style (through 2.3.3) or
 # new-style (>= 3.0.0)
-if (EXISTS "${PETSC_DIR}/${PETSC_ARCH}/lib/petsc/conf/petscvariables") # > 3.5
-  set (petsc_conf_rules "${PETSC_DIR}/lib/petsc/conf/rules")
-  set (petsc_conf_variables "${PETSC_DIR}/lib/petsc/conf/variables")
-elseif (EXISTS "${PETSC_DIR}/${PETSC_ARCH}/include/petscconf.h")   # > 2.3.3
+if (PETSC_ARCH STREQUAL "")
+
+  set(_petsc_variables_path "${PETSC_DIR}/lib/petsc/conf/petscvariables")
+  set(_petsc_conf_rules "${PETSC_DIR}/lib/petsc/conf/rules")
+  set(_petsc_conf_variables "${PETSC_DIR}/lib/petsc/conf/variables")
+  set(_petsc_include_conf "${PETSC_DIR}/include/petscconf.h")
+else()
+  set(_petsc_variables_path "${PETSC_DIR}/${PETSC_ARCH}/lib/petsc/conf/petscvariables")
+  set(_petsc_conf_rules "${PETSC_DIR}/lib/petsc/conf/rules")
+  set(_petsc_conf_variables "${PETSC_DIR}/lib/petsc/conf/variables")
+  set(_petsc_include_conf "${PETSC_DIR}/${PETSC_ARCH}/include/petscconf.h")
+endif()
+
+if (EXISTS "${_petsc_variables_path}") # > 3.5
+  set (petsc_conf_rules "${_petsc_conf_rules}")
+  set (petsc_conf_variables "${_petsc_conf_variables}")
+
+elseif (EXISTS "${_petsc_include_conf}")   # > 2.3.3
   set (petsc_conf_rules "${PETSC_DIR}/conf/rules")
   set (petsc_conf_variables "${PETSC_DIR}/conf/variables")
 elseif (EXISTS "${PETSC_DIR}/bmake/${PETSC_ARCH}/petscconf.h") # <= 2.3.3

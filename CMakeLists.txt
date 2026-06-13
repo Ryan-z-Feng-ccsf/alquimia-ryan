@@ -1,29 +1,15 @@
 # Minimum CMake version.
 cmake_minimum_required (VERSION 2.8.12)
 
+# We declare the project here.
+project (alquimia)
+
 # Adjust CMake's module path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 # Options for building Alquimia. These come from the xSDK compliance rules.
+option(ALQUIMIA_SUPERBUILD "Automatically download and build dependencies [OFF]." OFF)
 option(USE_XSDK_DEFAULTS "Set to use xSDK defaults for options [ON]." ON)
-option(CMAKE_INSTALL_PREFIX "Sets installation prefix [/usr/local].")
-option(XSDK_ENABLE_DEBUG "Enables Debug mode builds [OFF]." OFF)
-option(BUILD_SHARED_LIBS "Builds shared libraries [ON]." ON)
-option(XSDK_WITH_PFLOTRAN "Enables support for the PFlotran chemistry engine [OFF]." OFF)
-#option(TPL_PFLOTRAN_LIBRARIES "List of absolute paths to PFlotran link libraries [].")
-#option(TPL_PFLOTRAN_INCLUDE_DIRS "List of absolute paths to PFlotran include directories [].")
-option(XSDK_WITH_CRUNCHFLOW "Enables support for the CrunchFlow chemistry engine [OFF]." OFF)
-#option(TPL_CRUNCHFLOW_LIBRARIES "List of absolute paths to CrunchFlow link libraries [].")
-#option(TPL_CRUNCHFLOW_INCLUDE_DIRS "List of absolute paths to CrunchFlow include directories [].")
-
-# For now, we disable shared libs on Macs.
-if (APPLE)
-  set(BUILD_SHARED_LIBS OFF)
-endif()
-
-if (NOT CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX /usr/local)
-endif()
 
 # Make sure compilers are set. This must be done before enabling languages.
 if (NOT CMAKE_C_COMPILER)
@@ -49,8 +35,29 @@ endif()
 enable_language(C)
 enable_language(Fortran)
 
-# We declare the project here.
-project (alquimia)
+if (ALQUIMIA_SUPERBUILD)
+  include(cmake/Superbuild.cmake)
+  return()
+endif()
+
+option(CMAKE_INSTALL_PREFIX "Sets installation prefix [/usr/local].")
+option(XSDK_ENABLE_DEBUG "Enables Debug mode builds [OFF]." OFF)
+option(BUILD_SHARED_LIBS "Builds shared libraries [ON]." ON)
+option(XSDK_WITH_PFLOTRAN "Enables support for the PFlotran chemistry engine [OFF]." OFF)
+#option(TPL_PFLOTRAN_LIBRARIES "List of absolute paths to PFlotran link libraries [].")
+#option(TPL_PFLOTRAN_INCLUDE_DIRS "List of absolute paths to PFlotran include directories [].")
+option(XSDK_WITH_CRUNCHFLOW "Enables support for the CrunchFlow chemistry engine [OFF]." OFF)
+#option(TPL_CRUNCHFLOW_LIBRARIES "List of absolute paths to CrunchFlow link libraries [].")
+#option(TPL_CRUNCHFLOW_INCLUDE_DIRS "List of absolute paths to CrunchFlow include directories [].")
+
+# For now, we disable shared libs on Macs.
+if (APPLE)
+  set(BUILD_SHARED_LIBS OFF)
+endif()
+
+if (NOT CMAKE_INSTALL_PREFIX)
+  set(CMAKE_INSTALL_PREFIX /usr/local)
+endif()
 
 message(STATUS "C compiler is ${CMAKE_C_COMPILER} (${CMAKE_C_COMPILER_ID})")
 message(STATUS "Fortran compiler is ${CMAKE_Fortran_COMPILER} (${CMAKE_Fortran_COMPILER_ID})")
@@ -185,11 +192,14 @@ endif()
 
 # If needed, Check for PETSc and set things up.
 if (ALQUIMIA_NEED_PETSC)
-  if ($ENV{PETSC_DIR} STREQUAL "")
-    message(FATAL_ERROR "PETSC_DIR must be set for the requested engines to be enabled.")
+  if (NOT PETSC_DIR)
+    if ("$ENV{PETSC_DIR}" STREQUAL "")
+      message(FATAL_ERROR "PETSC_DIR must be set for the requested engines to be enabled.")
+    endif()
+    set(PETSC_DIR $ENV{PETSC_DIR})
   endif()
-  set(PETSC_DIR $ENV{PETSC_DIR})
-  if(DEFINED ENV{PETSC_ARCH})
+  
+  if(NOT DEFINED PETSC_ARCH AND DEFINED ENV{PETSC_ARCH})
     set(PETSC_ARCH $ENV{PETSC_ARCH})
   endif()
 
