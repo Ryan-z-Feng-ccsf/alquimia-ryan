@@ -8,7 +8,7 @@ add_dependencies(batch_chem alquimia)
 # Reactive transport (1D) driver.
 add_executable(transport TransportDriver.c DriverOutput.c transport.c ini.c)
 target_link_libraries(transport alquimia;${ALQUIMIA_TPLS})
-add_dependencies(batch_chem alquimia)
+add_dependencies(transport alquimia)
 
 # Install executables.
 install(TARGETS batch_chem transport DESTINATION bin)

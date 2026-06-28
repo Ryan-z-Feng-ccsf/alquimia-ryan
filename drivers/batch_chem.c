@@ -25,9 +25,11 @@
 // and to permit others to do so.
 //
 
-#include "petsc.h"
 #include "alquimia/alquimia_memory.h"
 #include "alquimia/alquimia_util.h"
+#if ALQUIMIA_NEED_PETSC
+#include "petsc.h"
+#endif
 #include "BatchChemDriver.h"
 #include "DriverOutput.h"
 
@@ -45,9 +47,11 @@ int main(int argc, char* argv[])
 
   // Initialize PETSc/MPI for command line options and engines that
   // require it.
+#if ALQUIMIA_NEED_PETSC
   char help[] = "Alquimia batch chemistry driver";
   PetscInitialize(&argc, &argv, (char*)0, help);
   PetscInitializeFortran();
+#endif
 
   char input_file[FILENAME_MAX];
   strncpy(input_file, argv[1], FILENAME_MAX-1);
@@ -86,12 +90,18 @@ int main(int argc, char* argv[])
   // Clean up.
   BatchChemDriverInput_Free(input);
   BatchChemDriver_Free(batch_chem);
+#if ALQUIMIA_NEED_PETSC
   PetscInt petsc_error = PetscFinalize();
   if (status == EXIT_SUCCESS && petsc_error == 0) 
     printf("Success!\n");
   else 
     printf("Failed!\n");
-
+#else
+  if (status == EXIT_SUCCESS)
+    printf("Success!\n");
+  else
+    printf("Failure!\n");
+#endif
   return status;
 }  
 

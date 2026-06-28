@@ -49,6 +49,9 @@ option(XSDK_WITH_PFLOTRAN "Enables support for the PFlotran chemistry engine [OF
 option(XSDK_WITH_CRUNCHFLOW "Enables support for the CrunchFlow chemistry engine [OFF]." OFF)
 #option(TPL_CRUNCHFLOW_LIBRARIES "List of absolute paths to CrunchFlow link libraries [].")
 #option(TPL_CRUNCHFLOW_INCLUDE_DIRS "List of absolute paths to CrunchFlow include directories [].")
+option(XSDK_WITH_ONNX "Enables support for the ONNX Runtime chemistry engine [OFF]." OFF)
+#option(TPL_ONNX_LIBRARIES "List of absolute paths to ONNX Runtime link libraries [].")
+#option(TPL_ONNX_INCLUDE_DIRS "List of absolute paths to ONNX Runtime include directories [].")
 
 # For now, we disable shared libs on Macs.
 if (APPLE)
@@ -183,6 +186,33 @@ if (XSDK_WITH_CRUNCHFLOW)
   set(ALQUIMIA_NEED_PETSC 1)
 else()
   set(ALQUIMIA_HAVE_CRUNCHFLOW 0)
+endif()
+
+# Check the library and header files for the onnxruntime_c_api
+if (XSDK_WITH_ONNX)
+  if (NOT TPL_ONNX_LIBRARIES)
+    message(FATAL_ERROR "TPL_ONNX_LIBRARIES option must be set for ONNX Runtime support to be enabled.")
+  endif()
+  foreach(lib ${TPL_ONNX_LIBRARIES})
+    if (NOT EXISTS ${lib})
+      message(FATAL_ERROR "ONNX Runtime library not found: ${lib}")
+    endif()
+  endforeach()
+
+  if (NOT TPL_ONNX_INCLUDE_DIRS)
+    message(FATAL_ERROR "TPL_ONNX_INCLUDE_DIRS option must be set for ONNX Runtime support to be enabled.")
+  endif()
+  foreach(dir ${TPL_ONNX_INCLUDE_DIRS})
+    if (NOT EXISTS ${dir})
+      message(FATAL_ERROR "ONNX Runtime include directory not found: ${dir}")
+    endif()
+  endforeach()
+
+  message(STATUS "Enabled support for ONNX Runtime chemistry engine.")
+  list(APPEND ALQUIMIA_ENGINES onnx)
+  set(ALQUIMIA_HAVE_ONNX 1)
+else()
+  set(ALQUIMIA_HAVE_ONNX 0)
 endif()
 
 # If we're not building with any engines, there's no point!

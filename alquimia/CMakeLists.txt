@@ -25,6 +25,12 @@ if (ALQUIMIA_HAVE_CRUNCHFLOW)
   list(APPEND ALQUIMIA_SOURCES crunch_alquimia_interface.F90 crunch_alquimia_wrappers.F90)
 endif()
 
+# Onnx model engine
+if(ALQUIMIA_HAVE_ONNX)
+  list(APPEND ALQUIMIA_INCLUDE_DIRS ${TPL_ONNX_INCLUDE_DIRS})
+  list(APPEND ALQUIMIA_TPLS ${TPL_ONNX_LIBRARIES})
+endif()
+
 if (ALQUIMIA_NEED_PETSC)
   list(APPEND ALQUIMIA_INCLUDE_DIRS ${PETSC_DIR}/include)
   list(APPEND ALQUIMIA_INCLUDE_DIRS ${PETSC_DIR}/include/petsc)

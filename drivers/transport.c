@@ -25,9 +25,11 @@
 // and to permit others to do so.
 //
 
-#include "petsc.h"
 #include "alquimia/alquimia_memory.h"
 #include "alquimia/alquimia_util.h"
+#if ALQUIMIA_NEED_PETSC
+#include "petsc.h"
+#endif 
 #include "TransportDriver.h"
 #include "DriverOutput.h"
 
@@ -43,11 +45,13 @@ int main(int argc, char* argv[])
   if (argc == 1)
     Usage();
 
+#if ALQUIMIA_NEED_PETSC
   // Initialize PETSc/MPI for command line options and engines that
   // require it.
   char help[] = "Alquimia advective, nondispersive reactive transport driver";
   PetscInitialize(&argc, &argv, (char*)0, help);
   PetscInitializeFortran();
+#endif
 
   char input_file[FILENAME_MAX];
   strncpy(input_file, argv[1], FILENAME_MAX-1);
@@ -86,11 +90,18 @@ int main(int argc, char* argv[])
   // Clean up.
   TransportDriverInput_Free(input);
   TransportDriver_Free(transport);
+#if ALQUIMIA_NEED_PETSC
   PetscInt petsc_error = PetscFinalize();
   if (status == EXIT_SUCCESS && petsc_error == 0) 
     printf("Success!\n");
   else 
     printf("Failed!\n");
+#else
+  if (status == EXIT_SUCCESS)
+    printf("Success!\n");
+  else
+    printf("Failure!\n");
+#endif
 
   return status;
 }  

@@ -12,55 +12,64 @@ set(COMMON_CMAKE_ARGS
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
 )
 
-# Detect system dependencies to avoid unnecessary downloads
-find_package(HDF5 QUIET)
-if(HDF5_FOUND)
-  message(STATUS "Found system HDF5: ${HDF5_INCLUDE_DIRS}")
-  set(PETSC_HDF5_ARGS "--with-hdf5=1")
-else()
-  message(STATUS "HDF5 not found, will be downloaded by PETSc")
-  set(PETSC_HDF5_ARGS "--download-hdf5=1")
-endif()
-
-find_package(BLAS QUIET)
-find_package(LAPACK QUIET)
-if(BLAS_FOUND AND LAPACK_FOUND AND FALSE)
-  message(STATUS "Found system BLAS/LAPACK")
-  set(PETSC_BLASLAPACK_ARGS "")
-else()
-  message(STATUS "BLAS/LAPACK not found, will be downloaded by PETSc")
-  set(PETSC_BLASLAPACK_ARGS "--download-fblaslapack=1")
-endif()
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(PETSC_DEBUG_ARG "--with-debugging=1")
-else()
-  set(PETSC_DEBUG_ARG "--with-debugging=0")
-endif()
-
-# PETSc
-ExternalProject_Add(petsc
-    GIT_REPOSITORY https://gitlab.com/petsc/petsc.git
-    GIT_TAG v3.20.0
-    PREFIX ${CMAKE_BINARY_DIR}/external/petsc
-    BUILD_IN_SOURCE 1
-    UPDATE_DISCONNECTED 1
-    CONFIGURE_COMMAND /usr/bin/python3.10 ./configure --prefix=${INSTALL_DIR} --with-mpi=1 ${PETSC_DEBUG_ARG} --with-shared-libraries=1 ${PETSC_HDF5_ARGS} ${PETSC_BLASLAPACK_ARGS}
-    BUILD_COMMAND make
-    INSTALL_COMMAND make install
-)
-
 # Chemistry engines options
 option(XSDK_WITH_PFLOTRAN "Enables support for the PFlotran chemistry engine [ON]." ON)
 option(XSDK_WITH_CRUNCHFLOW "Enables support for the CrunchFlow chemistry engine [ON]." ON)
+option(XSDK_WITH_ONNX "Enables support for the ONNX Runtime chemistry engine [ON]." ON)
 option(ALQUIMIA_BUILD_STANDALONE_ENGINES "Build standalone versions of requested chemistry engines [OFF]." OFF)
 
-if (NOT XSDK_WITH_PFLOTRAN AND NOT XSDK_WITH_CRUNCHFLOW)
+if (NOT XSDK_WITH_PFLOTRAN AND NOT XSDK_WITH_CRUNCHFLOW AND NOT XSDK_WITH_ONNX)
   message(FATAL_ERROR "At least one chemistry engine must be enabled (XSDK_WITH_PFLOTRAN or XSDK_WITH_CRUNCHFLOW).")
 endif()
 
-set(ALQUIMIA_DEPS petsc)
+# Only search for and compile HDF5, BLAS, LAPACK, and PETSc if traditional physical
+# engines are enabled. For pure machine learning/ONNX configurations, these are bypassed.
+if (XSDK_WITH_PFLOTRAN OR XSDK_WITH_CRUNCHFLOW)
+  # Detect system dependencies to avoid unnecessary downloads
+  find_package(HDF5 QUIET)
+  if(HDF5_FOUND)
+    message(STATUS "Found system HDF5: ${HDF5_INCLUDE_DIRS}")
+    set(PETSC_HDF5_ARGS "--with-hdf5=1")
+  else()
+    message(STATUS "HDF5 not found, will be downloaded by PETSc")
+    set(PETSC_HDF5_ARGS "--download-hdf5=1")
+  endif()
+
+  find_package(BLAS QUIET)
+  find_package(LAPACK QUIET)
+  if(BLAS_FOUND AND LAPACK_FOUND AND FALSE)
+    message(STATUS "Found system BLAS/LAPACK")
+    set(PETSC_BLASLAPACK_ARGS "")
+  else()
+    message(STATUS "BLAS/LAPACK not found, will be downloaded by PETSc")
+    set(PETSC_BLASLAPACK_ARGS "--download-fblaslapack=1")
+  endif()
+
+  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(PETSC_DEBUG_ARG "--with-debugging=1")
+  else()
+    set(PETSC_DEBUG_ARG "--with-debugging=0")
+  endif()
+
+  # PETSc
+  ExternalProject_Add(petsc
+      GIT_REPOSITORY https://gitlab.com/petsc/petsc.git
+      GIT_TAG v3.20.0
+      PREFIX ${CMAKE_BINARY_DIR}/external/petsc
+      BUILD_IN_SOURCE 1
+      UPDATE_DISCONNECTED 1
+      CONFIGURE_COMMAND /usr/bin/python3.10 ./configure --prefix=${INSTALL_DIR} --with-mpi=1 ${PETSC_DEBUG_ARG} --with-shared-libraries=1 ${PETSC_HDF5_ARGS} ${PETSC_BLASLAPACK_ARGS}
+      BUILD_COMMAND make
+      INSTALL_COMMAND make install
+  )
+endif()
+
+set(ALQUIMIA_DEPS)
 set(ALQUIMIA_EXTRA_ARGS)
+
+if (XSDK_WITH_PFLOTRAN OR XSDK_WITH_CRUNCHFLOW)
+  list(APPEND ALQUIMIA_DEPS petsc)
+endif()
 
 # PFLOTRAN
 if (XSDK_WITH_PFLOTRAN)
@@ -178,6 +187,55 @@ else()
   list(APPEND ALQUIMIA_EXTRA_ARGS -DXSDK_WITH_CRUNCHFLOW=OFF)
 endif()
 
+# ==============================================================================
+# ONNX Runtime Chemistry Engine Integration
+# ==============================================================================
+# This enables high-performance machine learning-based chemistry engines
+# within the Alquimia framework. This block manages the automated retrieval
+# and isolated filesystem packaging of ONNX Runtime's pre-built binaries.
+# ==============================================================================
+if (XSDK_WITH_ONNX)
+  # Declare ONNX pre-built binary package as an ExternalProject target.
+  # Since this uses official pre-compiled assets from Microsoft, the configure
+  # and build commands are left empty to bypass compilation overhead.
+  # Filesystem encapsulation is strictly enforced at the installation stage.
+  ExternalProject_Add(onnx
+      URL "https://github.com/microsoft/onnxruntime/releases/download/v1.16.0/onnxruntime-linux-x64-1.16.0.tgz"
+      PREFIX ${CMAKE_BINARY_DIR}/external/onnx
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND ""
+      INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_DIR}/include/onnxruntime
+              COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include ${INSTALL_DIR}/include/onnxruntime
+              COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_DIR}/lib
+              COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/lib/libonnxruntime.so ${INSTALL_DIR}/lib/libonnxruntime.so
+              COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/lib/libonnxruntime.so.1.16.0 ${INSTALL_DIR}/lib/libonnxruntime.so.1.16.0
+  )
+
+  # Register 'onnx' as a hard dependency of Alquimia Core.
+  # This ensures the ONNX Runtime assets are fully downloaded and organized
+  # in the installation directory BEFORE the inner Alquimia build is configured.
+  list(APPEND ALQUIMIA_DEPS onnx)
+
+  # Route the build arguments down to the inner-core Alquimia project.
+  # This cleanly exposes ONNX integration flags and targets.
+  list(APPEND ALQUIMIA_EXTRA_ARGS
+       -DXSDK_WITH_ONNX=ON
+       -DTPL_ONNX_LIBRARIES=${INSTALL_DIR}/lib/libonnxruntime.so
+       -DTPL_ONNX_INCLUDE_DIRS=${INSTALL_DIR}/include/onnxruntime)
+else()
+  # Gracefully report ONNX exclusion to the inner build system
+  list(APPEND ALQUIMIA_EXTRA_ARGS -DXSDK_WITH_ONNX=OFF)
+endif()
+
+# Dynamic configuration arguments for PETSc forwarding
+set(ALQUIMIA_CORE_PETSC_ARGS)
+if (XSDK_WITH_PFLOTRAN OR XSDK_WITH_CRUNCHFLOW)
+  set(ALQUIMIA_CORE_PETSC_ARGS
+      -DPETSC_DIR=${INSTALL_DIR}
+      -DPETSC_ARCH=.
+  )
+endif()
+
 # Alquimia itself
 ExternalProject_Add(alquimia_core
     DEPENDS ${ALQUIMIA_DEPS}
@@ -187,8 +245,7 @@ ExternalProject_Add(alquimia_core
     CMAKE_ARGS
         ${COMMON_CMAKE_ARGS}
         ${ALQUIMIA_EXTRA_ARGS}
-        -DPETSC_DIR=${INSTALL_DIR}
-        -DPETSC_ARCH=.
+        ${ALQUIMIA_CORE_PETSC_ARGS}
         -DALQUIMIA_SUPERBUILD=OFF
 )
 
