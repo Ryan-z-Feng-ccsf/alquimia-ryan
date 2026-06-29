@@ -9,7 +9,7 @@
 extern "C"
 {
 #endif /* __cplusplus */
-#if ALQUIMIA_NEED_ONNX
+#if ALQUIMIA_HAVE_ONNX
     void lsurf_alquimia_setup(
         void **engine_internal_state,
         bool hands_off,
