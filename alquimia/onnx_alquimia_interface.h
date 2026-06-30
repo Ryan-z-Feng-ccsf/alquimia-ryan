@@ -3,56 +3,57 @@
 
 #include "alquimia/alquimia_interface.h"
 #include "alquimia/alquimia_containers.h"
-#include <onnxruntime_c_api.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 #if ALQUIMIA_HAVE_ONNX
-    void lsurf_alquimia_setup(
-        void **engine_internal_state,
+    void onnx_alquimia_setup(
+        const char* input_filename,
         bool hands_off,
-        AlquimiaSizes *sizes,
-        AlquimiaEngineFunctionality *functionality,
-        AlquimiaEngineStatus *status);
+        void* onnx_engine_state,
+        AlquimiaSizes* sizes,
+        AlquimiaEngineFunctionality* functionality,
+        AlquimiaEngineStatus* status);
 
-    void lsurf_alquimia_shutdown(
-        void *engine_internal_state,
-        AlquimiaEngineStatus *status);
+    void onnx_alquimia_shutdown(
+        void* onnx_engine_state,
+        AlquimiaEngineStatus* status);
 
-    void lsurf_alquimia_processcondition(
-        void *engine_internal_state,
-        AlquimiaGeochemicalCondition *condition,
-        AlquimiaProperties *properties,
-        AlquimiaState *state,
-        AlquimiaAuxiliaryData *aux_data,
-        AlquimiaEngineStatus *status);
+    void onnx_alquimia_processcondition(
+        void* onnx_engine_state,
+        AlquimiaGeochemicalCondition* condition,
+        AlquimiaProperties* props,
+        AlquimiaState* state,
+        AlquimiaAuxiliaryData* aux_data,
+        AlquimiaEngineStatus* status);
 
-    void lsurf_alquimia_reactionstepoperatorsplit(
-        void *engine_internal_state,
+    void onnx_alquimia_reactionstepoperatorsplit(
+        void* onnx_engine_state,
         double delta_t,
-        AlquimiaProperties *properties,
-        AlquimiaState *state,
-        AlquimiaAuxiliaryData *aux_data,
-        AlquimiaEngineStatus *status);
+        AlquimiaProperties* props,
+        AlquimiaState* state,
+        AlquimiaAuxiliaryData* aux_data,
+        int natural_id,
+        AlquimiaEngineStatus* status);
 
-    void lsurf_alquimia_getauxiliaryoutput(
-        void *engine_internal_state,
-        AlquimiaProperties *properties,
-        AlquimiaState *state,
-        AlquimiaAuxiliaryData *aux_data,
-        AlquimiaAuxiliaryOutputData *aux_output,
-        AlquimiaEngineStatus *status);
+    void onnx_alquimia_getauxiliaryoutput(
+        void* onnx_engine_state,
+        AlquimiaProperties* props,
+        AlquimiaState* state,
+        AlquimiaAuxiliaryData* aux_data,
+        AlquimiaAuxiliaryOutputData* aux_out,
+        AlquimiaEngineStatus* status);
 
-    void lsurf_alquimia_getproblemmetadata(
-        void *engine_internal_state,
-        AlquimiaProblemMetaData *meta_data,
-        AlquimiaEngineStatus *status);
+    void onnx_alquimia_getproblemmetadata(
+        void* onnx_engine_state,
+        AlquimiaProblemMetaData* meta_data,
+        AlquimiaEngineStatus* status);
 #endif
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* ALQUIMIA_ONNX_INTERFACE_H_ */
+#endif /* ONNX_ALQUIMIA_INTERFACE_H_ */
