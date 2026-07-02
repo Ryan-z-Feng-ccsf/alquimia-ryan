@@ -31,6 +31,7 @@
 
 #include "alquimia/pflotran_alquimia_interface.h"
 #include "alquimia/crunch_alquimia_interface.h"
+#include "alquimia/onnx_alquimia_interface.h"
 
 #include "alquimia/alquimia_util.h"
 #include "alquimia/alquimia_constants.h"
@@ -82,11 +83,29 @@ void CreateAlquimiaInterface(const char* const engine_name,
              "\nERROR : CreateAlquimiaInterface() : CrunchFlow interface requested, but alquimia was not compiled with CrunchFlow!\n");
 #endif
 
+  } else if (AlquimiaCaseInsensitiveStringCompare(engine_name,
+                                                  kAlquimiaStringOnnx)) {
+#if ALQUIMIA_HAVE_ONNX
+    interface->Setup = &onnx_alquimia_setup;
+    interface->Shutdown = &onnx_alquimia_shutdown;
+    interface->ProcessCondition = &onnx_alquimia_processcondition;
+    interface->ReactionStepOperatorSplit = &onnx_alquimia_reactionstepoperatorsplit;
+    interface->GetAuxiliaryOutput = &onnx_alquimia_getauxiliaryoutput;
+    interface->GetProblemMetaData = &onnx_alquimia_getproblemmetadata;
+    status->error = kAlquimiaNoError;
+    snprintf(status->message, kAlquimiaMaxStringLength,
+             "CreateAlquimiaInterface() : successfully created ONNX interface.\n");
+#else
+    status->error = kAlquimiaErrorInvalidEngine;
+    snprintf(status->message, kAlquimiaMaxStringLength,
+             "\nERROR : CreateAlquimiaInterface() : ONNX interface requested, but alquimia was not compiled with ONNX!\n");
+#endif
+
   } else {
     status->error = kAlquimiaErrorInvalidEngine;
     snprintf(status->message, kAlquimiaMaxStringLength,
-             "\nERROR : CreateAlquimiaInterface() : Invalid interface name '%s'.\n  Valid names are:\n    '%s'\n    '%s'\n",
-             engine_name, kAlquimiaStringPFloTran, kAlquimiaStringCrunchFlow);
+             "\nERROR : CreateAlquimiaInterface() : Invalid interface name '%s'.\n  Valid names are:\n    '%s'\n    '%s'\n    '%s'\n",
+             engine_name, kAlquimiaStringPFloTran, kAlquimiaStringCrunchFlow, kAlquimiaStringOnnx);
   }
 
 }  /* end CreateAlquimiaInterface() */

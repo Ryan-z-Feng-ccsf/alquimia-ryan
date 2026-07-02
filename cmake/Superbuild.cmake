@@ -200,7 +200,7 @@ if (XSDK_WITH_ONNX)
   # and build commands are left empty to bypass compilation overhead.
   # Filesystem encapsulation is strictly enforced at the installation stage.
   ExternalProject_Add(onnx
-      URL "https://github.com/microsoft/onnxruntime/releases/download/v1.16.0/onnxruntime-linux-x64-1.16.0.tgz"
+      URL "https://github.com/microsoft/onnxruntime/releases/download/v1.27.0/onnxruntime-linux-x64-1.27.0.tgz"
       PREFIX ${CMAKE_BINARY_DIR}/external/onnx
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
@@ -208,7 +208,7 @@ if (XSDK_WITH_ONNX)
               COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include ${INSTALL_DIR}/include/onnxruntime
               COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_DIR}/lib
               COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/lib/libonnxruntime.so ${INSTALL_DIR}/lib/libonnxruntime.so
-              COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/lib/libonnxruntime.so.1.16.0 ${INSTALL_DIR}/lib/libonnxruntime.so.1.16.0
+              COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/lib/libonnxruntime.so.1.27.0 ${INSTALL_DIR}/lib/libonnxruntime.so.1.27.0
   )
 
   # Register 'onnx' as a hard dependency of Alquimia Core.

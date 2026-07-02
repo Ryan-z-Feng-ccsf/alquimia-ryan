@@ -41,6 +41,7 @@ extern const int kAlquimiaMaxWordLength;
 /* Geochemistry Engine Strings */
 extern const char* kAlquimiaStringPFloTran;
 extern const char* kAlquimiaStringCrunchFlow;
+extern const char* kAlquimiaStringOnnx;
 extern const char* kAlquimiaStringTotalAqueous;
 extern const char* kAlquimiaStringTotalSorbed;
 extern const char* kAlquimiaStringTotalAqueousPlusSorbed;
