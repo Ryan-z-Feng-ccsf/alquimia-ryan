@@ -41,6 +41,7 @@
 #include "alquimia/alquimia_util.h"
 #include "alquimia/pflotran_alquimia_interface.h"
 #include "alquimia/crunch_alquimia_interface.h"
+#include "alquimia/onnx_alquimia_interface.h"
 
 void test_AlquimiaCaseInsensitiveStringCompare(void);
 void test_AlquimiaVectors(void);
@@ -181,6 +182,26 @@ void test_CreateAlquimiaInterface(void) {
   ALQUIMIA_ASSERT(interface.ReactionStepOperatorSplit == &crunch_alquimia_reactionstepoperatorsplit);
   ALQUIMIA_ASSERT(interface.GetAuxiliaryOutput == &crunch_alquimia_getauxiliaryoutput);
   ALQUIMIA_ASSERT(interface.GetProblemMetaData == &crunch_alquimia_getproblemmetadata);
+#else
+  ALQUIMIA_ASSERT(status.error == kAlquimiaErrorInvalidEngine);
+  ALQUIMIA_ASSERT(interface.Setup == NULL);
+  ALQUIMIA_ASSERT(interface.Shutdown == NULL);
+  ALQUIMIA_ASSERT(interface.ProcessCondition == NULL);
+  ALQUIMIA_ASSERT(interface.ReactionStepOperatorSplit == NULL);
+  ALQUIMIA_ASSERT(interface.GetAuxiliaryOutput == NULL);
+  ALQUIMIA_ASSERT(interface.GetProblemMetaData == NULL);
+#endif
+
+  strncpy(name, "onnx", kAlquimiaMaxStringLength);
+  CreateAlquimiaInterface(name, &interface, &status);
+#if ALQUIMIA_HAVE_ONNX
+  ALQUIMIA_ASSERT(status.error == kAlquimiaNoError);
+  ALQUIMIA_ASSERT(interface.Setup == &onnx_alquimia_setup);
+  ALQUIMIA_ASSERT(interface.Shutdown == &onnx_alquimia_shutdown);
+  ALQUIMIA_ASSERT(interface.ProcessCondition == &onnx_alquimia_processcondition);
+  ALQUIMIA_ASSERT(interface.ReactionStepOperatorSplit == &onnx_alquimia_reactionstepoperatorsplit);
+  ALQUIMIA_ASSERT(interface.GetAuxiliaryOutput == &onnx_alquimia_getauxiliaryoutput);
+  ALQUIMIA_ASSERT(interface.GetProblemMetaData == &onnx_alquimia_getproblemmetadata);
 #else
   ALQUIMIA_ASSERT(status.error == kAlquimiaErrorInvalidEngine);
   ALQUIMIA_ASSERT(interface.Setup == NULL);
