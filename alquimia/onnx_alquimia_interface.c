@@ -71,16 +71,32 @@ typedef struct
   OrtModelMetadata *metadata;
   OrtMemoryInfo *memory_info;
   OrtAllocator *allocator;
-  OrtValue *input_tensor;
-  OrtValue *output_tensor;
-  double input_data[5];  /* Buffer for [1, 5] static input */
-  double output_data[1]; /* Buffer for [1, 1] static output */
+
+  /* Sentinel value sharing */
+  int num_primary;
+
+  /* Dynamic input info */
+  size_t num_inputs;
+  char **input_names;
+  size_t *input_num_dim;
+  int64_t **input_dim_values;
+  size_t *input_total_size;
+  double **input_data;
+  OrtValue **input_tensor;
+  size_t *input_offsets;
+
+  /* Dynamic output info */
+  size_t num_outputs;
+  char **output_names;
+  size_t *output_num_dim;
+  int64_t **output_dim_values;
+  size_t *output_total_size;
+  double **output_data;
+  OrtValue **output_tensor;
+  size_t *output_offsets;
 } OnnxEngineState;
 
-/*
-** Helper to check OrtStatus, write the error message to AlquimiaEngineStatus,
-** release OrtStatus, and return false on error.
-*/
+/* Helper to check OrtStatus */
 static bool CheckStatus(const OrtApi *g_ort, OrtStatus *status, AlquimiaEngineStatus *alquimia_status)
 {
   if (status != NULL)
@@ -94,9 +110,15 @@ static bool CheckStatus(const OrtApi *g_ort, OrtStatus *status, AlquimiaEngineSt
   return true;
 }
 
-/*
-** Set up ONNX Chemistry Engine
-*/
+static void CleanupOnSetupFailure(OnnxEngineState *onnx_state)
+{
+  /* Safely tear down any resources that were already allocated during setup.
+  ** We pass a temporary status struct to onnx_alquimia_shutdown to prevent
+  ** overwriting the original setup failure error stored in 'status'. */
+  AlquimiaEngineStatus temp_status;
+  onnx_alquimia_shutdown(onnx_state, &temp_status);
+}
+
 void onnx_alquimia_setup(
     const char *input_filename,
     bool hands_off,
@@ -109,14 +131,31 @@ void onnx_alquimia_setup(
   OrtStatus *ort_status;
   const char *model_path;
   FILE *f;
-  int64_t input_shape[2];
-  int64_t output_shape[2];
+  size_t i, j;
 
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
 
   // Unused
   (void)hands_off;
+
+  /* Determine and check model file path */
+  if (input_filename == NULL || strlen(input_filename) == 0)
+  {
+    status->error = kAlquimiaErrorEngineIntegrity;
+    snprintf(status->message, kAlquimiaMaxStringLength, "Model file path not provided.");
+    return;
+  }
+  model_path = input_filename;
+
+  f = fopen(model_path, "r");
+  if (f == NULL)
+  {
+    status->error = kAlquimiaErrorEngineIntegrity;
+    snprintf(status->message, kAlquimiaMaxStringLength, "Model file not found: %s", model_path);
+    return;
+  }
+  fclose(f);
 
   onnx_state = (OnnxEngineState *)calloc(1, sizeof(OnnxEngineState));
   if (onnx_state == NULL)
@@ -135,7 +174,6 @@ void onnx_alquimia_setup(
     return;
   }
 
-  /* Create Env */
   ort_status = onnx_state->g_ort->CreateEnv(ORT_LOGGING_LEVEL_WARNING, "onnx_alquimia_engine", &onnx_state->env);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
@@ -143,7 +181,6 @@ void onnx_alquimia_setup(
     return;
   }
 
-  /* Create Session Options */
   ort_status = onnx_state->g_ort->CreateSessionOptions(&onnx_state->session_options);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
@@ -152,26 +189,6 @@ void onnx_alquimia_setup(
     return;
   }
 
-  /* Determine and check model file path */
-  model_path = "alquimia/mixed/lsurf_model_float_64.onnx";
-  if (input_filename != NULL && strlen(input_filename) > 0)
-  {
-    model_path = input_filename;
-  }
-
-  f = fopen(model_path, "r");
-  if (f == NULL)
-  {
-    status->error = kAlquimiaErrorEngineIntegrity;
-    snprintf(status->message, kAlquimiaMaxStringLength, "Model file not found: %s", model_path);
-    onnx_state->g_ort->ReleaseSessionOptions(onnx_state->session_options);
-    onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    free(onnx_state);
-    return;
-  }
-  fclose(f);
-
-  /* Create Session */
   ort_status = onnx_state->g_ort->CreateSession(onnx_state->env, model_path, onnx_state->session_options, &onnx_state->session);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
@@ -181,81 +198,336 @@ void onnx_alquimia_setup(
     return;
   }
 
-  /* Get Model Metadata */
   ort_status = onnx_state->g_ort->SessionGetModelMetadata(onnx_state->session, &onnx_state->metadata);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
-    onnx_state->g_ort->ReleaseSession(onnx_state->session);
-    onnx_state->g_ort->ReleaseSessionOptions(onnx_state->session_options);
-    onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    free(onnx_state);
+    CleanupOnSetupFailure(onnx_state);
     return;
   }
 
-  /* Create CPU Memory Info */
   ort_status = onnx_state->g_ort->CreateCpuMemoryInfo(OrtArenaAllocator, OrtMemTypeDefault, &onnx_state->memory_info);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
-    onnx_state->g_ort->ReleaseModelMetadata(onnx_state->metadata);
-    onnx_state->g_ort->ReleaseSession(onnx_state->session);
-    onnx_state->g_ort->ReleaseSessionOptions(onnx_state->session_options);
-    onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    free(onnx_state);
+    CleanupOnSetupFailure(onnx_state);
     return;
   }
 
-  /* Create Allocator */
   ort_status = onnx_state->g_ort->CreateAllocator(onnx_state->session, onnx_state->memory_info, &onnx_state->allocator);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
-    onnx_state->g_ort->ReleaseMemoryInfo(onnx_state->memory_info);
-    onnx_state->g_ort->ReleaseModelMetadata(onnx_state->metadata);
-    onnx_state->g_ort->ReleaseSession(onnx_state->session);
-    onnx_state->g_ort->ReleaseSessionOptions(onnx_state->session_options);
-    onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    free(onnx_state);
+    CleanupOnSetupFailure(onnx_state);
     return;
   }
 
-  /* Create static re-usable Input Tensor */
-  input_shape[0] = 1;
-  input_shape[1] = 5;
-  ort_status = onnx_state->g_ort->CreateTensorWithDataAsOrtValue(
-      onnx_state->memory_info, onnx_state->input_data, sizeof(onnx_state->input_data),
-      input_shape, 2, ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE, &onnx_state->input_tensor);
+  /* Query input/output count */
+  size_t num_inputs = 0;
+  ort_status = onnx_state->g_ort->SessionGetInputCount(onnx_state->session, &num_inputs);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
-    onnx_state->g_ort->ReleaseAllocator(onnx_state->allocator);
-    onnx_state->g_ort->ReleaseMemoryInfo(onnx_state->memory_info);
-    onnx_state->g_ort->ReleaseModelMetadata(onnx_state->metadata);
-    onnx_state->g_ort->ReleaseSession(onnx_state->session);
-    onnx_state->g_ort->ReleaseSessionOptions(onnx_state->session_options);
-    onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    free(onnx_state);
+    CleanupOnSetupFailure(onnx_state);
     return;
   }
+  onnx_state->num_inputs = num_inputs;
 
-  /* Create static re-usable Output Tensor */
-  output_shape[0] = 1;
-  output_shape[1] = 1;
-  ort_status = onnx_state->g_ort->CreateTensorWithDataAsOrtValue(
-      onnx_state->memory_info, onnx_state->output_data, sizeof(onnx_state->output_data),
-      output_shape, 2, ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE, &onnx_state->output_tensor);
+  size_t num_outputs = 0;
+  ort_status = onnx_state->g_ort->SessionGetOutputCount(onnx_state->session, &num_outputs);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
-    onnx_state->g_ort->ReleaseValue(onnx_state->input_tensor);
-    onnx_state->g_ort->ReleaseAllocator(onnx_state->allocator);
-    onnx_state->g_ort->ReleaseMemoryInfo(onnx_state->memory_info);
-    onnx_state->g_ort->ReleaseModelMetadata(onnx_state->metadata);
-    onnx_state->g_ort->ReleaseSession(onnx_state->session);
-    onnx_state->g_ort->ReleaseSessionOptions(onnx_state->session_options);
-    onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    free(onnx_state);
+    CleanupOnSetupFailure(onnx_state);
+    return;
+  }
+  onnx_state->num_outputs = num_outputs;
+
+  /* Guard against empty inputs or outputs */
+  if (num_inputs == 0 || num_outputs == 0)
+  {
+    status->error = kAlquimiaErrorEngineIntegrity;
+    snprintf(status->message, kAlquimiaMaxStringLength, "Model has 0 inputs or outputs (inputs: %d, outputs: %d).", (int)num_inputs, (int)num_outputs);
+    CleanupOnSetupFailure(onnx_state);
     return;
   }
 
-  /* Initialize sizes and functionality */
-  sizes->num_primary = 5;
+  /* Allocate outer arrays for inputs */
+  onnx_state->input_names = (char **)calloc(num_inputs, sizeof(char *));
+  onnx_state->input_num_dim = (size_t *)calloc(num_inputs, sizeof(size_t));
+  onnx_state->input_dim_values = (int64_t **)calloc(num_inputs, sizeof(int64_t *));
+  onnx_state->input_total_size = (size_t *)calloc(num_inputs, sizeof(size_t));
+  onnx_state->input_data = (double **)calloc(num_inputs, sizeof(double *));
+  onnx_state->input_tensor = (OrtValue **)calloc(num_inputs, sizeof(OrtValue *));
+  onnx_state->input_offsets = (size_t *)calloc(num_inputs + 1, sizeof(size_t));
+
+  if (onnx_state->input_names == NULL || onnx_state->input_num_dim == NULL ||
+      onnx_state->input_dim_values == NULL || onnx_state->input_total_size == NULL ||
+      onnx_state->input_data == NULL || onnx_state->input_tensor == NULL ||
+      onnx_state->input_offsets == NULL)
+  {
+    status->error = kAlquimiaErrorEngineIntegrity;
+    snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for input container arrays.");
+    CleanupOnSetupFailure(onnx_state);
+    return;
+  }
+
+  /* Parse input names and dimensions */
+  for (i = 0; i < num_inputs; ++i)
+  {
+    char *name = NULL;
+    ort_status = onnx_state->g_ort->SessionGetInputName(onnx_state->session, i, onnx_state->allocator, &name);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+    onnx_state->input_names[i] = name;
+
+    OrtTypeInfo *type_info = NULL;
+    ort_status = onnx_state->g_ort->SessionGetInputTypeInfo(onnx_state->session, i, &type_info);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    const OrtTensorTypeAndShapeInfo *tensor_info = NULL;
+    ort_status = onnx_state->g_ort->CastTypeInfoToTensorInfo(type_info, &tensor_info);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    size_t dim_count = 0;
+    ort_status = onnx_state->g_ort->GetDimensionsCount(tensor_info, &dim_count);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    /* Zero-Dim / Scalar Guard */
+    if (dim_count == 0)
+    {
+      onnx_state->input_num_dim[i] = 1;
+      onnx_state->input_dim_values[i] = (int64_t *)calloc(1, sizeof(int64_t));
+      if (onnx_state->input_dim_values[i] == NULL)
+      {
+        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        status->error = kAlquimiaErrorEngineIntegrity;
+        snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for scalar input_dim_values.");
+        CleanupOnSetupFailure(onnx_state);
+        return;
+      }
+      onnx_state->input_dim_values[i][0] = 1;
+    }
+    else
+    {
+      onnx_state->input_num_dim[i] = dim_count;
+      onnx_state->input_dim_values[i] = (int64_t *)calloc(dim_count, sizeof(int64_t));
+      if (onnx_state->input_dim_values[i] == NULL)
+      {
+        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        status->error = kAlquimiaErrorEngineIntegrity;
+        snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for input_dim_values.");
+        CleanupOnSetupFailure(onnx_state);
+        return;
+      }
+      ort_status = onnx_state->g_ort->GetDimensions(tensor_info, onnx_state->input_dim_values[i], dim_count);
+      if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+      {
+        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        CleanupOnSetupFailure(onnx_state);
+        return;
+      }
+    }
+
+    /* In-place Dimension Correction */
+    size_t total_size = 1;
+    for (j = 0; j < onnx_state->input_num_dim[i]; ++j)
+    {
+      if (onnx_state->input_dim_values[i][j] <= 0)
+      {
+        onnx_state->input_dim_values[i][j] = 1;
+      }
+      total_size *= (size_t)onnx_state->input_dim_values[i][j];
+    }
+    onnx_state->input_total_size[i] = total_size;
+
+    onnx_state->input_data[i] = (double *)calloc(total_size, sizeof(double));
+    if (onnx_state->input_data[i] == NULL)
+    {
+      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      status->error = kAlquimiaErrorEngineIntegrity;
+      snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for input_data.");
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    /* Create dynamic reusable Input Tensor */
+    ort_status = onnx_state->g_ort->CreateTensorWithDataAsOrtValue(
+        onnx_state->memory_info, onnx_state->input_data[i], total_size * sizeof(double),
+        onnx_state->input_dim_values[i], onnx_state->input_num_dim[i],
+        ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE, &onnx_state->input_tensor[i]);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    onnx_state->g_ort->ReleaseTypeInfo(type_info);
+  }
+
+  /* Compute Input Cumulative Offsets & num_primary */
+  onnx_state->input_offsets[0] = 0;
+  for (i = 0; i < num_inputs; ++i)
+  {
+    int64_t last_dim = onnx_state->input_dim_values[i][onnx_state->input_num_dim[i] - 1];
+    onnx_state->input_offsets[i + 1] = onnx_state->input_offsets[i] + (size_t)last_dim;
+  }
+  int num_primary = (int)onnx_state->input_offsets[num_inputs];
+  onnx_state->num_primary = num_primary;
+  sizes->num_primary = num_primary;
+
+  /* Allocate outer arrays for outputs */
+  onnx_state->output_names = (char **)calloc(num_outputs, sizeof(char *));
+  onnx_state->output_num_dim = (size_t *)calloc(num_outputs, sizeof(size_t));
+  onnx_state->output_dim_values = (int64_t **)calloc(num_outputs, sizeof(int64_t *));
+  onnx_state->output_total_size = (size_t *)calloc(num_outputs, sizeof(size_t));
+  onnx_state->output_data = (double **)calloc(num_outputs, sizeof(double *));
+  onnx_state->output_tensor = (OrtValue **)calloc(num_outputs, sizeof(OrtValue *));
+  onnx_state->output_offsets = (size_t *)calloc(num_outputs + 1, sizeof(size_t));
+
+  if (onnx_state->output_names == NULL || onnx_state->output_num_dim == NULL ||
+      onnx_state->output_dim_values == NULL || onnx_state->output_total_size == NULL ||
+      onnx_state->output_data == NULL || onnx_state->output_tensor == NULL ||
+      onnx_state->output_offsets == NULL)
+  {
+    status->error = kAlquimiaErrorEngineIntegrity;
+    snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for output container arrays.");
+    CleanupOnSetupFailure(onnx_state);
+    return;
+  }
+
+  /* Parse output names and dimensions */
+  for (i = 0; i < num_outputs; ++i)
+  {
+    char *name = NULL;
+    ort_status = onnx_state->g_ort->SessionGetOutputName(onnx_state->session, i, onnx_state->allocator, &name);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+    onnx_state->output_names[i] = name;
+
+    OrtTypeInfo *type_info = NULL;
+    ort_status = onnx_state->g_ort->SessionGetOutputTypeInfo(onnx_state->session, i, &type_info);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    const OrtTensorTypeAndShapeInfo *tensor_info = NULL;
+    ort_status = onnx_state->g_ort->CastTypeInfoToTensorInfo(type_info, &tensor_info);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    size_t dim_count = 0;
+    ort_status = onnx_state->g_ort->GetDimensionsCount(tensor_info, &dim_count);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    /* Zero-Dim / Scalar Guard */
+    if (dim_count == 0)
+    {
+      onnx_state->output_num_dim[i] = 1;
+      onnx_state->output_dim_values[i] = (int64_t *)calloc(1, sizeof(int64_t));
+      if (onnx_state->output_dim_values[i] == NULL)
+      {
+        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        status->error = kAlquimiaErrorEngineIntegrity;
+        snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for scalar output_dim_values.");
+        CleanupOnSetupFailure(onnx_state);
+        return;
+      }
+      onnx_state->output_dim_values[i][0] = 1;
+    }
+    else
+    {
+      onnx_state->output_num_dim[i] = dim_count;
+      onnx_state->output_dim_values[i] = (int64_t *)calloc(dim_count, sizeof(int64_t));
+      if (onnx_state->output_dim_values[i] == NULL)
+      {
+        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        status->error = kAlquimiaErrorEngineIntegrity;
+        snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for output_dim_values.");
+        CleanupOnSetupFailure(onnx_state);
+        return;
+      }
+      ort_status = onnx_state->g_ort->GetDimensions(tensor_info, onnx_state->output_dim_values[i], dim_count);
+      if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+      {
+        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        CleanupOnSetupFailure(onnx_state);
+        return;
+      }
+    }
+
+    /* In-place Dimension Correction */
+    size_t total_size = 1;
+    for (j = 0; j < onnx_state->output_num_dim[i]; ++j)
+    {
+      if (onnx_state->output_dim_values[i][j] <= 0)
+      {
+        onnx_state->output_dim_values[i][j] = 1;
+      }
+      total_size *= (size_t)onnx_state->output_dim_values[i][j];
+    }
+    onnx_state->output_total_size[i] = total_size;
+
+    onnx_state->output_data[i] = (double *)calloc(total_size, sizeof(double));
+    if (onnx_state->output_data[i] == NULL)
+    {
+      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      status->error = kAlquimiaErrorEngineIntegrity;
+      snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for output_data.");
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    /* Create dynamic reusable Output Tensor */
+    ort_status = onnx_state->g_ort->CreateTensorWithDataAsOrtValue(
+        onnx_state->memory_info, onnx_state->output_data[i], total_size * sizeof(double),
+        onnx_state->output_dim_values[i], onnx_state->output_num_dim[i],
+        ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE, &onnx_state->output_tensor[i]);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      CleanupOnSetupFailure(onnx_state);
+      return;
+    }
+
+    onnx_state->g_ort->ReleaseTypeInfo(type_info);
+  }
+
+  /* Compute Output Cumulative Offsets */
+  onnx_state->output_offsets[0] = 0;
+  for (i = 0; i < num_outputs; ++i)
+  {
+    int64_t last_dim = onnx_state->output_dim_values[i][onnx_state->output_num_dim[i] - 1];
+    onnx_state->output_offsets[i + 1] = onnx_state->output_offsets[i] + (size_t)last_dim;
+  }
+
   sizes->num_sorbed = 0;
   sizes->num_minerals = 0;
   sizes->num_aqueous_complexes = 0;
@@ -286,6 +558,7 @@ void onnx_alquimia_shutdown(
     AlquimiaEngineStatus *status)
 {
   OnnxEngineState *onnx_state;
+  size_t i;
 
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
@@ -300,18 +573,139 @@ void onnx_alquimia_shutdown(
   onnx_state = (OnnxEngineState *)onnx_engine_state;
   if (onnx_state->g_ort != NULL)
   {
-    if (onnx_state->output_tensor != NULL)
-    {
-      onnx_state->g_ort->ReleaseValue(onnx_state->output_tensor);
-      onnx_state->output_tensor = NULL;
-    }
+    /* Release input tensors and associated buffers */
     if (onnx_state->input_tensor != NULL)
     {
-      onnx_state->g_ort->ReleaseValue(onnx_state->input_tensor);
+      for (i = 0; i < onnx_state->num_inputs; ++i)
+      {
+        if (onnx_state->input_tensor[i] != NULL)
+        {
+          onnx_state->g_ort->ReleaseValue(onnx_state->input_tensor[i]);
+        }
+      }
+      free(onnx_state->input_tensor);
       onnx_state->input_tensor = NULL;
     }
+    if (onnx_state->input_data != NULL)
+    {
+      for (i = 0; i < onnx_state->num_inputs; ++i)
+      {
+        if (onnx_state->input_data[i] != NULL)
+        {
+          free(onnx_state->input_data[i]);
+        }
+      }
+      free(onnx_state->input_data);
+      onnx_state->input_data = NULL;
+    }
+    if (onnx_state->input_dim_values != NULL)
+    {
+      for (i = 0; i < onnx_state->num_inputs; ++i)
+      {
+        if (onnx_state->input_dim_values[i] != NULL)
+        {
+          free(onnx_state->input_dim_values[i]);
+        }
+      }
+      free(onnx_state->input_dim_values);
+      onnx_state->input_dim_values = NULL;
+    }
+    if (onnx_state->input_num_dim != NULL)
+    {
+      free(onnx_state->input_num_dim);
+      onnx_state->input_num_dim = NULL;
+    }
+    if (onnx_state->input_total_size != NULL)
+    {
+      free(onnx_state->input_total_size);
+      onnx_state->input_total_size = NULL;
+    }
+    if (onnx_state->input_offsets != NULL)
+    {
+      free(onnx_state->input_offsets);
+      onnx_state->input_offsets = NULL;
+    }
+
+    /* Release output tensors and associated buffers */
+    if (onnx_state->output_tensor != NULL)
+    {
+      for (i = 0; i < onnx_state->num_outputs; ++i)
+      {
+        if (onnx_state->output_tensor[i] != NULL)
+        {
+          onnx_state->g_ort->ReleaseValue(onnx_state->output_tensor[i]);
+        }
+      }
+      free(onnx_state->output_tensor);
+      onnx_state->output_tensor = NULL;
+    }
+    if (onnx_state->output_data != NULL)
+    {
+      for (i = 0; i < onnx_state->num_outputs; ++i)
+      {
+        if (onnx_state->output_data[i] != NULL)
+        {
+          free(onnx_state->output_data[i]);
+        }
+      }
+      free(onnx_state->output_data);
+      onnx_state->output_data = NULL;
+    }
+    if (onnx_state->output_dim_values != NULL)
+    {
+      for (i = 0; i < onnx_state->num_outputs; ++i)
+      {
+        if (onnx_state->output_dim_values[i] != NULL)
+        {
+          free(onnx_state->output_dim_values[i]);
+        }
+      }
+      free(onnx_state->output_dim_values);
+      onnx_state->output_dim_values = NULL;
+    }
+    if (onnx_state->output_num_dim != NULL)
+    {
+      free(onnx_state->output_num_dim);
+      onnx_state->output_num_dim = NULL;
+    }
+    if (onnx_state->output_total_size != NULL)
+    {
+      free(onnx_state->output_total_size);
+      onnx_state->output_total_size = NULL;
+    }
+    if (onnx_state->output_offsets != NULL)
+    {
+      free(onnx_state->output_offsets);
+      onnx_state->output_offsets = NULL;
+    }
+
+    /* Release allocator and names */
     if (onnx_state->allocator != NULL)
     {
+      if (onnx_state->input_names != NULL)
+      {
+        for (i = 0; i < onnx_state->num_inputs; ++i)
+        {
+          if (onnx_state->input_names[i] != NULL)
+          {
+            onnx_state->allocator->Free(onnx_state->allocator, onnx_state->input_names[i]);
+          }
+        }
+        free(onnx_state->input_names);
+        onnx_state->input_names = NULL;
+      }
+      if (onnx_state->output_names != NULL)
+      {
+        for (i = 0; i < onnx_state->num_outputs; ++i)
+        {
+          if (onnx_state->output_names[i] != NULL)
+          {
+            onnx_state->allocator->Free(onnx_state->allocator, onnx_state->output_names[i]);
+          }
+        }
+        free(onnx_state->output_names);
+        onnx_state->output_names = NULL;
+      }
       onnx_state->g_ort->ReleaseAllocator(onnx_state->allocator);
       onnx_state->allocator = NULL;
     }
@@ -355,17 +749,28 @@ void onnx_alquimia_processcondition(
     AlquimiaAuxiliaryData *aux_data,
     AlquimiaEngineStatus *status)
 {
+  OnnxEngineState *onnx_state;
   double input_vals[] = {-6.67778070526608, -4.54327863489071, -25.419, -20.100, -37.489};
   int i;
+  int num_primary;
 
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
 
   // Unused
-  (void)onnx_engine_state;
   (void)condition;
   (void)props;
   (void)aux_data;
+
+  if (onnx_engine_state == NULL)
+  {
+    status->error = kAlquimiaErrorInvalidEngine;
+    snprintf(status->message, kAlquimiaMaxStringLength, "Invalid ONNX engine state pointer in ProcessCondition.");
+    return;
+  }
+
+  onnx_state = (OnnxEngineState *)onnx_engine_state;
+  num_primary = onnx_state->num_primary;
 
   if (state == NULL || state->total_mobile.data == NULL)
   {
@@ -374,16 +779,23 @@ void onnx_alquimia_processcondition(
     return;
   }
 
-  if (state->total_mobile.size < 5)
+  if (num_primary != 5)
   {
     status->error = kAlquimiaErrorEngineIntegrity;
-    snprintf(status->message, kAlquimiaMaxStringLength, "state->total_mobile.size is less than 5.");
+    snprintf(status->message, kAlquimiaMaxStringLength, "Model has num_primary = %d. Models with num_primary != 5 are untested and unsupported in ProcessCondition.", num_primary);
     return;
   }
 
-  for (i = 0; i < 5; ++i)
+  for (i = 0; i < num_primary; ++i)
   {
-    state->total_mobile.data[i] = input_vals[i];
+    if (i < 5)
+    {
+      state->total_mobile.data[i] = input_vals[i];
+    }
+    else
+    {
+      state->total_mobile.data[i] = 0.0;
+    }
   }
 }
 
@@ -400,10 +812,7 @@ void onnx_alquimia_reactionstepoperatorsplit(
     AlquimiaEngineStatus *status)
 {
   OnnxEngineState *onnx_state;
-  const char *input_names[1];
-  const char *output_names[1];
   OrtStatus *ort_status;
-  double *out_arr;
   int i;
 
   status->error = kAlquimiaNoError;
@@ -422,68 +831,83 @@ void onnx_alquimia_reactionstepoperatorsplit(
     return;
   }
 
-  if (state == NULL || state->total_mobile.data == NULL || state->total_mobile.size < 5)
+  onnx_state = (OnnxEngineState *)onnx_engine_state;
+
+  if (state == NULL || state->total_mobile.data == NULL)
   {
     status->error = kAlquimiaErrorEngineIntegrity;
-    snprintf(status->message, kAlquimiaMaxStringLength, "Invalid state data in reactionstepoperatorsplit.");
+    snprintf(status->message, kAlquimiaMaxStringLength, "Invalid state or total_mobile.data in reactionstepoperatorsplit.");
     return;
   }
 
-  onnx_state = (OnnxEngineState *)onnx_engine_state;
-
-  /* Copy data from state->total_mobile.data into pre-allocated input_data buffer */
-  for (i = 0; i < 5; ++i)
+  /* Array Bounds Verification */
+  if (state->total_mobile.size < onnx_state->input_offsets[onnx_state->num_inputs] ||
+      state->total_mobile.size < onnx_state->output_offsets[onnx_state->num_outputs])
   {
-    onnx_state->input_data[i] = state->total_mobile.data[i];
+    status->error = kAlquimiaErrorEngineIntegrity;
+    snprintf(status->message, kAlquimiaMaxStringLength,
+             "Array bounds check failed in reactionstepoperatorsplit. "
+             "state->total_mobile.size (%d) is smaller than required input offset (%d) "
+             "or output offset (%d).",
+             (int)state->total_mobile.size,
+             (int)onnx_state->input_offsets[onnx_state->num_inputs],
+             (int)onnx_state->output_offsets[onnx_state->num_outputs]);
+    return;
   }
 
-  input_names[0] = "double_input";
-  output_names[0] = "double_output";
+  /* Copy data from state->total_mobile.data into pre-allocated input_data buffers using offsets */
+  for (i = 0; i < (int)onnx_state->num_inputs; ++i)
+  {
+    int64_t last_dim = onnx_state->input_dim_values[i][onnx_state->input_num_dim[i] - 1];
+    int64_t k;
+    for (k = 0; k < last_dim; ++k)
+    {
+      onnx_state->input_data[i][k] = state->total_mobile.data[onnx_state->input_offsets[i] + k];
+    }
+  }
 
-  /* Run inference using pre-allocated input and output tensors */
+  /* Run inference using pre-allocated input and output tensors and dynamic names */
   ort_status = onnx_state->g_ort->Run(
       onnx_state->session,
       NULL, /* RunOptions */
-      input_names,
-      (const OrtValue *const *)&onnx_state->input_tensor,
-      1,
-      output_names,
-      1,
-      &onnx_state->output_tensor);
+      (const char *const *)onnx_state->input_names,
+      (const OrtValue *const *)onnx_state->input_tensor,
+      onnx_state->num_inputs,
+      (const char *const *)onnx_state->output_names,
+      onnx_state->num_outputs,
+      onnx_state->output_tensor);
 
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
     return;
   }
 
-  if (onnx_state->output_tensor == NULL)
+  /* Copy output data back to state->total_mobile.data using offsets */
+  for (i = 0; i < (int)onnx_state->num_outputs; ++i)
   {
-    status->error = kAlquimiaErrorEngineIntegrity;
-    snprintf(status->message, kAlquimiaMaxStringLength, "ONNX Run completed but output_tensor is NULL.");
-    return;
-  }
+    double *out_arr = NULL;
+    ort_status = onnx_state->g_ort->GetTensorMutableData(onnx_state->output_tensor[i], (void **)&out_arr);
+    if (!CheckStatus(onnx_state->g_ort, ort_status, status))
+    {
+      return;
+    }
 
-  out_arr = NULL;
-  ort_status = onnx_state->g_ort->GetTensorMutableData(onnx_state->output_tensor, (void **)&out_arr);
-  if (!CheckStatus(onnx_state->g_ort, ort_status, status))
-  {
-    return;
-  }
+    if (out_arr == NULL)
+    {
+      status->error = kAlquimiaErrorEngineIntegrity;
+      snprintf(status->message, kAlquimiaMaxStringLength, "GetTensorMutableData returned NULL output buffer for output tensor %d.", i);
+      return;
+    }
 
-  if (out_arr == NULL)
-  {
-    status->error = kAlquimiaErrorEngineIntegrity;
-    snprintf(status->message, kAlquimiaMaxStringLength, "ONNX GetTensorMutableData returned NULL data pointer.");
-    return;
+    int64_t last_dim = onnx_state->output_dim_values[i][onnx_state->output_num_dim[i] - 1];
+    int k;
+    for (k = 0; k < last_dim; ++k)
+    {
+      state->total_mobile.data[onnx_state->output_offsets[i] + k] = out_arr[k];
+    }
   }
-
-  /* Write the prediction back to state->total_mobile.data[0] */
-  state->total_mobile.data[0] = out_arr[0];
 }
 
-/*
-** Get Auxiliary Output
-*/
 void onnx_alquimia_getauxiliaryoutput(
     void *onnx_engine_state,
     AlquimiaProperties *props,
@@ -516,6 +940,7 @@ void onnx_alquimia_getproblemmetadata(
   char **keys;
   OrtStatus *ort_status;
   int i, j;
+  bool debug = false;
 
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
@@ -579,8 +1004,11 @@ void onnx_alquimia_getproblemmetadata(
       return;
     }
 
-    /* Print custom metadata */
-    printf("Custom Metadata - Key: %s, Value: %s\n", keys[i], value);
+    /* Print custom metadata in debug mode only */
+    if (debug)
+    {
+      printf("Custom Metadata - Key: %s, Value: %s\n", keys[i], value);
+    }
 
     /* Store the feature name in meta_data if key matches "feature_X" */
     int feat_idx = -1;
