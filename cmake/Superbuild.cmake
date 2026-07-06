@@ -209,6 +209,7 @@ if (XSDK_WITH_ONNX)
               COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_DIR}/lib
               COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/lib/libonnxruntime.so ${INSTALL_DIR}/lib/libonnxruntime.so
               COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/lib/libonnxruntime.so.1.27.0 ${INSTALL_DIR}/lib/libonnxruntime.so.1.27.0
+              COMMAND ${CMAKE_COMMAND} -E create_symlink libonnxruntime.so ${INSTALL_DIR}/lib/libonnxruntime.so.1
   )
 
   # Register 'onnx' as a hard dependency of Alquimia Core.
