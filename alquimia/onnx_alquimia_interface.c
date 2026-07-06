@@ -749,54 +749,15 @@ void onnx_alquimia_processcondition(
     AlquimiaAuxiliaryData *aux_data,
     AlquimiaEngineStatus *status)
 {
-  OnnxEngineState *onnx_state;
-  double input_vals[] = {-6.67778070526608, -4.54327863489071, -25.419, -20.100, -37.489};
-  int i;
-  int num_primary;
-
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
 
-  // Unused
+  /* Keeping ProcessCondition empty/stub for now */
+  (void)onnx_engine_state;
   (void)condition;
   (void)props;
+  (void)state;
   (void)aux_data;
-
-  if (onnx_engine_state == NULL)
-  {
-    status->error = kAlquimiaErrorInvalidEngine;
-    snprintf(status->message, kAlquimiaMaxStringLength, "Invalid ONNX engine state pointer in ProcessCondition.");
-    return;
-  }
-
-  onnx_state = (OnnxEngineState *)onnx_engine_state;
-  num_primary = onnx_state->num_primary;
-
-  if (state == NULL || state->total_mobile.data == NULL)
-  {
-    status->error = kAlquimiaErrorEngineIntegrity;
-    snprintf(status->message, kAlquimiaMaxStringLength, "Invalid state or total_mobile.data in ProcessCondition.");
-    return;
-  }
-
-  if (num_primary != 5)
-  {
-    status->error = kAlquimiaErrorEngineIntegrity;
-    snprintf(status->message, kAlquimiaMaxStringLength, "Model has num_primary = %d. Models with num_primary != 5 are untested and unsupported in ProcessCondition.", num_primary);
-    return;
-  }
-
-  for (i = 0; i < num_primary; ++i)
-  {
-    if (i < 5)
-    {
-      state->total_mobile.data[i] = input_vals[i];
-    }
-    else
-    {
-      state->total_mobile.data[i] = 0.0;
-    }
-  }
 }
 
 /*
