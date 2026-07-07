@@ -563,14 +563,14 @@ void onnx_alquimia_shutdown(
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
 
-  if (onnx_engine_state == NULL)
+  if (onnx_engine_state == NULL || *(OnnxEngineState **)onnx_engine_state == NULL)
   {
     status->error = kAlquimiaErrorInvalidEngine;
     snprintf(status->message, kAlquimiaMaxStringLength, "Invalid ONNX engine state pointer in shutdown.");
     return;
   }
 
-  onnx_state = (OnnxEngineState *)onnx_engine_state;
+  onnx_state = *(OnnxEngineState **)onnx_engine_state;
   if (onnx_state->g_ort != NULL)
   {
     /* Release input tensors and associated buffers */
@@ -736,6 +736,7 @@ void onnx_alquimia_shutdown(
     }
   }
   free(onnx_state);
+  *(OnnxEngineState **)onnx_engine_state = NULL;
 }
 
 /*
@@ -785,14 +786,14 @@ void onnx_alquimia_reactionstepoperatorsplit(
   (void)aux_data;
   (void)natural_id;
 
-  if (onnx_engine_state == NULL)
+  if (onnx_engine_state == NULL || *(OnnxEngineState **)onnx_engine_state == NULL)
   {
     status->error = kAlquimiaErrorInvalidEngine;
     snprintf(status->message, kAlquimiaMaxStringLength, "Invalid ONNX engine state pointer in reactionstepoperatorsplit.");
     return;
   }
 
-  onnx_state = (OnnxEngineState *)onnx_engine_state;
+  onnx_state = *(OnnxEngineState **)onnx_engine_state;
 
   if (state == NULL || state->total_mobile.data == NULL)
   {
@@ -906,14 +907,14 @@ void onnx_alquimia_getproblemmetadata(
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
 
-  if (onnx_engine_state == NULL)
+  if (onnx_engine_state == NULL || *(OnnxEngineState **)onnx_engine_state == NULL)
   {
     status->error = kAlquimiaErrorInvalidEngine;
     snprintf(status->message, kAlquimiaMaxStringLength, "Invalid ONNX engine state pointer.");
     return;
   }
 
-  onnx_state = (OnnxEngineState *)onnx_engine_state;
+  onnx_state = *(OnnxEngineState **)onnx_engine_state;
 
   num_keys = 0;
   keys = NULL;
