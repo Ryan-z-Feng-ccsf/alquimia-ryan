@@ -31,7 +31,7 @@ typedef struct {
   double inputs[6];
 } ModelTestCase;
 
-void test_SingleModelLifecycle(const ModelTestCase* tc) {
+void test_SingleModelLifecycle(const ModelTestCase* test_case) {
   AlquimiaEngineStatus status;
   AlquimiaInterface interface;
   AlquimiaSizes sizes;
@@ -46,13 +46,13 @@ void test_SingleModelLifecycle(const ModelTestCase* tc) {
 
   // 2. Setup (Load model)
   char model_path[2048];
-  snprintf(model_path, sizeof(model_path), "%s/../models/%s", CMAKE_CURRENT_SOURCE_DIR, tc->filename);
+  snprintf(model_path, sizeof(model_path), "%s/../models/%s", CMAKE_CURRENT_SOURCE_DIR, test_case->filename);
 
   // Note: Setup takes &engine_state (pointer-to-pointer)
   interface.Setup(model_path, false, &engine_state, &sizes, &functionality, &status);
   if (status.error != kAlquimiaNoError) {
-    fprintf(stderr, "Setup failed for %s! Error: %d, Message: %s\n", tc->filename, status.error, status.message);
-    if (strcmp(tc->filename, "lsurf_model_5_float_64.onnx") == 0) {
+    fprintf(stderr, "Setup failed for %s! Error: %d, Message: %s\n", test_case->filename, status.error, status.message);
+    if (strcmp(test_case->filename, "lsurf_model_5_float_64.onnx") == 0) {
       ALQUIMIA_ASSERT(status.error == kAlquimiaNoError);
     }
     FreeAlquimiaEngineStatus(&status);
@@ -60,7 +60,7 @@ void test_SingleModelLifecycle(const ModelTestCase* tc) {
   }
 
   ALQUIMIA_ASSERT(engine_state != NULL);
-  ALQUIMIA_ASSERT(sizes.num_primary == tc->num_features);
+  ALQUIMIA_ASSERT(sizes.num_primary == test_case->num_features);
 
   // 3. Problem Metadata
   AlquimiaProblemMetaData meta_data;
@@ -69,13 +69,13 @@ void test_SingleModelLifecycle(const ModelTestCase* tc) {
   ALQUIMIA_ASSERT(status.error == kAlquimiaNoError);
 
   // Verify feature names align perfectly with the model's custom metadata
-  printf("Model: %s\n", tc->filename);
-  for (int i = 0; i < tc->num_features; ++i) {
-    printf("  Index %d: expected = '%s', actual = '%s'\n", i, tc->features[i], meta_data.primary_names.data[i]);
+  printf("Model: %s\n", test_case->filename);
+  for (int i = 0; i < test_case->num_features; ++i) {
+    printf("  Index %d: expected = '%s', actual = '%s'\n", i, test_case->features[i], meta_data.primary_names.data[i]);
   }
 
-  for (int i = 0; i < tc->num_features; ++i) {
-    ALQUIMIA_ASSERT(strcmp(meta_data.primary_names.data[i], tc->features[i]) == 0);
+  for (int i = 0; i < test_case->num_features; ++i) {
+    ALQUIMIA_ASSERT(strcmp(meta_data.primary_names.data[i], test_case->features[i]) == 0);
   }
 
   // 4. Process Condition (Loads dummy state)
@@ -89,8 +89,8 @@ void test_SingleModelLifecycle(const ModelTestCase* tc) {
   ALQUIMIA_ASSERT(status.error == kAlquimiaNoError);
 
   // Manually initialize input concentrations based on the test case
-  for (int i = 0; i < tc->num_features; ++i) {
-    state.total_mobile.data[i] = tc->inputs[i];
+  for (int i = 0; i < test_case->num_features; ++i) {
+    state.total_mobile.data[i] = test_case->inputs[i];
   }
 
   // 5. Run ReactionStepOperatorSplit (Inference)
@@ -98,10 +98,10 @@ void test_SingleModelLifecycle(const ModelTestCase* tc) {
   ALQUIMIA_ASSERT(status.error == kAlquimiaNoError);
 
   // Print output for verification
-  printf("Model %s output (uranium_total): %.15f\n", tc->filename, state.total_mobile.data[0]);
+  printf("Model %s output (uranium_total): %.15f\n", test_case->filename, state.total_mobile.data[0]);
 
   // Strictly validate Model 5 output
-  if (strcmp(tc->filename, "lsurf_model_5_float_64.onnx") == 0) {
+  if (strcmp(test_case->filename, "lsurf_model_5_float_64.onnx") == 0) {
     ALQUIMIA_ASSERT(fabs(state.total_mobile.data[0] - (-6.691744980518146)) < 1e-4);
   }
 
