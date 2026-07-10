@@ -1656,18 +1656,6 @@ void onnx_alquimia_getproblemmetadata(
           meta_data, mapping.target_struct);
       StoreMetadataName(names, mapping.target_index, value);
     }
-    else if (meta_data != NULL &&
-             sscanf(keys[i], "isotherm_species_%d%c", &feat_idx,
-                    &trailing) == 1)
-    {
-      StoreMetadataName(&meta_data->isotherm_species_names, feat_idx, value);
-    }
-    else if (meta_data != NULL &&
-             sscanf(keys[i], "aqueous_kinetic_%d%c", &feat_idx,
-                    &trailing) == 1)
-    {
-      StoreMetadataName(&meta_data->aqueous_kinetic_names, feat_idx, value);
-    }
 
     /* Standard deallocation */
     onnx_state->allocator->Free(onnx_state->allocator, value);
