@@ -291,6 +291,57 @@ static int MappingTargetSize(
 }
 
 /**
+ * @brief Selects the problem-metadata name vector for a state mapping.
+ * @param meta_data Problem metadata whose name vectors were allocated from the
+ *        model sizes.
+ * @param target_struct State field associated with a model feature.
+ * @return The corresponding name vector, or NULL when the mapped state field
+ *         has no name representation in AlquimiaProblemMetaData.
+ */
+static AlquimiaVectorString *MetadataNamesForMapping(
+    AlquimiaProblemMetaData *meta_data,
+    AlquimiaMappedStruct target_struct)
+{
+  switch (target_struct)
+  {
+  case ALQUIMIA_STRUCT_TOTAL_MOBILE:
+  case ALQUIMIA_STRUCT_TOTAL_IMMOBILE:
+    return &meta_data->primary_names;
+  case ALQUIMIA_STRUCT_MINERAL_VOLUME_FRACTION:
+  case ALQUIMIA_STRUCT_MINERAL_SPECIFIC_SURFACE_AREA:
+    return &meta_data->mineral_names;
+  case ALQUIMIA_STRUCT_SURFACE_SITE_DENSITY:
+    return &meta_data->surface_site_names;
+  case ALQUIMIA_STRUCT_CATION_EXCHANGE_CAPACITY:
+    return &meta_data->ion_exchange_names;
+  case ALQUIMIA_STRUCT_GAS_CONCENTRATION:
+    return &meta_data->gas_names;
+  default:
+    return NULL;
+  }
+}
+
+/**
+ * @brief Copies a model metadata value into an allocated Alquimia name vector.
+ * @param names Destination name vector.
+ * @param index Zero-based destination index.
+ * @param value Null-terminated metadata value to copy.
+ */
+static void StoreMetadataName(
+    AlquimiaVectorString *names,
+    int index,
+    const char *value)
+{
+  if (names == NULL || names->data == NULL || index < 0 || index >= names->size)
+  {
+    return;
+  }
+
+  strncpy(names->data[index], value, kAlquimiaMaxStringLength - 1);
+  names->data[index][kAlquimiaMaxStringLength - 1] = '\0';
+}
+
+/**
  * @brief Builds and validates one flattened tensor-to-state mapping.
  * @param onnx_state Engine state used to query and free metadata values.
  * @param mapping_prefix Either "input_feature_map" or "output_feature_map".
@@ -1593,15 +1644,29 @@ void onnx_alquimia_getproblemmetadata(
       printf("Custom Metadata - Key: %s, Value: %s\n", keys[i], value);
     }
 
-    /* Store the feature name in meta_data if key matches "feature_X" */
+    /* Store each feature name according to its explicit state mapping. */
     int feat_idx = -1;
-    if (sscanf(keys[i], "feature_%d", &feat_idx) == 1)
+    char trailing;
+    if (sscanf(keys[i], "feature_%d%c", &feat_idx, &trailing) == 1 &&
+        meta_data != NULL && feat_idx >= 0 &&
+        (size_t)feat_idx < onnx_state->total_flat_inputs)
     {
-      if (meta_data != NULL && feat_idx >= 0 && feat_idx < meta_data->primary_names.size)
-      {
-        strncpy(meta_data->primary_names.data[feat_idx], value, kAlquimiaMaxStringLength - 1);
-        meta_data->primary_names.data[feat_idx][kAlquimiaMaxStringLength - 1] = '\0';
-      }
+      FeatureMapping mapping = onnx_state->input_mappings[feat_idx];
+      AlquimiaVectorString *names = MetadataNamesForMapping(
+          meta_data, mapping.target_struct);
+      StoreMetadataName(names, mapping.target_index, value);
+    }
+    else if (meta_data != NULL &&
+             sscanf(keys[i], "isotherm_species_%d%c", &feat_idx,
+                    &trailing) == 1)
+    {
+      StoreMetadataName(&meta_data->isotherm_species_names, feat_idx, value);
+    }
+    else if (meta_data != NULL &&
+             sscanf(keys[i], "aqueous_kinetic_%d%c", &feat_idx,
+                    &trailing) == 1)
+    {
+      StoreMetadataName(&meta_data->aqueous_kinetic_names, feat_idx, value);
     }
 
     /* Standard deallocation */
