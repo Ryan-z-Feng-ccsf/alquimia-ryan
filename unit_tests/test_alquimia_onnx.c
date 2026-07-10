@@ -52,9 +52,8 @@ void test_SingleModelLifecycle(const ModelTestCase* test_case) {
   interface.Setup(model_path, false, &engine_state, &sizes, &functionality, &status);
   if (status.error != kAlquimiaNoError) {
     fprintf(stderr, "Setup failed for %s! Error: %d, Message: %s\n", test_case->filename, status.error, status.message);
-    if (strcmp(test_case->filename, "lsurf_model_5_float_64.onnx") == 0) {
-      ALQUIMIA_ASSERT(status.error == kAlquimiaNoError);
-    }
+    ALQUIMIA_ASSERT(strstr(status.message, "Missing required ONNX mapping metadata key") != NULL);
+    ALQUIMIA_ASSERT(engine_state == NULL);
     FreeAlquimiaEngineStatus(&status);
     return;
   }
@@ -78,20 +77,32 @@ void test_SingleModelLifecycle(const ModelTestCase* test_case) {
     ALQUIMIA_ASSERT(strcmp(meta_data.primary_names.data[i], test_case->features[i]) == 0);
   }
 
-  // 4. Process Condition (Loads dummy state)
+  // 4. Process Condition (Loads dynamic state from geochemical condition)
   AlquimiaState state;
   AllocateAlquimiaState(&sizes, &state);
-  AlquimiaGeochemicalCondition condition = {0};
+
+  AlquimiaGeochemicalCondition condition;
+  AllocateAlquimiaGeochemicalCondition(7, test_case->num_features, 0, &condition);
+  strcpy(condition.name, "initial");
+  for (int i = 0; i < test_case->num_features; ++i) {
+    AllocateAlquimiaAqueousConstraint(&condition.aqueous_constraints.data[i]);
+    strcpy(condition.aqueous_constraints.data[i].primary_species_name, test_case->features[i]);
+    strcpy(condition.aqueous_constraints.data[i].constraint_type, "total");
+    condition.aqueous_constraints.data[i].value = test_case->inputs[i];
+  }
+
   AlquimiaProperties properties = {0};
   AlquimiaAuxiliaryData aux_data = {0};
 
   interface.ProcessCondition(&engine_state, &condition, &properties, &state, &aux_data, &status);
   ALQUIMIA_ASSERT(status.error == kAlquimiaNoError);
 
-  // Manually initialize input concentrations based on the test case
+  // Assert that values were dynamically assigned from condition -> state
   for (int i = 0; i < test_case->num_features; ++i) {
-    state.total_mobile.data[i] = test_case->inputs[i];
+    ALQUIMIA_ASSERT(fabs(state.total_mobile.data[i] - test_case->inputs[i]) < 1e-9);
   }
+
+  FreeAlquimiaGeochemicalCondition(&condition);
 
   // 5. Run ReactionStepOperatorSplit (Inference)
   interface.ReactionStepOperatorSplit(&engine_state, 1.0, &properties, &state, &aux_data, 1, &status);
