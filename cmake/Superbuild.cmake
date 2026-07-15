@@ -195,6 +195,34 @@ endif()
 # and isolated filesystem packaging of ONNX Runtime's pre-built binaries.
 # ==============================================================================
 if (XSDK_WITH_ONNX)
+  # cJSON publishes source archives rather than pre-built binaries. Build and
+  # install its shared library into the same private prefix used for the ONNX
+  # Runtime package so the inner Alquimia build sees one dependency boundary.
+  ExternalProject_Add(cjson
+      URL "https://github.com/DaveGamble/cJSON/archive/refs/tags/v1.7.19.tar.gz"
+      URL_HASH SHA256=7fa616e3046edfa7a28a32d5f9eacfd23f92900fe1f8ccd988c1662f30454562
+      PREFIX ${CMAKE_BINARY_DIR}/external/cjson
+      CMAKE_ARGS
+          ${COMMON_CMAKE_ARGS}
+          -DBUILD_SHARED_LIBS=ON
+          -DBUILD_SHARED_AND_STATIC_LIBS=OFF
+          -DENABLE_CJSON_UTILS=OFF
+          -DENABLE_CJSON_TEST=OFF
+          -DENABLE_TARGET_EXPORT=OFF
+          -DENABLE_CUSTOM_COMPILER_FLAGS=OFF
+          -DCMAKE_INSTALL_LIBDIR=lib
+          -DCMAKE_INSTALL_INCLUDEDIR=include
+  )
+  ExternalProject_Add_Step(cjson stage_license
+      COMMAND ${CMAKE_COMMAND} -E make_directory
+              ${INSTALL_DIR}/share/licenses/cjson
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              <SOURCE_DIR>/LICENSE
+              ${INSTALL_DIR}/share/licenses/cjson/LICENSE
+      DEPENDEES build
+      DEPENDERS install
+  )
+
   # Declare ONNX pre-built binary package as an ExternalProject target.
   # Since this uses official pre-compiled assets from Microsoft, the configure
   # and build commands are left empty to bypass compilation overhead.
@@ -215,14 +243,16 @@ if (XSDK_WITH_ONNX)
   # Register 'onnx' as a hard dependency of Alquimia Core.
   # This ensures the ONNX Runtime assets are fully downloaded and organized
   # in the installation directory BEFORE the inner Alquimia build is configured.
-  list(APPEND ALQUIMIA_DEPS onnx)
+  list(APPEND ALQUIMIA_DEPS cjson onnx)
 
   # Route the build arguments down to the inner-core Alquimia project.
   # This cleanly exposes ONNX integration flags and targets.
   list(APPEND ALQUIMIA_EXTRA_ARGS
        -DXSDK_WITH_ONNX=ON
        -DTPL_ONNX_LIBRARIES=${INSTALL_DIR}/lib/libonnxruntime.so
-       -DTPL_ONNX_INCLUDE_DIRS=${INSTALL_DIR}/include/onnxruntime)
+       -DTPL_ONNX_INCLUDE_DIRS=${INSTALL_DIR}/include/onnxruntime
+       -DTPL_CJSON_LIBRARIES=${INSTALL_DIR}/lib/libcjson${CMAKE_SHARED_LIBRARY_SUFFIX}
+       -DTPL_CJSON_INCLUDE_DIRS=${INSTALL_DIR}/include/cjson)
 else()
   # Gracefully report ONNX exclusion to the inner build system
   list(APPEND ALQUIMIA_EXTRA_ARGS -DXSDK_WITH_ONNX=OFF)

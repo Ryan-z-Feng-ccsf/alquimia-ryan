@@ -27,9 +27,30 @@ endif()
 
 # Onnx model engine
 if(ALQUIMIA_HAVE_ONNX)
+  if (NOT TPL_CJSON_LIBRARIES)
+    message(FATAL_ERROR
+      "TPL_CJSON_LIBRARIES must be set for ONNX Runtime support.")
+  endif()
+  foreach(lib ${TPL_CJSON_LIBRARIES})
+    if (NOT EXISTS ${lib})
+      message(FATAL_ERROR "cJSON library not found: ${lib}")
+    endif()
+  endforeach()
+  if (NOT TPL_CJSON_INCLUDE_DIRS)
+    message(FATAL_ERROR
+      "TPL_CJSON_INCLUDE_DIRS must be set for ONNX Runtime support.")
+  endif()
+  foreach(dir ${TPL_CJSON_INCLUDE_DIRS})
+    if (NOT EXISTS ${dir})
+      message(FATAL_ERROR "cJSON include directory not found: ${dir}")
+    endif()
+  endforeach()
+
   list(APPEND ALQUIMIA_INCLUDE_DIRS ${TPL_ONNX_INCLUDE_DIRS})
-  list(APPEND ALQUIMIA_TPLS ${TPL_ONNX_LIBRARIES})
-  list(APPEND ALQUIMIA_SOURCES onnx_alquimia_interface.c)
+  list(APPEND ALQUIMIA_PRIVATE_INCLUDE_DIRS ${TPL_CJSON_INCLUDE_DIRS})
+  list(APPEND ALQUIMIA_TPLS ${TPL_ONNX_LIBRARIES} ${TPL_CJSON_LIBRARIES})
+  list(APPEND ALQUIMIA_SOURCES onnx_alquimia_interface.c
+       onnx_alquimia_manifest.c)
 endif()
 
 if (ALQUIMIA_NEED_PETSC)
@@ -48,6 +69,9 @@ endif()
 
 include_directories(${ALQUIMIA_INCLUDE_DIRS})
 add_library(alquimia ${ALQUIMIA_SOURCES})
+if (ALQUIMIA_PRIVATE_INCLUDE_DIRS)
+  target_include_directories(alquimia PRIVATE ${ALQUIMIA_PRIVATE_INCLUDE_DIRS})
+endif()
 target_link_libraries(alquimia ${ALQUIMIA_TPLS})
 
 # Stuff for provenance.
@@ -69,5 +93,7 @@ endif()
 
 # Install headers, including generated files.
 file(GLOB HEADERS *.h)
+list(REMOVE_ITEM HEADERS
+     ${CMAKE_CURRENT_SOURCE_DIR}/onnx_alquimia_manifest.h)
 LIST(APPEND HEADERS ${CMAKE_CURRENT_BINARY_DIR}/alquimia.h)
 install(FILES ${HEADERS} DESTINATION include/alquimia)
