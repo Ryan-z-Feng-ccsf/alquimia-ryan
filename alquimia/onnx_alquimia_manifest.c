@@ -332,8 +332,8 @@ static bool ParseInputMappings(
         /* Check if there are duplicate keys */
         !ValidateProperties(item, allowed, 5, "input mapping",
                             error_message, error_message_size) ||
-        /* Assign the value to the OnnxEngineStatus engine->manifest */
-        /* Assign the value to the OnnxEngineStatus engine->manifest */
+        /* Assign the value to the OnnxEngineStatus engine->manifest->inputMapping */
+        /* Assign the value to the OnnxEngineStatus engine->manifest->inputMapping */
         !GetRequiredString(item, "tensor", "input mapping",
                            &manifest->inputs[i].tensor,
                            error_message, error_message_size) ||
@@ -584,7 +584,13 @@ static bool PopulateManifest(
              "ONNX manifest inputs and outputs must be arrays.");
     return false;
   }
-
+  /* Set values for the OnnxEngineStatus engine->manifest */
+  /* engine->manifest->model_path, engine
+  ** engine->manifest->inputMapping
+  ** engine->manifest->outpuMapping
+  ** The input mapping is almost the same as the output mapping
+  ** But the output mapping doesn't have the output feature
+  */
   return ResolveModelPath(path, model->valuestring, &manifest->model_path,
                           error_message, error_message_size) &&
          ParseInputMappings(inputs, manifest, error_message,
