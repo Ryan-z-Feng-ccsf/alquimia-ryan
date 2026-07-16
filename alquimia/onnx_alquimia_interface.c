@@ -132,8 +132,8 @@ static bool CheckStatus(const OrtApi *g_ort, OrtStatus *status, AlquimiaEngineSt
 }
 
 /**
- * @brief Maps an exact manifest field name to an AlquimiaState destination.
- * @param name Case-sensitive AlquimiaState field name from the manifest.
+ * @brief Maps an exact manifest state-variable name to an AlquimiaState field.
+ * @param name Case-sensitive alquimia_state value from the manifest.
  * @param target Receives the corresponding mapping enum on success and remains
  *        unchanged when @p name is unsupported.
  * @return True when @p name identifies a supported scalar or vector field.
@@ -282,38 +282,41 @@ static char *CopyFeatureName(const char *name)
 
 /**
  * @brief Converts one validated manifest destination into a runtime mapping.
- * @param field Case-sensitive AlquimiaState field name.
- * @param index Nonnegative destination index parsed from the manifest.
+ * @param alquimia_state Case-sensitive AlquimiaState variable name.
+ * @param alquimia_state_index Nonnegative state-vector index from the manifest.
  * @param mapping Receives the runtime destination on success.
  * @param status Receives an engine-integrity error on incompatibility.
- * @return True when the field and index can be represented safely.
+ * @return True when the state variable and index can be represented safely.
  *
- * Scalar fields require index zero. INT_MAX is rejected for vectors so the
- * later size calculation of index plus one cannot overflow an Alquimia int.
+ * Scalar state variables require index zero. INT_MAX is rejected for vectors
+ * so the later size calculation cannot overflow an Alquimia int.
  */
 static bool ParseManifestMapping(
-    const char *field,
-    int index,
+    const char *alquimia_state,
+    int alquimia_state_index,
     FeatureMapping *mapping,
     AlquimiaEngineStatus *status)
 {
-  if (!ParseStructName(field, &mapping->target_struct))
+  if (!ParseStructName(alquimia_state, &mapping->target_struct))
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
-             "Unsupported AlquimiaState field '%s' in ONNX manifest.", field);
+             "Unsupported AlquimiaState variable '%s' in ONNX manifest.",
+             alquimia_state);
     return false;
   }
-  if ((IsScalarMapping(mapping->target_struct) && index != 0) ||
-      (!IsScalarMapping(mapping->target_struct) && index == INT_MAX))
+  if ((IsScalarMapping(mapping->target_struct) &&
+       alquimia_state_index != 0) ||
+      (!IsScalarMapping(mapping->target_struct) &&
+       alquimia_state_index == INT_MAX))
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
-             "ONNX manifest index %d is incompatible with field '%s'.",
-             index, field);
+             "ONNX manifest AlquimiaState index %d is incompatible with "
+             "variable '%s'.", alquimia_state_index, alquimia_state);
     return false;
   }
-  mapping->target_index = index;
+  mapping->target_index = alquimia_state_index;
   return true;
 }
 
@@ -364,22 +367,22 @@ static void UpdateSizesForMapping(
 }
 
 /**
- * @brief Resolves a tensor-local element to the flat runtime mapping index.
+ * @brief Resolves a tensor element index to the flat runtime mapping index.
  * @param tensor Case-sensitive tensor name from the manifest.
- * @param element Zero-based flattened element within that tensor.
+ * @param tensor_element_index Zero-based flattened index within that tensor.
  * @param num_tensors Number of model tensors in @p names and @p tensor_sizes.
  * @param names ONNX Runtime tensor names in session order.
  * @param tensor_sizes Flattened element counts in session order.
  * @param flat_index Receives the offset into the combined mapping array.
  * @param status Receives an error for unknown, duplicate, or undersized tensors.
- * @return True when exactly one tensor matches and the element is in range.
+ * @return True when exactly one tensor matches and the index is in range.
  *
  * Reaction steps iterate tensors in session order, so this same prefix-sum
  * layout must be used while constructing the mapping arrays.
  */
 static bool FindFlatTensorElement(
     const char *tensor,
-    size_t element,
+    size_t tensor_element_index,
     size_t num_tensors,
     char *const *names,
     const size_t *tensor_sizes,
@@ -402,7 +405,7 @@ static bool FindFlatTensorElement(
         return false;
       }
       matching_index = i;
-      *flat_index = offset + element;
+      *flat_index = offset + tensor_element_index;
     }
     offset += tensor_sizes[i];
   }
@@ -413,12 +416,13 @@ static bool FindFlatTensorElement(
              "ONNX manifest references unknown tensor '%s'.", tensor);
     return false;
   }
-  if (element >= tensor_sizes[matching_index])
+  if (tensor_element_index >= tensor_sizes[matching_index])
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
-             "ONNX manifest element %zu is out of range for tensor '%s' of size %zu.",
-             element, tensor, tensor_sizes[matching_index]);
+             "ONNX manifest tensor element index %zu is out of range for "
+             "tensor '%s' of size %zu.", tensor_element_index, tensor,
+             tensor_sizes[matching_index]);
     return false;
   }
   return true;
@@ -438,11 +442,11 @@ static void InitializeSizes(AlquimiaSizes *sizes)
  * @param onnx_state Inspected model state and destination for runtime mappings.
  * @param sizes Receives dimensions derived from the highest mapped indices.
  * @param status Receives allocation or semantic-validation errors.
- * @return True only when every model tensor element has exactly one mapping.
+ * @return True only when every tensor element index has exactly one mapping.
  *
  * Input feature names are copied before the manifest is released. The seen
- * arrays enforce complete coverage and also prevent duplicate element
- * mappings; name-category checks preserve the metadata representation invariant.
+ * arrays enforce complete coverage and prevent duplicate tensor indices;
+ * name-category checks preserve the metadata representation invariant.
  */
 static bool BuildManifestMappings(
     OnnxEngineState *onnx_state,
@@ -479,7 +483,7 @@ static bool BuildManifestMappings(
     size_t flat_index;
     size_t j;
 
-    if (!FindFlatTensorElement(spec->tensor, spec->element,
+    if (!FindFlatTensorElement(spec->tensor, spec->tensor_element_index,
                                onnx_state->num_inputs,
                                onnx_state->input_names,
                                onnx_state->input_total_size,
@@ -493,14 +497,15 @@ static bool BuildManifestMappings(
     {
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
-               "Duplicate ONNX input mapping for tensor '%s' element %zu.",
-               spec->tensor, spec->element);
+               "Duplicate ONNX input mapping for tensor '%s' element index %zu.",
+               spec->tensor, spec->tensor_element_index);
       free(input_seen);
       free(output_seen);
       return false;
     }
     mapping = &onnx_state->input_mappings[flat_index];
-    if (!ParseManifestMapping(spec->field, spec->index, mapping, status))
+    if (!ParseManifestMapping(spec->alquimia_state,
+                              spec->alquimia_state_index, mapping, status))
     {
       free(input_seen);
       free(output_seen);
@@ -518,8 +523,10 @@ static bool BuildManifestMappings(
       {
         status->error = kAlquimiaErrorEngineIntegrity;
         snprintf(status->message, kAlquimiaMaxStringLength,
-                 "Conflicting ONNX feature names '%s' and '%s' for field '%s' index %d.",
-                 other->feature_name, spec->feature, spec->field, spec->index);
+                 "Conflicting ONNX feature names '%s' and '%s' for "
+                 "AlquimiaState variable '%s' index %d.",
+                 other->feature_name, spec->feature, spec->alquimia_state,
+                 spec->alquimia_state_index);
         free(input_seen);
         free(output_seen);
         return false;
@@ -545,7 +552,7 @@ static bool BuildManifestMappings(
     FeatureMapping *mapping;
     size_t flat_index;
 
-    if (!FindFlatTensorElement(spec->tensor, spec->element,
+    if (!FindFlatTensorElement(spec->tensor, spec->tensor_element_index,
                                onnx_state->num_outputs,
                                onnx_state->output_names,
                                onnx_state->output_total_size,
@@ -559,14 +566,15 @@ static bool BuildManifestMappings(
     {
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
-               "Duplicate ONNX output mapping for tensor '%s' element %zu.",
-               spec->tensor, spec->element);
+               "Duplicate ONNX output mapping for tensor '%s' element index %zu.",
+               spec->tensor, spec->tensor_element_index);
       free(input_seen);
       free(output_seen);
       return false;
     }
     mapping = &onnx_state->output_mappings[flat_index];
-    if (!ParseManifestMapping(spec->field, spec->index, mapping, status))
+    if (!ParseManifestMapping(spec->alquimia_state,
+                              spec->alquimia_state_index, mapping, status))
     {
       free(input_seen);
       free(output_seen);
@@ -582,7 +590,7 @@ static bool BuildManifestMappings(
     {
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
-               "ONNX manifest does not map every input tensor element.");
+               "ONNX manifest does not map every input tensor element index.");
       free(input_seen);
       free(output_seen);
       return false;
@@ -594,7 +602,7 @@ static bool BuildManifestMappings(
     {
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
-               "ONNX manifest does not map every output tensor element.");
+               "ONNX manifest does not map every output tensor element index.");
       free(input_seen);
       free(output_seen);
       return false;
