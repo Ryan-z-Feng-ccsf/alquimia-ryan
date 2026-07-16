@@ -92,9 +92,14 @@ static bool ValidateProperties(
   size_t i;
 
   /* Triple loop to check duplicate keys */
-
+  /* Trade-off between space and time performance */
+  /* Right here, pick the space */
+  /* Uses an O(N^2 * M) triple loop to detect duplicate keys without allocating 
+  ** extra memory, prioritizing space efficiency over time. */
   cJSON_ArrayForEach(property, object)
   {
+    /* Check if the key is empty */
+    /* Check if the key is valid */
     if (property->string == NULL ||
         !IsAllowedProperty(property->string, allowed, num_allowed))
     {
@@ -103,13 +108,17 @@ static bool ValidateProperties(
                property->string == NULL ? "" : property->string, context);
       return false;
     }
-
+    /* Second layer of the loop, traverse the allowed keys */
     for (i = 0; i < num_allowed; ++i)
     {
+      /* If the key was found */
       if (strcmp(property->string, allowed[i]) == 0)
       {
+        /* A new cJSON used to find the duplicate key */
         const cJSON *other;
+        /* Record the number of each key */
         int count = 0;
+        /* Traverse the key from the start to record the number of each key */
         cJSON_ArrayForEach(other, object)
         {
           if (other->string != NULL &&
@@ -118,6 +127,7 @@ static bool ValidateProperties(
             ++count;
           }
         }
+        /* If the count > 1, duplicate key */
         if (count > 1)
         {
           snprintf(error_message, error_message_size,
@@ -224,6 +234,7 @@ static bool ResolveModelPath(
     char *error_message,
     size_t error_message_size)
 {
+  /* A pointer points to the last '/' */
   const char *separator;
   size_t directory_length;
   size_t model_length = strlen(model);
@@ -288,7 +299,7 @@ static bool ParseInputMappings(
       "alquimia_state_index"};
   cJSON *item;
   size_t i = 0;
-  /* In cJSON API, Array is key:[key : value,key : value]*/
+  /* In cJSON API, Array is key:[key : value,key : value,...]*/
   int count = cJSON_GetArraySize(array);
 
   /* Check if it's empty 
@@ -449,13 +460,16 @@ static bool ReadManifestjson_contents(
     char *error_message,
     size_t error_message_size)
 {
+  /* Opened file handle for the manifest JSON. */
   FILE *file;
+  /* Number of bytes of the file */
   long file_size;
   size_t bytes_read;
 
   *json_contents = NULL;
   *length = 0;
   file = fopen(path, "rb");
+  /* Open the file and determine its size by seeking, resetting the pointer afterward. */
   if (file == NULL || fseek(file, 0, SEEK_END) != 0 ||
       (file_size = ftell(file)) < 0 || fseek(file, 0, SEEK_SET) != 0)
   {
@@ -467,6 +481,7 @@ static bool ReadManifestjson_contents(
              "Unable to read ONNX manifest: %s", path);
     return false;
   }
+  /* Check if the file size exceeds the size_t */
   if ((unsigned long)file_size > SIZE_MAX - 1)
   {
     fclose(file);
@@ -483,8 +498,14 @@ static bool ReadManifestjson_contents(
              "Memory allocation failed while reading ONNX manifest.");
     return false;
   }
+  /* Number of bytes read from the JSON file. */
+  /*  Returns the number of full items read. 
+  ** This number may be less than count 
+  ** if an error occurs or the end of the file is reached.
+  */
   bytes_read = fread(*json_contents, 1, (size_t)file_size, file);
   fclose(file);
+  /* Check if errors occur during reading JSON */
   if (bytes_read != (size_t)file_size)
   {
     free(*json_contents);
@@ -524,7 +545,7 @@ static bool PopulateManifest(
   const cJSON *outputs;
   /* cJSON structure reference:
   ** - Object: { "key": value }
-  ** - Array:  [ value, value ]
+  ** - Array:  [ value, value ], for the value inside []: "key":value
   */
   if (!cJSON_IsObject(root))
   {
@@ -543,6 +564,7 @@ static bool PopulateManifest(
   model = cJSON_GetObjectItemCaseSensitive(root, "model");
   inputs = cJSON_GetObjectItemCaseSensitive(root, "inputs");
   outputs = cJSON_GetObjectItemCaseSensitive(root, "outputs");
+  /* In cJSON API, there is only double value */
   if (!cJSON_IsNumber(schema_version) || schema_version->valuedouble != 1.0)
   {
     SetError(error_message, error_message_size,
