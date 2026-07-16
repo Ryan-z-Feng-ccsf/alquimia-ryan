@@ -91,6 +91,8 @@ static bool ValidateProperties(
   const cJSON *property;
   size_t i;
 
+  /* Triple loop to check duplicate keys */
+
   cJSON_ArrayForEach(property, object)
   {
     if (property->string == NULL ||
@@ -226,16 +228,19 @@ static bool ResolveModelPath(
   size_t directory_length;
   size_t model_length = strlen(model);
 
-  // Absolute path /usr/...
+  /* Absolute path /usr/... */
   if (model[0] == '/')
   {
     *model_path = CopyString(model);
   }
-  // relative path models/.onnx
+  /* relative path models/.onnx */
   else
   {
+    /* Find the last '/' */
     separator = strrchr(manifest_path, '/');
+    /* Get the length of the directory inclding the last '/' */
     directory_length = separator == NULL ? 0 : (size_t)(separator - manifest_path) + 1;
+    /* Check if the path exceeds the size_t */
     if (directory_length > SIZE_MAX - model_length - 1)
     {
       SetError(error_message, error_message_size,
@@ -245,7 +250,9 @@ static bool ResolveModelPath(
     *model_path = (char *)malloc(directory_length + model_length + 1);
     if (*model_path != NULL)
     {
+      /* Copy the directory path prefix. */
       memcpy(*model_path, manifest_path, directory_length);
+      /* Append the model filename (including the null terminator). */
       memcpy(*model_path + directory_length, model, model_length + 1);
     }
   }
@@ -508,19 +515,24 @@ static bool PopulateManifest(
     char *error_message,
     size_t error_message_size)
 {
+  /* The allowed keys in the first layer */
   static const char *const allowed[] = {
       "schema_version", "model", "inputs", "outputs"};
   const cJSON *schema_version;
   const cJSON *model;
   const cJSON *inputs;
   const cJSON *outputs;
-
+  /* cJSON structure reference:
+  ** - Object: { "key": value }
+  ** - Array:  [ value, value ]
+  */
   if (!cJSON_IsObject(root))
   {
     SetError(error_message, error_message_size,
              "ONNX manifest root must be an object.");
     return false;
   }
+  /* Check duplicate keys */
   if (!ValidateProperties(root, allowed, 4, "manifest root",
                           error_message, error_message_size))
   {
@@ -607,6 +619,8 @@ bool OnnxAlquimiaLoadManifest(
     char *error_message,
     size_t error_message_size)
 {
+  /* The onnx_alquimia_manifest checks the duplicate keys */
+  /* onnx_alquimia_interface checks the duplicate values */
   char *json_contents = NULL;
   size_t bytes_read;
   const char *parse_end = NULL;
