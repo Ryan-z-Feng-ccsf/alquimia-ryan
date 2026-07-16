@@ -277,11 +277,16 @@ static bool ParseInputMappings(
     size_t error_message_size)
 {
   static const char *const allowed[] = {
-      "tensor", "element", "feature", "field", "index"};
+      "tensor", "tensor_element_index", "feature", "alquimia_state",
+      "alquimia_state_index"};
   cJSON *item;
   size_t i = 0;
+  /* In cJSON API, Array is key:[key : value,key : value]*/
   int count = cJSON_GetArraySize(array);
 
+  /* Check if it's empty 
+  ** Check if count * total input tensor exceeds the size_t
+  */
   if (count < 0 || (size_t)count > SIZE_MAX / sizeof(*manifest->inputs))
   {
     SetError(error_message, error_message_size,
@@ -289,6 +294,7 @@ static bool ParseInputMappings(
     return false;
   }
   manifest->num_inputs = (size_t)count;
+  /* Check if there is key inside the inputs */
   if (count > 0)
   {
     manifest->inputs = (OnnxAlquimiaInputMappingSpec *)calloc(
@@ -300,26 +306,29 @@ static bool ParseInputMappings(
       return false;
     }
   }
-
+  /* Traverse all the elements in inputs */
   cJSON_ArrayForEach(item, array)
   {
-    int element;
+    int tensor_element_index;
     if (!cJSON_IsObject(item) ||
+        /* Check if there are duplicate keys */
         !ValidateProperties(item, allowed, 5, "input mapping",
                             error_message, error_message_size) ||
+        /* Assign the value to the OnnxEngineStatus engine->manifest */
         !GetRequiredString(item, "tensor", "input mapping",
                            &manifest->inputs[i].tensor,
                            error_message, error_message_size) ||
-        !GetRequiredInteger(item, "element", "input mapping", &element,
-                            error_message, error_message_size) ||
+        !GetRequiredInteger(item, "tensor_element_index", "input mapping",
+                            &tensor_element_index, error_message,
+                            error_message_size) ||
         !GetRequiredString(item, "feature", "input mapping",
                            &manifest->inputs[i].feature,
                            error_message, error_message_size) ||
-        !GetRequiredString(item, "field", "input mapping",
-                           &manifest->inputs[i].field,
+        !GetRequiredString(item, "alquimia_state", "input mapping",
+                           &manifest->inputs[i].alquimia_state,
                            error_message, error_message_size) ||
-        !GetRequiredInteger(item, "index", "input mapping",
-                            &manifest->inputs[i].index,
+        !GetRequiredInteger(item, "alquimia_state_index", "input mapping",
+                            &manifest->inputs[i].alquimia_state_index,
                             error_message, error_message_size))
     {
       if (!cJSON_IsObject(item))
@@ -329,7 +338,8 @@ static bool ParseInputMappings(
       }
       return false;
     }
-    manifest->inputs[i].element = (size_t)element;
+    manifest->inputs[i].tensor_element_index =
+        (size_t)tensor_element_index;
     ++i;
   }
   return true;
@@ -353,7 +363,8 @@ static bool ParseOutputMappings(
     size_t error_message_size)
 {
   static const char *const allowed[] = {
-      "tensor", "element", "field", "index"};
+      "tensor", "tensor_element_index", "alquimia_state",
+      "alquimia_state_index"};
   cJSON *item;
   size_t i = 0;
   int count = cJSON_GetArraySize(array);
@@ -379,20 +390,21 @@ static bool ParseOutputMappings(
 
   cJSON_ArrayForEach(item, array)
   {
-    int element;
+    int tensor_element_index;
     if (!cJSON_IsObject(item) ||
         !ValidateProperties(item, allowed, 4, "output mapping",
                             error_message, error_message_size) ||
         !GetRequiredString(item, "tensor", "output mapping",
                            &manifest->outputs[i].tensor,
                            error_message, error_message_size) ||
-        !GetRequiredInteger(item, "element", "output mapping", &element,
-                            error_message, error_message_size) ||
-        !GetRequiredString(item, "field", "output mapping",
-                           &manifest->outputs[i].field,
+        !GetRequiredInteger(item, "tensor_element_index", "output mapping",
+                            &tensor_element_index, error_message,
+                            error_message_size) ||
+        !GetRequiredString(item, "alquimia_state", "output mapping",
+                           &manifest->outputs[i].alquimia_state,
                            error_message, error_message_size) ||
-        !GetRequiredInteger(item, "index", "output mapping",
-                            &manifest->outputs[i].index,
+        !GetRequiredInteger(item, "alquimia_state_index", "output mapping",
+                            &manifest->outputs[i].alquimia_state_index,
                             error_message, error_message_size))
     {
       if (!cJSON_IsObject(item))
@@ -402,7 +414,8 @@ static bool ParseOutputMappings(
       }
       return false;
     }
-    manifest->outputs[i].element = (size_t)element;
+    manifest->outputs[i].tensor_element_index =
+        (size_t)tensor_element_index;
     ++i;
   }
   return true;
@@ -564,13 +577,13 @@ void OnnxAlquimiaFreeManifest(OnnxAlquimiaManifest *manifest)
   {
     free(manifest->inputs[i].tensor);
     free(manifest->inputs[i].feature);
-    free(manifest->inputs[i].field);
+    free(manifest->inputs[i].alquimia_state);
   }
   free(manifest->inputs);
   for (i = 0; i < manifest->num_outputs; ++i)
   {
     free(manifest->outputs[i].tensor);
-    free(manifest->outputs[i].field);
+    free(manifest->outputs[i].alquimia_state);
   }
   free(manifest->outputs);
   memset(manifest, 0, sizeof(*manifest));
@@ -578,7 +591,7 @@ void OnnxAlquimiaFreeManifest(OnnxAlquimiaManifest *manifest)
 
 /**
  * @brief Loads and strictly validates a version 1 ONNX sidecar manifest.
- * @param path Manifest filesystem path.
+ * @param path JSON filesystem path.
  * @param manifest Receives owned model-path and mapping storage on success.
  * @param error_message Destination for the first read, parse, or schema error.
  * @param error_message_size Size of @p error_message in bytes.
@@ -600,8 +613,10 @@ bool OnnxAlquimiaLoadManifest(
   bool success;
 
   memset(manifest, 0, sizeof(*manifest));
+  /* Check if the JSON path is valid (null/empty)*/
   if (path == NULL || path[0] == '\0')
   {
+    /* Set up the error message for the AlquimiaEngineStatus: status */
     SetError(error_message, error_message_size,
              "ONNX manifest file path not provided.");
     return false;
