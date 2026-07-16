@@ -315,6 +315,7 @@ static bool ParseInputMappings(
         !ValidateProperties(item, allowed, 5, "input mapping",
                             error_message, error_message_size) ||
         /* Assign the value to the OnnxEngineStatus engine->manifest */
+        /* Assign the value to the OnnxEngineStatus engine->manifest */
         !GetRequiredString(item, "tensor", "input mapping",
                            &manifest->inputs[i].tensor,
                            error_message, error_message_size) ||
@@ -424,7 +425,7 @@ static bool ParseOutputMappings(
 /**
  * @brief Reads a complete manifest file into a null-terminated buffer.
  * @param path Manifest filesystem path.
- * @param contents Receives newly allocated file contents.
+ * @param json_contents Receives newly allocated file json_contents.
  * @param length Receives the file length, excluding the terminator.
  * @param error_message Destination for read or allocation errors.
  * @param error_message_size Size of @p error_message in bytes.
@@ -434,9 +435,9 @@ static bool ParseOutputMappings(
  * This helper owns the FILE for its entire lifetime, keeping file cleanup out
  * of the parser's validation control flow.
  */
-static bool ReadManifestContents(
+static bool ReadManifestjson_contents(
     const char *path,
-    char **contents,
+    char **json_contents,
     size_t *length,
     char *error_message,
     size_t error_message_size)
@@ -445,7 +446,7 @@ static bool ReadManifestContents(
   long file_size;
   size_t bytes_read;
 
-  *contents = NULL;
+  *json_contents = NULL;
   *length = 0;
   file = fopen(path, "rb");
   if (file == NULL || fseek(file, 0, SEEK_END) != 0 ||
@@ -467,26 +468,26 @@ static bool ReadManifestContents(
     return false;
   }
 
-  *contents = (char *)malloc((size_t)file_size + 1);
-  if (*contents == NULL)
+  *json_contents = (char *)malloc((size_t)file_size + 1);
+  if (*json_contents == NULL)
   {
     fclose(file);
     SetError(error_message, error_message_size,
              "Memory allocation failed while reading ONNX manifest.");
     return false;
   }
-  bytes_read = fread(*contents, 1, (size_t)file_size, file);
+  bytes_read = fread(*json_contents, 1, (size_t)file_size, file);
   fclose(file);
   if (bytes_read != (size_t)file_size)
   {
-    free(*contents);
-    *contents = NULL;
+    free(*json_contents);
+    *json_contents = NULL;
     SetError(error_message, error_message_size,
              "Failed to read the complete ONNX manifest.");
     return false;
   }
 
-  (*contents)[bytes_read] = '\0';
+  (*json_contents)[bytes_read] = '\0';
   *length = bytes_read;
   return true;
 }
@@ -606,7 +607,7 @@ bool OnnxAlquimiaLoadManifest(
     char *error_message,
     size_t error_message_size)
 {
-  char *contents = NULL;
+  char *json_contents = NULL;
   size_t bytes_read;
   const char *parse_end = NULL;
   cJSON *root = NULL;
@@ -621,7 +622,7 @@ bool OnnxAlquimiaLoadManifest(
              "ONNX manifest file path not provided.");
     return false;
   }
-  if (!ReadManifestContents(path, &contents, &bytes_read,
+  if (!ReadManifestjson_contents(path, &json_contents, &bytes_read,
                             error_message, error_message_size))
   {
     return false;
@@ -630,21 +631,21 @@ bool OnnxAlquimiaLoadManifest(
   /* Requiring the terminator and checking parse_end rejects otherwise-valid
   ** JSON followed by non-whitespace trailing content. */
   root = cJSON_ParseWithLengthOpts(
-      contents, bytes_read + 1, &parse_end, true);
+      json_contents, bytes_read + 1, &parse_end, true);
   if (root == NULL || parse_end == NULL ||
-      (size_t)(parse_end - contents) != bytes_read)
+      (size_t)(parse_end - json_contents) != bytes_read)
   {
     SetError(error_message, error_message_size,
              "ONNX manifest is not valid strict JSON.");
     cJSON_Delete(root);
-    free(contents);
+    free(json_contents);
     return false;
   }
 
   success = PopulateManifest(path, root, manifest,
                              error_message, error_message_size);
   cJSON_Delete(root);
-  free(contents);
+  free(json_contents);
   if (!success)
   {
     OnnxAlquimiaFreeManifest(manifest);
