@@ -331,6 +331,7 @@ static bool ParseManifestMapping(
     FeatureMapping *mapping,
     AlquimiaEngineStatus *status)
 {
+  /* Parse the AlquimiaState */
   if (!ParseStructName(alquimia_state, &mapping->alquimia_state))
   {
     status->error = kAlquimiaErrorEngineIntegrity;
@@ -339,6 +340,9 @@ static bool ParseManifestMapping(
              alquimia_state);
     return false;
   }
+  /* Check if it's a valid scalar/vector in the AlquimiaState
+  ** Index = 0 for valid scalar
+  */
   if ((IsScalarMapping(mapping->alquimia_state) &&
        alquimia_state_index != 0) ||
       (!IsScalarMapping(mapping->alquimia_state) &&
@@ -425,12 +429,15 @@ static bool FindFlatTensorElement(
 {
   size_t i;
   size_t offset = 0;
+  /* Initialize sentinel value to track if the target tensor is found. */
   size_t matching_index = num_tensors;
 
+  /* Check if there duplicate values in JSON */
   for (i = 0; i < num_tensors; ++i)
   {
     if (strcmp(tensor, names[i]) == 0)
     {
+      /* If matching_index was already set, a duplicate name exists. */
       if (matching_index != num_tensors)
       {
         status->error = kAlquimiaErrorEngineIntegrity;
@@ -438,11 +445,15 @@ static bool FindFlatTensorElement(
                  "ONNX model contains duplicate tensor name '%s'.", tensor);
         return false;
       }
+      /* Find the tensor customized_tensor_element[0] for the first time */
       matching_index = i;
+      /* Calculate the absolute flattened index for this specific element. */
       *flat_index = offset + tensor_element_index;
     }
+    /* Accumulate tensor offset to track the starting bound of subsequent tensors. */
     offset += tensor_sizes[i];
   }
+  /* Reject unknown tensors not present in the model metadata. */
   if (matching_index == num_tensors)
   {
     status->error = kAlquimiaErrorEngineIntegrity;
@@ -450,6 +461,7 @@ static bool FindFlatTensorElement(
              "ONNX manifest references unknown tensor '%s'.", tensor);
     return false;
   }
+  /* Guard against out-of-bounds element indexing within the matched tensor. */
   if (tensor_element_index >= tensor_sizes[matching_index])
   {
     status->error = kAlquimiaErrorEngineIntegrity;
@@ -487,7 +499,10 @@ static bool BuildManifestMappings(
     AlquimiaSizes *sizes,
     AlquimiaEngineStatus *status)
 {
-  /* Check if there is duplicate value in the JSON */
+  /* Check if there is duplicate value in the JSON 
+  ** They are for the 1-dimension array
+  ** The input/output mapping are all 1-dimension arrays
+  */
   bool *input_seen;
   bool *output_seen;
   size_t i;
@@ -516,11 +531,13 @@ static bool BuildManifestMappings(
   /* For every input tensor */
   for (i = 0; i < onnx_state->manifest.num_inputs; ++i)
   {
+    /* This points to the real OnnxEngine->manifest.inputMapping */
     const OnnxAlquimiaInputMappingSpec *spec = &onnx_state->manifest.inputs[i];
     FeatureMapping *mapping;
     size_t flat_index;
     size_t j;
 
+    /* Map the tensor element index into the 1-dimensional flattened array. */
     if (!FindFlatTensorElement(spec->tensor, spec->tensor_element_index,
                                onnx_state->num_inputs,
                                onnx_state->input_names,
@@ -531,6 +548,7 @@ static bool BuildManifestMappings(
       free(output_seen);
       return false;
     }
+    /* Find the duplicate value */
     if (input_seen[flat_index])
     {
       status->error = kAlquimiaErrorEngineIntegrity;
@@ -542,6 +560,7 @@ static bool BuildManifestMappings(
       return false;
     }
     mapping = &onnx_state->input_mappings[flat_index];
+    /* Parse the AlquimiaState value to the input mapping */
     if (!ParseManifestMapping(spec->alquimia_state,
                               spec->alquimia_state_index, mapping, status))
     {
@@ -549,9 +568,14 @@ static bool BuildManifestMappings(
       free(output_seen);
       return false;
     }
+    /* Inside the Input tensor */
     for (j = 0; j < onnx_state->total_flat_inputs; ++j)
     {
       const FeatureMapping *other = &onnx_state->input_mappings[j];
+      /* Check if there are conflicted input feature 
+      ** alquimia_state[index]=alquimia_state[index]
+      ** input_feature[index] != input_feature[index]
+      */
       if (input_seen[j] &&
           MetadataNameCategory(other->alquimia_state) >= 0 &&
           MetadataNameCategory(other->alquimia_state) ==
@@ -570,6 +594,7 @@ static bool BuildManifestMappings(
         return false;
       }
     }
+    /* Copy the feature name */
     mapping->feature = CopyFeatureName(spec->feature);
     if (mapping->feature == NULL)
     {
@@ -580,16 +605,21 @@ static bool BuildManifestMappings(
       free(output_seen);
       return false;
     }
+    /* Find the input tensor element for the first time */
     input_seen[flat_index] = true;
+    /* Update the respective AlquimiaSize when finding new input tensor element */
     UpdateSizesForMapping(mapping, sizes);
   }
 
+  /* For every output tensor */
   for (i = 0; i < onnx_state->manifest.num_outputs; ++i)
   {
+    /* This points to the real OnnxEngine->manifest.outputMapping */
     const OnnxAlquimiaOutputMappingSpec *spec = &onnx_state->manifest.outputs[i];
     FeatureMapping *mapping;
     size_t flat_index;
 
+    /* Map the tensor element index into the 1-dimensional flattened array. */
     if (!FindFlatTensorElement(spec->tensor, spec->tensor_element_index,
                                onnx_state->num_outputs,
                                onnx_state->output_names,
@@ -600,6 +630,7 @@ static bool BuildManifestMappings(
       free(output_seen);
       return false;
     }
+    /* Find the duplicate value */
     if (output_seen[flat_index])
     {
       status->error = kAlquimiaErrorEngineIntegrity;
@@ -611,6 +642,7 @@ static bool BuildManifestMappings(
       return false;
     }
     mapping = &onnx_state->output_mappings[flat_index];
+    /* Parse the AlquimiaState value to the output mapping */
     if (!ParseManifestMapping(spec->alquimia_state,
                               spec->alquimia_state_index, mapping, status))
     {
@@ -618,7 +650,9 @@ static bool BuildManifestMappings(
       free(output_seen);
       return false;
     }
+    /* Find the output tensor element for the first time */
     output_seen[flat_index] = true;
+    /* Update the respective AlquimiaSize when finding new output tensor element */
     UpdateSizesForMapping(mapping, sizes);
   }
 
@@ -1474,6 +1508,13 @@ void onnx_alquimia_shutdown(
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
 
+  /* 
+  ** Memory Lifecycle & Cleanup Rules:
+  ** 1. Input/output tensors and underlying data arrays are created via 
+  **    independent API calls during setup and can be freed in any order.
+  ** 2. Core ONNX Runtime objects (session, env, etc.) maintain strict 
+  **    dependencies and must be released in reverse order of initialization (LIFO).
+  */
   if (onnx_engine_state == NULL || *(OnnxEngineState **)onnx_engine_state == NULL)
   {
     status->error = kAlquimiaErrorInvalidEngine;
@@ -1704,8 +1745,8 @@ void onnx_alquimia_processcondition(
     return;
   }
 
-  /* Input feature names are validated and copied during setup, so this path
-  ** performs no manifest parsing or ONNX metadata lookup. */
+  /* Map matching aqueous constraint values into the Alquimia state 
+  ** based on the pre-validated input features. */
   for (k = 0; k < onnx_state->total_flat_inputs; ++k)
   {
     const char *feature = onnx_state->input_mappings[k].feature;
@@ -1763,6 +1804,8 @@ void onnx_alquimia_reactionstepoperatorsplit(
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
 
+  /* Input/output tensors will be reused
+  ** They will be freed in the shutdown*/
   // Unused
   (void)delta_t;
   (void)props;
@@ -1824,6 +1867,7 @@ void onnx_alquimia_reactionstepoperatorsplit(
     for (i = 0; i < (int)onnx_state->num_outputs; ++i)
     {
       double *out_arr = NULL;
+      /* Extract the data from the output tensor */
       ort_status = onnx_state->g_ort->GetTensorMutableData(onnx_state->output_tensor[i], (void **)&out_arr);
       if (!CheckStatus(onnx_state->g_ort, ort_status, status))
       {
@@ -1914,9 +1958,11 @@ void onnx_alquimia_getproblemmetadata(
 
   for (i = 0; i < onnx_state->total_flat_inputs; ++i)
   {
+    /* Directly point to the OnnxEngine-> input_mappings */ 
     FeatureMapping mapping = onnx_state->input_mappings[i];
     AlquimiaVectorString *names = MetadataNamesForMapping(
         meta_data, mapping.alquimia_state);
+    /* All the manipulation is to the OnnxEngine */
     StoreMetadataName(names, mapping.alquimia_state_index, mapping.feature);
   }
 }
