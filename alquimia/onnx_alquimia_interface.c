@@ -484,6 +484,40 @@ static void InitializeSizes(AlquimiaSizes *sizes)
 }
 
 /**
+ * @brief Rejects an input feature name already assigned to a tensor element.
+ * @param input_mappings Existing flattened input mappings.
+ * @param input_seen Marks the mappings that have already been populated.
+ * @param num_mappings Number of entries in the mapping and seen arrays.
+ * @param feature Case-sensitive feature name to validate.
+ * @param status Receives an engine-integrity error for a duplicate name.
+ * @return True when @p feature has not been assigned previously.
+ *
+ * ProcessCondition uses feature names as lookup keys, so exact duplicates
+ * would let one condition ambiguously address multiple tensor elements.
+ */
+static bool ValidateUniqueInputFeature(
+    const FeatureMapping *input_mappings,
+    const bool *input_seen,
+    size_t num_mappings,
+    const char *feature,
+    AlquimiaEngineStatus *status)
+{
+  size_t i;
+
+  for (i = 0; i < num_mappings; ++i)
+  {
+    if (input_seen[i] && strcmp(input_mappings[i].feature, feature) == 0)
+    {
+      status->error = kAlquimiaErrorEngineIntegrity;
+      snprintf(status->message, kAlquimiaMaxStringLength,
+               "Duplicate ONNX input feature name '%s'.", feature);
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
  * @brief Builds complete flat input/output mappings from the parsed manifest.
  * @param onnx_state Inspected model state and destination for runtime mappings.
  * @param sizes Receives dimensions derived from the highest mapped indices.
@@ -568,7 +602,15 @@ static bool BuildManifestMappings(
       free(output_seen);
       return false;
     }
-    /* Inside the Input tensor */
+    /* Check the duplicate input feature */
+    if (!ValidateUniqueInputFeature(
+            onnx_state->input_mappings, input_seen,
+            onnx_state->total_flat_inputs, spec->feature, status))
+    {
+      free(input_seen);
+      free(output_seen);
+      return false;
+    }
     for (j = 0; j < onnx_state->total_flat_inputs; ++j)
     {
       const FeatureMapping *other = &onnx_state->input_mappings[j];
