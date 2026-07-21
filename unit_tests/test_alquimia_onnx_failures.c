@@ -1,6 +1,14 @@
 /* -*-  mode: c; c-default-style: "google"; indent-tabs-mode: nil -*- 
-** The goal of this file is to check 
+** The goal of this file is to verify the robustness, error handling,
+** and lifecycle management of the Alquimia ONNX interface.
 **
+** Specifically, it covers:
+**   1. Setup failure cases (invalid JSON manifests, missing models, 
+**      unsupported tensor types, bad graph dimensions).
+**   2. Condition processing guard checks (NULL pointers, mismatched 
+**      vector sizes, mixed scalar/vector mapping).
+**   3. Engine lifecycle operations (null-pointer shutdowns, repeated 
+**      creation/destruction loops, and leak checking).
 */
 #include <stdio.h>
 #include <stdlib.h>
