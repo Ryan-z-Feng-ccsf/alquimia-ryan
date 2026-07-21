@@ -80,7 +80,7 @@ static void ModelPath(const char *filename, char *path, size_t size) {
 }
 
 /* Create the Interface for test_id */
-static int CreateAlquimiaInterface(
+static int CreateInterface(
     AlquimiaInterface *interface,
     AlquimiaEngineStatus *status,
     const char *test_id) {
@@ -102,7 +102,7 @@ static void CheckSetupFailure(const SetupFailureCase *test_case) {
   char path[2048];
   void *onnx_engine_state = NULL;
   /* Create Alquimia interface */
-  if (!CreateAlquimiaInterface(&interface, &status, test_case->test_id)) {
+  if (!CreateInterface(&interface, &status, test_case->test_id)) {
     FreeAlquimiaEngineStatus(&status);
     return;
   }
@@ -141,7 +141,7 @@ static void CheckRawModelRejected(void) {
   void *onnx_engine_state = NULL;
 
   /* Create Alquimia Interface */
-  if (!CreateAlquimiaInterface(&interface, &status, "S03")) {
+  if (!CreateInterface(&interface, &status, "S03")) {
     FreeAlquimiaEngineStatus(&status);
     return;
   }
@@ -173,7 +173,7 @@ static int SetupOnnxEngine(
   char path[2048];
 
   /* Create ONNX interface */
-  if (!CreateAlquimiaInterface(interface, status, test_id)) {
+  if (!CreateInterface(interface, status, test_id)) {
     return 0;
   }
   /* Set up absolute path for the JSON test file */
@@ -357,7 +357,7 @@ static void CheckNullShutdown(void) {
   void *onnx_engine_state = NULL;
 
   /* | L02 | Shutdown receives a null engine pointer | Defined error; no crash | */
-  if (!CreateAlquimiaInterface(&interface, &status, "L02")) {
+  if (!CreateInterface(&interface, &status, "L02")) {
     FreeAlquimiaEngineStatus(&status);
     return;
   }
@@ -465,6 +465,9 @@ static void RunSetupFailureCases(void) {
 #endif
 
 int main(void) {
+  /* The test file couples with the error message in the related c file 
+  ** Change the error message string could potentially fail the test
+  */
 #if ALQUIMIA_HAVE_ONNX
   /* Except all the setup test case and L03 */
   RunSetupFailureCases();

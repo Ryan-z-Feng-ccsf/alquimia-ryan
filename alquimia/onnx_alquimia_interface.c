@@ -346,6 +346,7 @@ static bool ParseManifestMapping(
   if ((IsScalarMapping(mapping->alquimia_state) &&
        alquimia_state_index != 0) ||
       (!IsScalarMapping(mapping->alquimia_state) &&
+      // Alquimia size = index + 1
        alquimia_state_index == INT_MAX))
   {
     status->error = kAlquimiaErrorEngineIntegrity;
