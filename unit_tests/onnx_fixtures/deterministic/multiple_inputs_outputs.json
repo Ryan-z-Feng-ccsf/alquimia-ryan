@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "model": "multiple_inputs_outputs.onnx",
+  "inputs": [
+    {"tensor": "left", "tensor_element_index": 0, "feature": "porosity_feature", "alquimia_state": "porosity", "alquimia_state_index": 0},
+    {"tensor": "right", "tensor_element_index": 0, "feature": "mobile_feature", "alquimia_state": "total_mobile", "alquimia_state_index": 0}
+  ],
+  "outputs": [
+    {"tensor": "sum", "tensor_element_index": 0, "alquimia_state": "temperature", "alquimia_state_index": 0},
+    {"tensor": "weighted", "tensor_element_index": 0, "alquimia_state": "gas_concentration", "alquimia_state_index": 0}
+  ]
+}

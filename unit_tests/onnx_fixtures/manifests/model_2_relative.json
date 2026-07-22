@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "model": "../../../models/lsurf_model_2_float_64.onnx",
+  "inputs": [
+    {
+      "tensor": "double_input_2",
+      "tensor_element_index": 0,
+      "feature": "uranium_total",
+      "alquimia_state": "total_mobile",
+      "alquimia_state_index": 0
+    },
+    {
+      "tensor": "double_input_2",
+      "tensor_element_index": 1,
+      "feature": "U_species14",
+      "alquimia_state": "total_mobile",
+      "alquimia_state_index": 1
+    }
+  ],
+  "outputs": [
+    {
+      "tensor": "double_output_2",
+      "tensor_element_index": 0,
+      "alquimia_state": "total_mobile",
+      "alquimia_state_index": 0
+    }
+  ]
+}

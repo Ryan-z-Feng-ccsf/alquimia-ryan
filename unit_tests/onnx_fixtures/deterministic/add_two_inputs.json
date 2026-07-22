@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "model": "add_two_inputs.onnx",
+  "inputs": [
+    {"tensor": "left", "tensor_element_index": 0, "feature": "left_feature", "alquimia_state": "total_mobile", "alquimia_state_index": 0},
+    {"tensor": "right", "tensor_element_index": 0, "feature": "right_feature", "alquimia_state": "total_mobile", "alquimia_state_index": 1}
+  ],
+  "outputs": [
+    {"tensor": "sum", "tensor_element_index": 0, "alquimia_state": "total_mobile", "alquimia_state_index": 2}
+  ]
+}
