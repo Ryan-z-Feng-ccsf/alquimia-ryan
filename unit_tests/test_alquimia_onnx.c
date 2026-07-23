@@ -49,7 +49,7 @@
 #define MODEL_2_PATH \
   CMAKE_CURRENT_SOURCE_DIR "/../models/lsurf_model_2_float_64.onnx"
 #define MODEL_2_MANIFEST \
-  CMAKE_CURRENT_SOURCE_DIR "/../models/lsurf_model_2_float_64.json"
+  CMAKE_CURRENT_SOURCE_DIR "/../models/lsurf_model_2_test.json"
 #define MODEL_2_RELATIVE_MANIFEST                                      \
   CMAKE_CURRENT_SOURCE_DIR                                             \
   "/onnx_fixtures/manifests/model_2_relative.json"
