@@ -56,7 +56,12 @@ static void GetIndexLabel(const char* name, char* label)
 {
   size_t br1 = strstr(name, "[") - name;
   size_t br2 = strstr(name, "]") - name;
-  memcpy(label, &name[br1], sizeof(char) * (br2-br1));
+  // For isotherm_kd[Na+]
+  // label = [Na+
+  // Copy extra '['
+  size_t len = br2 - br1 - 1;
+  memcpy(label, &name[br1 + 1], sizeof(char) * len);
+  label[len] = '\0';
 }
 
 // The following macros are for parsing values that are indexed by names.
@@ -418,6 +423,9 @@ BatchChemDriver* BatchChemDriver_New(BatchChemDriverInput* input)
   {
     for (int i = 0; i < driver->chem_state.cation_exchange_capacity.size; ++i)
     {
+      // It uses the feature names to map the data 
+      // In input file, the name is [uranium_total
+      // In order to match the 
       int j = IonExchangeIndex(input, driver->chem_metadata.ion_exchange_names.data[i]);
       driver->chem_state.cation_exchange_capacity.data[i] = input->cation_exchange_capacity[j];
     }
