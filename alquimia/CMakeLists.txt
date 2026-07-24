@@ -50,7 +50,7 @@ if(ALQUIMIA_HAVE_ONNX)
   list(APPEND ALQUIMIA_PRIVATE_INCLUDE_DIRS ${TPL_CJSON_INCLUDE_DIRS})
   list(APPEND ALQUIMIA_TPLS ${TPL_ONNX_LIBRARIES} ${TPL_CJSON_LIBRARIES})
   list(APPEND ALQUIMIA_SOURCES onnx_alquimia_interface.c
-       onnx_alquimia_manifest.c)
+       onnx_alquimia_config.c)
 endif()
 
 if (ALQUIMIA_NEED_PETSC)
@@ -94,6 +94,6 @@ endif()
 # Install headers, including generated files.
 file(GLOB HEADERS *.h)
 list(REMOVE_ITEM HEADERS
-     ${CMAKE_CURRENT_SOURCE_DIR}/onnx_alquimia_manifest.h)
+     ${CMAKE_CURRENT_SOURCE_DIR}/onnx_alquimia_config.h)
 LIST(APPEND HEADERS ${CMAKE_CURRENT_BINARY_DIR}/alquimia.h)
 install(FILES ${HEADERS} DESTINATION include/alquimia)

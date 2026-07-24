@@ -67,11 +67,11 @@ static void CheckClose(double actual, double expected) {
 /**
  * @brief Initializes and sets up the ONNX engine instance for a given test fixture.
  * 
- * @param relative_path Relative path or filename of the ONNX manifest fixture.
+ * @param relative_path Relative path or filename of the ONNX config fixture.
  * @param[out] engine Pointer to the OnnxTestEngine instance to be configured.
  */
 static void SetupEngine(const char *relative_path, OnnxTestEngine *engine) {
-  char manifest_path[2048];
+  char config_path[2048];
 
   // Initialize the test engine
   memset(engine, 0, sizeof(*engine));
@@ -80,9 +80,9 @@ static void SetupEngine(const char *relative_path, OnnxTestEngine *engine) {
   // Expect: engine->status.error == kAquimiaNoError
   CHECK(engine->status.error == kAlquimiaNoError);
 
-  snprintf(manifest_path, sizeof(manifest_path), "%s/onnx_fixtures/%s",
+  snprintf(config_path, sizeof(config_path), "%s/onnx_fixtures/%s",
            CMAKE_CURRENT_SOURCE_DIR, relative_path);
-  engine->interface.Setup(manifest_path, false, &engine->engine_state,
+  engine->interface.Setup(config_path, false, &engine->engine_state,
                           &engine->sizes, &engine->functionality,
                           &engine->status);
   if (engine->status.error != kAlquimiaNoError) {

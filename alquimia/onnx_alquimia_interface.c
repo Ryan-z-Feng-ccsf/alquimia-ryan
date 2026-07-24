@@ -48,7 +48,7 @@
 
 #include "alquimia/alquimia_constants.h"
 #include "alquimia/alquimia_util.h"
-#include "alquimia/onnx_alquimia_manifest.h"
+#include "alquimia/onnx_alquimia_config.h"
 
 #if ALQUIMIA_HAVE_ONNX
 
@@ -75,7 +75,7 @@ typedef struct {
   */
   /* Align with the alquimia_state */
   int alquimia_state_index;
-  /* Adapter-owned copy retained after the manifest is released. Output
+  /* Adapter-owned copy retained after the config is released. Output
   ** mappings leave this NULL because only inputs have condition names. 
   */
   char *feature;
@@ -93,12 +93,12 @@ typedef struct
   OrtAllocator *allocator;  /* Released by ReleaseAllocator() */
   /* Setup owns this temporary representation and releases it before
   ** publishing a successfully initialized engine. */
-  OnnxAlquimiaManifest manifest;  /* Released by OnnxAlquimiaFreeManifest()*/
+  OnnxAlquimiaConfig config;  /* Released by OnnxAlquimiaFreeConfig()*/
 
   /* Dynamic input info */
-  /* Align with num_inputs in manifest */
+  /* Align with num_inputs in config */
   size_t num_inputs;
-  /* Align with the tensor in manifest */
+  /* Align with the tensor in config */
   char **input_names; /* Released by OrtAllocator allocator */       
   /* Number of dimensions for each input tensor 
   ** 0 for a scalar tensor
@@ -117,9 +117,9 @@ typedef struct
   OrtValue **input_tensor;  /* Released by ReleaseValue() */
 
   /* Dynamic output info */
-  /* Align with num_outputs in manifest */
+  /* Align with num_outputs in config */
   size_t num_outputs;
-  /* Align with the tensor in manifest */
+  /* Align with the tensor in config */
   char **output_names;  /* Released by OrtAllocator allocator */
   /* Number of dimensions for each output tensor */
   size_t *output_num_dim; /* Released by free() */
@@ -164,8 +164,8 @@ static bool CheckStatus(const OrtApi *g_ort, OrtStatus *status, AlquimiaEngineSt
 }
 
 /**
- * @brief Maps an exact manifest state-variable name to an AlquimiaState field.
- * @param name Case-sensitive alquimia_state value from the manifest.
+ * @brief Maps an exact config state-variable name to an AlquimiaState field.
+ * @param name Case-sensitive alquimia_state value from the config.
  * @param target Receives the corresponding mapping enum on success and remains
  *        unchanged when @p name is unsupported.
  * @return True when @p name identifies a supported scalar or vector field.
@@ -296,11 +296,11 @@ static void StoreMetadataName(
 }
 
 /**
- * @brief Copies a manifest feature name into adapter-owned storage.
+ * @brief Copies a config feature name into adapter-owned storage.
  * @param name Null-terminated feature name to copy.
  * @return A newly allocated copy, or NULL on allocation failure.
  *
- * The returned string outlives the parsed manifest and is released with the
+ * The returned string outlives the parsed config and is released with the
  * input mapping array during engine shutdown.
  */
 static char *CopyFeatureName(const char *name)
@@ -315,9 +315,9 @@ static char *CopyFeatureName(const char *name)
 }
 
 /**
- * @brief Converts one validated manifest destination into a runtime mapping.
+ * @brief Converts one validated config destination into a runtime mapping.
  * @param alquimia_state Case-sensitive AlquimiaState variable name.
- * @param alquimia_state_index Nonnegative state-vector index from the manifest.
+ * @param alquimia_state_index Nonnegative state-vector index from the config.
  * @param mapping Receives the runtime destination on success.
  * @param status Receives an engine-integrity error on incompatibility.
  * @return True when the state variable and index can be represented safely.
@@ -325,7 +325,7 @@ static char *CopyFeatureName(const char *name)
  * Scalar state variables require index zero. INT_MAX is rejected for vectors
  * so the later size calculation cannot overflow an Alquimia int.
  */
-static bool ParseManifestMapping(
+static bool ParseConfigMapping(
     const char *alquimia_state,
     int alquimia_state_index,
     FeatureMapping *mapping,
@@ -336,7 +336,7 @@ static bool ParseManifestMapping(
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
-             "Unsupported AlquimiaState variable '%s' in ONNX manifest.",
+             "Unsupported AlquimiaState variable '%s' in ONNX config.",
              alquimia_state);
     return false;
   }
@@ -351,7 +351,7 @@ static bool ParseManifestMapping(
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
-             "ONNX manifest AlquimiaState index %d is incompatible with "
+             "ONNX config AlquimiaState index %d is incompatible with "
              "variable '%s'.", alquimia_state_index, alquimia_state);
     return false;
   }
@@ -407,7 +407,7 @@ static void UpdateSizesForMapping(
 
 /**
  * @brief Resolves a tensor element index to the flat runtime mapping index.
- * @param tensor Case-sensitive tensor name from the manifest.
+ * @param tensor Case-sensitive tensor name from the config.
  * @param tensor_element_index Zero-based flattened index within that tensor.
  * @param num_tensors Number of model tensors in @p names and @p tensor_sizes.
  * @param names ONNX Runtime tensor names in session order.
@@ -459,7 +459,7 @@ static bool FindFlatTensorElement(
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
-             "ONNX manifest references unknown tensor '%s'.", tensor);
+             "ONNX config references unknown tensor '%s'.", tensor);
     return false;
   }
   /* Guard against out-of-bounds element indexing within the matched tensor. */
@@ -467,7 +467,7 @@ static bool FindFlatTensorElement(
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
-             "ONNX manifest tensor element index %zu is out of range for "
+             "ONNX config tensor element index %zu is out of range for "
              "tensor '%s' of size %zu.", tensor_element_index, tensor,
              tensor_sizes[matching_index]);
     return false;
@@ -476,7 +476,7 @@ static bool FindFlatTensorElement(
 }
 
 /**
- * @brief Clears all dimensions before deriving them solely from the manifest.
+ * @brief Clears all dimensions before deriving them solely from the config.
  * @param sizes Size structure returned through the generic engine interface.
  */
 static void InitializeSizes(AlquimiaSizes *sizes)
@@ -519,17 +519,17 @@ static bool ValidateUniqueInputFeature(
 }
 
 /**
- * @brief Builds complete flat input/output mappings from the parsed manifest.
+ * @brief Builds complete flat input/output mappings from the parsed config.
  * @param onnx_state Inspected model state and destination for runtime mappings.
  * @param sizes Receives dimensions derived from the highest mapped indices.
  * @param status Receives allocation or semantic-validation errors.
  * @return True only when every tensor element index has exactly one mapping.
  *
- * Input feature names are copied before the manifest is released. The seen
+ * Input feature names are copied before the config is released. The seen
  * arrays enforce complete coverage and prevent duplicate tensor indices;
  * name-category checks preserve the metadata representation invariant.
  */
-static bool BuildManifestMappings(
+static bool BuildConfigMappings(
     OnnxEngineState *onnx_state,
     AlquimiaSizes *sizes,
     AlquimiaEngineStatus *status)
@@ -555,7 +555,7 @@ static bool BuildManifestMappings(
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
-             "Memory allocation failed for ONNX manifest mappings.");
+             "Memory allocation failed for ONNX config mappings.");
     free(input_seen);
     free(output_seen);
     return false;
@@ -564,10 +564,10 @@ static bool BuildManifestMappings(
   InitializeSizes(sizes);
 
   /* For every input tensor */
-  for (i = 0; i < onnx_state->manifest.num_inputs; ++i)
+  for (i = 0; i < onnx_state->config.num_inputs; ++i)
   {
-    /* This points to the real OnnxEngine->manifest.inputMapping */
-    const OnnxAlquimiaInputMappingSpec *spec = &onnx_state->manifest.inputs[i];
+    /* This points to the real OnnxEngine->config.inputMapping */
+    const OnnxAlquimiaInputMappingSpec *spec = &onnx_state->config.inputs[i];
     FeatureMapping *mapping;
     size_t flat_index;
     size_t j;
@@ -596,7 +596,7 @@ static bool BuildManifestMappings(
     }
     mapping = &onnx_state->input_mappings[flat_index];
     /* Parse the AlquimiaState value to the input mapping */
-    if (!ParseManifestMapping(spec->alquimia_state,
+    if (!ParseConfigMapping(spec->alquimia_state,
                               spec->alquimia_state_index, mapping, status))
     {
       free(input_seen);
@@ -655,10 +655,10 @@ static bool BuildManifestMappings(
   }
 
   /* For every output tensor */
-  for (i = 0; i < onnx_state->manifest.num_outputs; ++i)
+  for (i = 0; i < onnx_state->config.num_outputs; ++i)
   {
-    /* This points to the real OnnxEngine->manifest.outputMapping */
-    const OnnxAlquimiaOutputMappingSpec *spec = &onnx_state->manifest.outputs[i];
+    /* This points to the real OnnxEngine->config.outputMapping */
+    const OnnxAlquimiaOutputMappingSpec *spec = &onnx_state->config.outputs[i];
     FeatureMapping *mapping;
     size_t flat_index;
 
@@ -686,7 +686,7 @@ static bool BuildManifestMappings(
     }
     mapping = &onnx_state->output_mappings[flat_index];
     /* Parse the AlquimiaState value to the output mapping */
-    if (!ParseManifestMapping(spec->alquimia_state,
+    if (!ParseConfigMapping(spec->alquimia_state,
                               spec->alquimia_state_index, mapping, status))
     {
       free(input_seen);
@@ -705,7 +705,7 @@ static bool BuildManifestMappings(
     {
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
-               "ONNX manifest does not map every input tensor element index.");
+               "ONNX config does not map every input tensor element index.");
       free(input_seen);
       free(output_seen);
       return false;
@@ -717,7 +717,7 @@ static bool BuildManifestMappings(
     {
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
-               "ONNX manifest does not map every output tensor element index.");
+               "ONNX config does not map every output tensor element index.");
       free(input_seen);
       free(output_seen);
       return false;
@@ -945,8 +945,8 @@ static void CleanupOnSetupFailure(OnnxEngineState **onnx_state)
 }
 
 /**
- * @brief Initializes an ONNX engine from a versioned JSON sidecar manifest.
- * @param input_filename Manifest path; relative model paths resolve from its
+ * @brief Initializes an ONNX engine from a versioned JSON sidecar config.
+ * @param input_filename config path; relative model paths resolve from its
  *        directory.
  * @param hands_off Unused by this adapter.
  * @param onnx_engine_state Address that receives the initialized engine.
@@ -955,7 +955,7 @@ static void CleanupOnSetupFailure(OnnxEngineState **onnx_state)
  * @param status Receives setup errors without being overwritten by cleanup.
  *
  * The destination engine pointer is set to NULL before resource acquisition and
- * remains NULL on every failure. Parsed manifest storage is released before a
+ * remains NULL on every failure. Parsed config storage is released before a
  * successful engine is published.
  */
 void onnx_alquimia_setup(
@@ -993,23 +993,23 @@ void onnx_alquimia_setup(
     snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for OnnxEngineState.");
     return;
   }
-  /* Parse the JSON to the manifest */
-  if (!OnnxAlquimiaLoadManifest(
-          input_filename, &onnx_state->manifest, status->message,
+  /* Parse the JSON to the config */
+  if (!OnnxAlquimiaLoadConfig(
+          input_filename, &onnx_state->config, status->message,
           kAlquimiaMaxStringLength))
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     free(onnx_state);
     return;
   }
-  f = fopen(onnx_state->manifest.model_path, "rb");
+  f = fopen(onnx_state->config.model_path, "rb");
   if (f == NULL)
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
              "ONNX model file not found: %s",
-             onnx_state->manifest.model_path);
-    OnnxAlquimiaFreeManifest(&onnx_state->manifest);
+             onnx_state->config.model_path);
+    OnnxAlquimiaFreeConfig(&onnx_state->config);
     free(onnx_state);
     return;
   }
@@ -1020,7 +1020,7 @@ void onnx_alquimia_setup(
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength, "Failed to load ONNX Runtime API.");
-    OnnxAlquimiaFreeManifest(&onnx_state->manifest);
+    OnnxAlquimiaFreeConfig(&onnx_state->config);
     free(onnx_state);
     return;
   }
@@ -1028,7 +1028,7 @@ void onnx_alquimia_setup(
   ort_status = onnx_state->g_ort->CreateEnv(ORT_LOGGING_LEVEL_WARNING, "onnx_alquimia_engine", &onnx_state->env);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
-    OnnxAlquimiaFreeManifest(&onnx_state->manifest);
+    OnnxAlquimiaFreeConfig(&onnx_state->config);
     free(onnx_state);
     return;
   }
@@ -1037,19 +1037,19 @@ void onnx_alquimia_setup(
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
     onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    OnnxAlquimiaFreeManifest(&onnx_state->manifest);
+    OnnxAlquimiaFreeConfig(&onnx_state->config);
     free(onnx_state);
     return;
   }
 
   ort_status = onnx_state->g_ort->CreateSession(
-      onnx_state->env, onnx_state->manifest.model_path,
+      onnx_state->env, onnx_state->config.model_path,
       onnx_state->session_options, &onnx_state->session);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
     onnx_state->g_ort->ReleaseSessionOptions(onnx_state->session_options);
     onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    OnnxAlquimiaFreeManifest(&onnx_state->manifest);
+    OnnxAlquimiaFreeConfig(&onnx_state->config);
     free(onnx_state);
     return;
   }
@@ -1519,14 +1519,14 @@ void onnx_alquimia_setup(
   /* Set up the mapping rules inside the OnnxEngine->mapping struct 
   ** Initialize AlquimiaSize
   */
-  if (!BuildManifestMappings(onnx_state, sizes, status))
+  if (!BuildConfigMappings(onnx_state, sizes, status))
   {
     CleanupOnSetupFailure(&onnx_state);
     return;
   }
 
-  /* Freed the manifest form the onnx_interface_manifest */
-  OnnxAlquimiaFreeManifest(&onnx_state->manifest);
+  /* Freed the config form the onnx_interface_config */
+  OnnxAlquimiaFreeConfig(&onnx_state->config);
   *(OnnxEngineState **)onnx_engine_state = onnx_state;
 }
 
@@ -1731,13 +1731,13 @@ void onnx_alquimia_shutdown(
       onnx_state->env = NULL;
     }
   }
-  OnnxAlquimiaFreeManifest(&onnx_state->manifest);
+  OnnxAlquimiaFreeConfig(&onnx_state->config);
   free(onnx_state);
   *(OnnxEngineState **)onnx_engine_state = NULL;
 }
 
 /**
- * @brief Applies named aqueous constraints to manifest-mapped model inputs.
+ * @brief Applies named aqueous constraints to config-mapped model inputs.
  * @param onnx_engine_state Address of an initialized engine pointer.
  * @param condition Named constraints to apply; NULL or empty is a no-op.
  * @param props Unused by the ONNX adapter.
@@ -1941,7 +1941,7 @@ void onnx_alquimia_reactionstepoperatorsplit(
 /**
  * @brief Implements the generic auxiliary-output hook as a successful no-op.
  *
- * Version 1 ONNX manifests map only AlquimiaState fields and define no
+ * Version 1 ONNX configs map only AlquimiaState fields and define no
  * auxiliary outputs.
  */
 void onnx_alquimia_getauxiliaryoutput(
@@ -1964,7 +1964,7 @@ void onnx_alquimia_getauxiliaryoutput(
 }
 
 /**
- * @brief Copies manifest input feature names into problem metadata vectors.
+ * @brief Copies config input feature names into problem metadata vectors.
  * @param onnx_engine_state Address of an initialized engine pointer.
  * @param meta_data Metadata storage allocated from the setup-derived sizes.
  * @param status Receives invalid-engine or invalid-destination errors.

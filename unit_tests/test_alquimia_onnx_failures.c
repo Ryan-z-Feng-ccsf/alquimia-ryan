@@ -3,7 +3,7 @@
 ** and lifecycle management of the Alquimia ONNX interface.
 **
 ** Specifically, it covers:
-**   1. Setup failure cases (invalid JSON manifests, missing models, 
+**   1. Setup failure cases (invalid JSON configs, missing models, 
 **      unsupported tensor types, bad graph dimensions).
 **   2. Condition processing guard checks (NULL pointers, mismatched 
 **      vector sizes, mixed scalar/vector mapping).
@@ -58,7 +58,7 @@ typedef struct {
   */
   const char *test_id;
   /* Stands for the relative path
-  ** to a JSON manifest or ONNX model under onnx_fixtures.
+  ** to a JSON config or ONNX model under onnx_fixtures.
   */
   const char *relative_path;
   const char *message_fragment;
@@ -349,7 +349,7 @@ static void CheckMixedCondition(void) {
 ** | L02 | Shutdown receives a null engine pointer | Defined error; no crash |
 ** | L03 | Setup failure is followed by shutdown | No double free |
 ** | L04 | Repeated create/setup/run/shutdown loop | No leak under sanitizer or Valgrind |
-** | L05 | Manifest parse fails after partial allocation | Manifest strings, arrays, and cJSON tree are released |
+** | L05 | config parse fails after partial allocation | config strings, arrays, and cJSON tree are released |
 */
 static void CheckNullShutdown(void) {
   AlquimiaEngineStatus status = {0};
@@ -414,10 +414,10 @@ static void CheckRepeatedLifecycle(void) {
 }
 
 static void RunSetupFailureCases(void) {
-  /* | S01 | Manifest path does not exist | Setup error; engine state remains `NULL` |
-  ** | S02 | Manifest exists but is malformed or has trailing content | Parse error; no crash or leak |
+  /* | S01 | config path does not exist | Setup error; engine state remains `NULL` |
+  ** | S02 | config exists but is malformed or has trailing content | Parse error; no crash or leak |
   ** | S03 | Raw ONNX file is passed as the setup input | Parse error; engine state remains `NULL` |
-  ** | S04 | Manifest model path does not exist | Setup error naming the resolved path |
+  ** | S04 | config model path does not exist | Setup error naming the resolved path |
   ** | S05 | Model file exists but is not ONNX | Setup error; no crash or leak |
   ** | S06 | ONNX graph is invalid | Setup error; no published engine state |
   ** | S07 | Model has zero inputs or zero outputs | Setup error |
@@ -428,9 +428,9 @@ static void RunSetupFailureCases(void) {
   */
   /* Test message segment is the substring of the error message in the onnx_alquimia_interface.c */
   static const SetupFailureCase cases[] = {
-    {"S01", "invalid_models/manifest_does_not_exist.json",
-     "Unable to read ONNX manifest"},
-    {"S02-malformed", "invalid_models/malformed_manifest.json",
+    {"S01", "invalid_models/config_does_not_exist.json",
+     "Unable to read ONNX config"},
+    {"S02-malformed", "invalid_models/malformed_config.json",
      "not valid strict JSON"},
     {"S02-trailing", "invalid_models/trailing_content.json",
      "not valid strict JSON"},

@@ -11,14 +11,14 @@ if (XSDK_WITH_ONNX)
     LABELS "onnx;unit;condition;integration")
 
   # Register a test case in the ctest
-  add_test(NAME test_alquimia_onnx_manifest
-    COMMAND test_alquimia_onnx_exe manifest)
+  add_test(NAME test_alquimia_onnx_config
+    COMMAND test_alquimia_onnx_exe config)
 
   # Allows easy categorization when filtering tests via `ctest -L <label>`
   # Work directory has to be: ~/alquimia-ryan/build/alquimia-build/unit_tests
-  set_tests_properties(test_alquimia_onnx_manifest PROPERTIES
+  set_tests_properties(test_alquimia_onnx_config PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    LABELS "onnx;unit;manifest;mapping")
+    LABELS "onnx;unit;config;mapping")
 
   # test_alquimia_onnx_failures.c
   add_alquimia_unit_test(test_alquimia_onnx_failures_exe
@@ -27,7 +27,7 @@ if (XSDK_WITH_ONNX)
   # Allows easy categorization when filtering tests via `ctest -L <label>`
   # Work directory has to be: ~/alquimia-ryan/build/alquimia-build/unit_tests
   set_tests_properties(test_alquimia_onnx_failures_exe PROPERTIES
-    LABELS "onnx;unit;manifest;condition;resource")
+    LABELS "onnx;unit;config;condition;resource")
 
   # ---------------------------------------------------------------------------
   # test_alquimia_onnx_routing.c

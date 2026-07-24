@@ -19,7 +19,7 @@
 ** | M14 | Feature names target different state categories | Correct problem-metadata vectors are populated |
 ** | M15 | Two names target the same metadata destination | Setup rejects the ambiguity |
 ** | M16 | Similar but invalid property has trailing text | Property is rejected rather than partially matched |
-** | M17 | Model path is relative to the manifest | Correct path is resolved from the manifest directory |
+** | M17 | Model path is relative to the config | Correct path is resolved from the config directory |
 ** | M18 | Two input mappings use the same feature name | Setup rejects the duplicate lookup key |
 **
 ** Here we use the LSURF model for testing
@@ -48,12 +48,12 @@
 */
 #define MODEL_2_PATH \
   CMAKE_CURRENT_SOURCE_DIR "/../models/lsurf_model_2_float_64.onnx"
-#define MODEL_2_MANIFEST \
+#define MODEL_2_CONFIG \
   CMAKE_CURRENT_SOURCE_DIR "/../models/lsurf_model_2_test.json"
-#define MODEL_2_RELATIVE_MANIFEST                                      \
+#define MODEL_2_RELATIVE_CONFIG                                      \
   CMAKE_CURRENT_SOURCE_DIR                                             \
-  "/onnx_fixtures/manifests/model_2_relative.json"
-#define TEMP_MANIFEST "test_alquimia_onnx_manifest_case.json"
+  "/onnx_fixtures/configs/model_2_relative.json"
+#define TEMP_CONFIG "test_alquimia_onnx_config_case.json"
 
 // Match the first input of the model
 #define VALID_INPUT_0                                                  \
@@ -79,14 +79,14 @@ static void CreateOnnxInterface(
   CreateAlquimiaInterface("ONNX", interface, status);
   ALQUIMIA_ASSERT(status->error == kAlquimiaNoError);
 }
-/* Write the contents: manifest to the temporary file 
-** manifest: JSON 
+/* Write the contents: config to the temporary file 
+** config: JSON 
 ** If used, needed to remove() manually
 */
-static void WriteTemporaryManifest(const char *contents)
+static void WriteTemporaryConfig(const char *contents)
 {
-  /* TEMP_MANIFEST = "test_alquimia_onnx_manifest_case.json" */
-  FILE *file = fopen(TEMP_MANIFEST, "wb");
+  /* TEMP_CONFIG = "test_alquimia_onnx_config_case.json" */
+  FILE *file = fopen(TEMP_CONFIG, "wb");
   size_t length = strlen(contents);
 
   ALQUIMIA_ASSERT(file != NULL);
@@ -98,7 +98,7 @@ static void ExpectSetupFailure(
     AlquimiaInterface *interface,
     AlquimiaEngineStatus *status,
     const char *test_id,
-    const char *manifest,
+    const char *config,
     const char *expected_message)
 {
   AlquimiaEngineFunctionality functionality = {0};
@@ -106,12 +106,12 @@ static void ExpectSetupFailure(
   void *engine_state = NULL;
 
   printf("  %s\n", test_id);
-  /* Write the contents: manifest to the temporary file */
-  /* manifest: JSON 
+  /* Write the contents: config to the temporary file */
+  /* config: JSON 
   */
-  WriteTemporaryManifest(manifest);
+  WriteTemporaryConfig(config);
   /* Setup by the temporary JSON file */
-  interface->Setup(TEMP_MANIFEST, false, &engine_state, &sizes,
+  interface->Setup(TEMP_CONFIG, false, &engine_state, &sizes,
                    &functionality, status);
   if (status->error == kAlquimiaNoError || engine_state != NULL ||
     /* expected_message is the substring of the status->message */
@@ -124,7 +124,7 @@ static void ExpectSetupFailure(
   ALQUIMIA_ASSERT(status->error == kAlquimiaErrorEngineIntegrity);
   ALQUIMIA_ASSERT(engine_state == NULL);
   ALQUIMIA_ASSERT(strstr(status->message, expected_message) != NULL);
-  ALQUIMIA_ASSERT(remove(TEMP_MANIFEST) == 0);
+  ALQUIMIA_ASSERT(remove(TEMP_CONFIG) == 0);
 }
 
 /* Test the whole lifecycle */
@@ -149,7 +149,7 @@ static void TestModel2Lifecycle(void)
   AllocateAlquimiaEngineStatus(&status);
   CreateOnnxInterface(&interface, &status);
 
-  interface.Setup(MODEL_2_MANIFEST, false, &engine_state, &sizes,
+  interface.Setup(MODEL_2_CONFIG, false, &engine_state, &sizes,
                   &functionality, &status);
   if (status.error != kAlquimiaNoError)
   {
@@ -214,12 +214,12 @@ static void TestModel2Lifecycle(void)
 }
 
 // | M14 | Feature names target different state categories | Correct problem-metadata vectors are populated |
-// | M17 | Model path is relative to the manifest | Correct path is resolved from the manifest directory |
+// | M17 | Model path is relative to the config | Correct path is resolved from the config directory |
 static void TestSuccessfulMappingCases(
     AlquimiaInterface *interface,
     AlquimiaEngineStatus *status)
 {
-  static const char category_manifest[] =
+  static const char category_config[] =
       "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
       "\",\"inputs\":["
       "{\"tensor\":\"double_input_2\",\"tensor_element_index\":0,"
@@ -234,11 +234,11 @@ static void TestSuccessfulMappingCases(
   void *engine_state = NULL;
 
   printf("  M14 feature names populate separate metadata categories\n");
-  /* Write the contents: manifest to the temporary file */
-  /* manifest: JSON 
+  /* Write the contents: config to the temporary file */
+  /* config: JSON 
   */
-  WriteTemporaryManifest(category_manifest);
-  interface->Setup(TEMP_MANIFEST, false, &engine_state, &sizes,
+  WriteTemporaryConfig(category_config);
+  interface->Setup(TEMP_CONFIG, false, &engine_state, &sizes,
                    &functionality, status);
   // Expected value:                  
   ALQUIMIA_ASSERT(status->error == kAlquimiaNoError);
@@ -255,11 +255,11 @@ static void TestSuccessfulMappingCases(
   interface->Shutdown(&engine_state, status);
   ALQUIMIA_ASSERT(status->error == kAlquimiaNoError);
   ALQUIMIA_ASSERT(engine_state == NULL);
-  ALQUIMIA_ASSERT(remove(TEMP_MANIFEST) == 0);
+  ALQUIMIA_ASSERT(remove(TEMP_CONFIG) == 0);
 
-  // Test the ResolvePath in the onnx_alquimia_manifest.c 
-  printf("  M17 model path resolves relative to the manifest\n");
-  interface->Setup(MODEL_2_RELATIVE_MANIFEST, false, &engine_state, &sizes,
+  // Test the ResolvePath in the onnx_alquimia_config.c 
+  printf("  M17 model path resolves relative to the config\n");
+  interface->Setup(MODEL_2_RELATIVE_CONFIG, false, &engine_state, &sizes,
                    &functionality, status);
   if (status->error != kAlquimiaNoError)
   {
@@ -273,13 +273,13 @@ static void TestSuccessfulMappingCases(
 }
 
 /* Check the JSON mapping contract */
-static void TestManifestContract(void)
+static void TestConfigContract(void)
 {
   
   AlquimiaEngineStatus status;
   AlquimiaInterface interface;
 
-  printf("Running strict ONNX manifest contract cases.\n");
+  printf("Running strict ONNX config contract cases.\n");
   AllocateAlquimiaEngineStatus(&status);
   CreateOnnxInterface(&interface, &status);
   /* MODEL_2_PATH = absolute file .../models/lsurf_model_2_float_64.onnx */
@@ -432,7 +432,7 @@ static void TestManifestContract(void)
       "M07 tensor element index exceeds C int range",
       "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
       "\",\"inputs\":[{\"tensor\":\"double_input_2\","
-      // tensor_element_index = 2147483648 > INT_MAX, in the onnx_alquimia_manifest.c
+      // tensor_element_index = 2147483648 > INT_MAX, in the onnx_alquimia_config.c
       "\"tensor_element_index\":2147483648,\"feature\":\"f\","
       "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}],"
       "\"outputs\":[" VALID_OUTPUT "]}", "tensor_element_index");
@@ -441,7 +441,7 @@ static void TestManifestContract(void)
       "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
       "\",\"inputs\":[{\"tensor\":\"double_input_2\",\"tensor_element_index\":0,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\","
-      // alquimia_state_index = 2147383648 > INT_MAX, in the onnx_alquimia_manifest.c
+      // alquimia_state_index = 2147383648 > INT_MAX, in the onnx_alquimia_config.c
       "\"alquimia_state_index\":2147483648}],\"outputs\":[" VALID_OUTPUT
       "]}", "alquimia_state_index");
 
@@ -519,7 +519,7 @@ static void TestManifestContract(void)
       "\"outputs\":[" VALID_OUTPUT "]}", "incompatible with variable");
 
   // | M14 | Feature names target different state categories | Correct problem-metadata vectors are populated |
-  // | M17 | Model path is relative to the manifest | Correct path is resolved from the manifest directory |
+  // | M17 | Model path is relative to the config | Correct path is resolved from the config directory |
   TestSuccessfulMappingCases(&interface, &status);
 
   // | M15 | Two names target the same metadata destination | Setup rejects the ambiguity |
@@ -572,10 +572,10 @@ int main(int argc, char **argv)
   setvbuf(stdout, NULL, _IONBF, 0);
   setvbuf(stderr, NULL, _IONBF, 0);
 
-  if (argc == 2 && strcmp(argv[1], "manifest") == 0)
+  if (argc == 2 && strcmp(argv[1], "config") == 0)
   {
-    // Enter: ./test_alquimia_onnx manifest to test the JSON parser, otherwise test the lifecycle
-    TestManifestContract();
+    // Enter: ./test_alquimia_onnx config to test the JSON parser, otherwise test the lifecycle
+    TestConfigContract();
   }
   else
   {
