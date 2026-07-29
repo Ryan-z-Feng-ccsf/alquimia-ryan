@@ -152,7 +152,6 @@ static bool CheckStatus(const OrtApi *g_ort, OrtStatus *status, AlquimiaEngineSt
   ** populate our status, and explicitly release the status object. 
   */
   if (status != NULL)
-  if (status != NULL)
   {
     const char *msg = g_ort->GetErrorMessage(status);
     alquimia_status->error = kAlquimiaErrorEngineIntegrity;
