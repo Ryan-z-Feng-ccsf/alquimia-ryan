@@ -1872,18 +1872,18 @@ void onnx_alquimia_reactionstepoperatorsplit(
   }
 
   {
-    size_t flat_idx = 0;
+    size_t flat_index = 0;
     for (i = 0; i < (int)onnx_state->num_inputs; ++i)
     {
       size_t k;
       for (k = 0; k < onnx_state->input_total_size[i]; ++k)
       {
-        onnx_state->input_data[i][k] = GetAlquimiaValue(state, onnx_state->input_mappings[flat_idx], status);
+        onnx_state->input_data[i][k] = GetAlquimiaValue(state, onnx_state->input_mappings[flat_index], status);
         if (status->error != kAlquimiaNoError)
         {
           return;
         }
-        flat_idx++;
+        flat_index++;
       }
     }
   }
