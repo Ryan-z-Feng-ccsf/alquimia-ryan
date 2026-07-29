@@ -50,11 +50,11 @@ typedef struct {
 /* Parse the JSON file */
 bool OnnxAlquimiaLoadConfig(
     /* JSON file path */
-    const char *path,
+    const char *config_path,
     /* Populates the config. On failure, resources are freed internally. 
     ** This can be assigned directly to an OnnxEngine's engine->config;
     ** on success, the interface manages its lifetime and release. */
-    OnnxAlquimiaConfig *config,
+    OnnxAlquimiaConfig *onnx_config,
     /* Write the error message in the AlquimiaEngineStatus: status*/
     char *error_message,
     /* Specify the error message size */
