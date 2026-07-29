@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "model": "multi_target.onnx",
+  "inputs": [
+    {"tensor": "input", "tensor_element_index": 0, "feature": "target_input_0", "alquimia_state": "total_mobile", "alquimia_state_index": 0},
+    {"tensor": "input", "tensor_element_index": 1, "feature": "target_input_1", "alquimia_state": "total_mobile", "alquimia_state_index": 1}
+  ],
+  "outputs": [
+    {"tensor": "target_sum", "tensor_element_index": 0, "alquimia_state": "total_immobile", "alquimia_state_index": 0},
+    {"tensor": "target_affine", "tensor_element_index": 0, "alquimia_state": "gas_concentration", "alquimia_state_index": 0}
+  ]
+}

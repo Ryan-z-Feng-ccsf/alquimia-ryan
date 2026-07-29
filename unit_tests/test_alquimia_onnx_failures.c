@@ -58,7 +58,7 @@ typedef struct {
   */
   const char *test_id;
   /* Stands for the relative path
-  ** to a JSON config or ONNX model under onnx_fixtures.
+  ** to a JSON config or ONNX model under onnx_test_cases.
   */
   const char *relative_path;
   const char *message_fragment;
@@ -66,7 +66,7 @@ typedef struct {
 
 static void SetupAbsolutePath(const char *relative_path, char *path, size_t size) {
   /* Get the absolute path */
-  int result = snprintf(path, size, "%s/onnx_fixtures/%s",
+  int result = snprintf(path, size, "%s/onnx_test_cases/%s",
                         CMAKE_CURRENT_SOURCE_DIR, relative_path);
   CHECK_CASE("relative-path", result >= 0 && (size_t)result < size);
 }

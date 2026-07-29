@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "model": "all_state_categories.onnx",
+  "inputs": [
+    {"tensor": "input", "tensor_element_index": 0, "feature": "water_density_feature", "alquimia_state": "water_density", "alquimia_state_index": 0},
+    {"tensor": "input", "tensor_element_index": 1, "feature": "porosity_feature", "alquimia_state": "porosity", "alquimia_state_index": 0},
+    {"tensor": "input", "tensor_element_index": 2, "feature": "temperature_feature", "alquimia_state": "temperature", "alquimia_state_index": 0},
+    {"tensor": "input", "tensor_element_index": 3, "feature": "pressure_feature", "alquimia_state": "aqueous_pressure", "alquimia_state_index": 0},
+    {"tensor": "input", "tensor_element_index": 4, "feature": "mobile_feature", "alquimia_state": "total_mobile", "alquimia_state_index": 0},
+    {"tensor": "input", "tensor_element_index": 5, "feature": "immobile_feature", "alquimia_state": "total_immobile", "alquimia_state_index": 1},
+    {"tensor": "input", "tensor_element_index": 6, "feature": "mineral_volume_feature", "alquimia_state": "mineral_volume_fraction", "alquimia_state_index": 0},
+    {"tensor": "input", "tensor_element_index": 7, "feature": "mineral_area_feature", "alquimia_state": "mineral_specific_surface_area", "alquimia_state_index": 1},
+    {"tensor": "input", "tensor_element_index": 8, "feature": "surface_feature", "alquimia_state": "surface_site_density", "alquimia_state_index": 0},
+    {"tensor": "input", "tensor_element_index": 9, "feature": "exchange_feature", "alquimia_state": "cation_exchange_capacity", "alquimia_state_index": 0},
+    {"tensor": "input", "tensor_element_index": 10, "feature": "gas_feature", "alquimia_state": "gas_concentration", "alquimia_state_index": 0}
+  ],
+  "outputs": [
+    {"tensor": "output", "tensor_element_index": 0, "alquimia_state": "water_density", "alquimia_state_index": 0},
+    {"tensor": "output", "tensor_element_index": 1, "alquimia_state": "porosity", "alquimia_state_index": 0},
+    {"tensor": "output", "tensor_element_index": 2, "alquimia_state": "temperature", "alquimia_state_index": 0},
+    {"tensor": "output", "tensor_element_index": 3, "alquimia_state": "aqueous_pressure", "alquimia_state_index": 0},
+    {"tensor": "output", "tensor_element_index": 4, "alquimia_state": "total_mobile", "alquimia_state_index": 0},
+    {"tensor": "output", "tensor_element_index": 5, "alquimia_state": "total_immobile", "alquimia_state_index": 1},
+    {"tensor": "output", "tensor_element_index": 6, "alquimia_state": "mineral_volume_fraction", "alquimia_state_index": 0},
+    {"tensor": "output", "tensor_element_index": 7, "alquimia_state": "mineral_specific_surface_area", "alquimia_state_index": 1},
+    {"tensor": "output", "tensor_element_index": 8, "alquimia_state": "surface_site_density", "alquimia_state_index": 0},
+    {"tensor": "output", "tensor_element_index": 9, "alquimia_state": "cation_exchange_capacity", "alquimia_state_index": 0},
+    {"tensor": "output", "tensor_element_index": 10, "alquimia_state": "gas_concentration", "alquimia_state_index": 0}
+  ]
+}

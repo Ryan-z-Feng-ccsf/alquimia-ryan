@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "model": "not_onnx.onnx",
+  "inputs": [],
+  "outputs": []
+}
