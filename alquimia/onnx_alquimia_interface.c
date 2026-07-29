@@ -25,6 +25,31 @@
 ** and to permit others to do so.
 */
 
+/* **************************************************************************** 
+**
+** ONNX Alquimia Inteface module
+**
+** Authors: 
+**        Zhuolei Feng, Sergi Molins
+**
+** Notes:
+**
+**  * Public function call signatures, including intent, are dictated
+**    by the alquimia API.
+**
+**  * alquimia data structures defined in the AlquimiaContainers_module
+**    (alquimia_containers.h) are dictated by the alquimia API.
+**
+**  * All other function calls (e.g. involving ORT structures) are only
+**    used here and not available in the interface
+**
+**  * It makes use of onnx_alquimia_config.h for reading the input file 
+**    with information about the .onnx model file and metadata
+**
+** **************************************************************************** 
+*/
+
+
 #include "alquimia/onnx_alquimia_interface.h"
 
 #include <limits.h>
@@ -51,6 +76,8 @@
 #include "alquimia/onnx_alquimia_config.h"
 
 #if ALQUIMIA_HAVE_ONNX
+
+/* --------------------DATA STRUCTURES USED HERE ONLY ----------------------------*/
 
 /* Mapping struct for the AlquimiaState*/
 typedef enum {
@@ -86,20 +113,20 @@ typedef struct
   /* OnnxRuntime API */
   /* Const pointer to the global OrtApi function table. Do NOT release. */
   const OrtApi *g_ort;
-  OrtEnv *env;  /* Released by ReleaseEnv() */
-  OrtSessionOptions *session_options; /* Released by ReleaseSessionOptions() */
-  OrtSession *session; /* Released by ReleaseSession() */
-  OrtMemoryInfo *memory_info; /* Released by ReleaseMemoryInfo() */
-  OrtAllocator *allocator;  /* Released by ReleaseAllocator() */
+  OrtEnv *env;  
+  OrtSessionOptions *session_options; 
+  OrtSession *session; 
+  OrtMemoryInfo *memory_info; 
+  OrtAllocator *allocator;  
   /* Setup owns this temporary representation and releases it before
   ** publishing a successfully initialized engine. */
-  OnnxAlquimiaConfig config;  /* Released by OnnxAlquimiaFreeConfig()*/
+  OnnxAlquimiaConfig config;  
 
   /* Dynamic input info */
   /* Align with num_inputs in config */
   size_t num_inputs;
   /* Align with the tensor in config */
-  char **input_names; /* Released by OrtAllocator allocator */       
+  char **input_names; 
   /* Number of dimensions for each input tensor 
   ** 0 for a scalar tensor
   */
@@ -109,27 +136,27 @@ typedef struct
   /* Considering the architecture of Alquimia 
   ** Set it as 1
   */
-  int64_t **input_dim_values; /* Released by free() */
+  int64_t **input_dim_values; 
   /* Each input tensor has their own size */
-  size_t *input_total_size; /* Released by free() */
+  size_t *input_total_size; 
   /* The real numbers for the input tensor */
-  double **input_data;  /* Released by free() */
-  OrtValue **input_tensor;  /* Released by ReleaseValue() */
+  double **input_data;  
+  OrtValue **input_tensor;  
 
   /* Dynamic output info */
   /* Align with num_outputs in config */
   size_t num_outputs;
   /* Align with the tensor in config */
-  char **output_names;  /* Released by OrtAllocator allocator */
+  char **output_names;  
   /* Number of dimensions for each output tensor */
-  size_t *output_num_dim; /* Released by free() */
+  size_t *output_num_dim; 
   /* [batch size, input features] / [input features] */
-  int64_t **output_dim_values;  /* Released by free() */
+  int64_t **output_dim_values;  
   /* Each output tensor has their own size */
-  size_t *output_total_size;  /* Released by free() */
+  size_t *output_total_size;  
   /* The real numbers for the output tensor */
-  double **output_data; /* Released by free() */
-  OrtValue **output_tensor; /* Released by ReleaseValue() */
+  double **output_data; 
+  OrtValue **output_tensor; 
 
   /* Flatten non-sequential input/output tensors into 1-dimensional arrays. */
   size_t total_flat_inputs;
@@ -137,6 +164,8 @@ typedef struct
   FeatureMapping *input_mappings;  /* Array of size total_flat_inputs */
   FeatureMapping *output_mappings; /* Array of size total_flat_outputs */
 } OnnxEngineState;
+
+/* ------------- HELPER and ONNX-RELATED FUNCTIONS USED HERE ONLY -----------------*/
 
 /**
  * @brief Converts an ONNX Runtime status into an Alquimia engine status.
@@ -944,15 +973,17 @@ static void CleanupOnSetupFailure(OnnxEngineState **onnx_state)
   onnx_alquimia_shutdown(onnx_state, &temp_status);
 }
 
+
+/* ------------------------ ALQUIMIA FUNCTIONS -------------------------------*/
+
 /**
- * @brief Initializes an ONNX engine from a versioned JSON sidecar config.
- * @param input_filename config path; relative model paths resolve from its
- *        directory.
- * @param hands_off Unused by this adapter.
+ * @brief Initializes an ONNX engine from a versioned JSON configuration (input).
+ * @param input_filename JSON file path; relative paths resolve from its directory.
+ * @param hands_off is unused for now, passed by value. 
  * @param onnx_engine_state Address that receives the initialized engine.
- * @param sizes Receives state-vector sizes derived from explicit mappings.
- * @param functionality Receives the ONNX adapter capability flags.
- * @param status Receives setup errors without being overwritten by cleanup.
+ * @param sizes Returns state-vector sizes derived from explicit mappings.
+ * @param functionality Returns the ONNX capability flags.
+ * @param status Returns setup errors without being overwritten by cleanup.
  *
  * The destination engine pointer is set to NULL before resource acquisition and
  * remains NULL on every failure. Parsed config storage is released before a
@@ -974,7 +1005,7 @@ void onnx_alquimia_setup(
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
 
-  // Unused
+  // Declare only, passed by value, not used. 
   (void)hands_off;
 
   if (onnx_engine_state == NULL)
@@ -993,7 +1024,8 @@ void onnx_alquimia_setup(
     snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for OnnxEngineState.");
     return;
   }
-  /* Parse the JSON to the config */
+  /* Read the JSON file that contains that serves as input 
+  ** and provides the metadata mapping model to alquimia struct */
   if (!OnnxAlquimiaLoadConfig(
           input_filename, &onnx_state->config, status->message,
           kAlquimiaMaxStringLength))
@@ -1042,6 +1074,7 @@ void onnx_alquimia_setup(
     return;
   }
 
+/* Read the ONNX file that contains that contains the model */ 
   ort_status = onnx_state->g_ort->CreateSession(
       onnx_state->env, onnx_state->config.model_path,
       onnx_state->session_options, &onnx_state->session);
@@ -1342,7 +1375,7 @@ void onnx_alquimia_setup(
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
-    /* Check if the output data type is double (important for geoscience) */
+    /* Check if the output data type is double */
     if (element_type != ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE)
     {
       onnx_state->g_ort->ReleaseTypeInfo(type_info);
@@ -1470,6 +1503,8 @@ void onnx_alquimia_setup(
     onnx_state->g_ort->ReleaseTypeInfo(type_info);
   }
 
+  /* functionality is hardwired for now. Mostly fine but need to revisit */
+    
   /* Each reaction step mutates the reusable tensors and backing buffers in
   ** OnnxEngineState, so shared-state calls are not thread-safe. MPI-only use
   ** remains safe because each process owns its engine state. */
@@ -1533,7 +1568,7 @@ void onnx_alquimia_setup(
 /**
  * @brief Releases all adapter and ONNX Runtime resources.
  * @param onnx_engine_state Address of the engine pointer created by setup.
- * @param status Receives an invalid-engine error for a NULL engine.
+ * @param status Returns an invalid-engine error for a NULL engine.
  *
  * Tensor names must be released with the ONNX allocator, while dimensions,
  * buffers, mappings, and copied feature names use the C allocator. On success,
