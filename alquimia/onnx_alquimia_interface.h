@@ -24,7 +24,7 @@ extern "C"
     void onnx_alquimia_processcondition(
         void* onnx_engine_state,
         AlquimiaGeochemicalCondition* condition,
-        AlquimiaProperties* props,
+        AlquimiaProperties* properties,
         AlquimiaState* state,
         AlquimiaAuxiliaryData* aux_data,
         AlquimiaEngineStatus* status);
@@ -32,7 +32,7 @@ extern "C"
     void onnx_alquimia_reactionstepoperatorsplit(
         void* onnx_engine_state,
         double delta_t,
-        AlquimiaProperties* props,
+        AlquimiaProperties* properties,
         AlquimiaState* state,
         AlquimiaAuxiliaryData* aux_data,
         int natural_id,
@@ -40,7 +40,7 @@ extern "C"
 
     void onnx_alquimia_getauxiliaryoutput(
         void* onnx_engine_state,
-        AlquimiaProperties* props,
+        AlquimiaProperties* properties,
         AlquimiaState* state,
         AlquimiaAuxiliaryData* aux_data,
         AlquimiaAuxiliaryOutputData* aux_out,

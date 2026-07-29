@@ -75,7 +75,7 @@ typedef struct {
   */
   /* Align with the alquimia_state */
   int alquimia_state_index;
-  /* Adapter-owned copy retained after the config is released. Output
+  /* Adapter-owned copy retained after the onnx_config is released. Output
   ** mappings leave this NULL because only inputs have condition names. 
   */
   char *feature;
@@ -86,20 +86,20 @@ typedef struct
   /* OnnxRuntime API */
   /* Const pointer to the global OrtApi function table. Do NOT release. */
   const OrtApi *g_ort;
-  OrtEnv *env;  /* Released by ReleaseEnv() */
-  OrtSessionOptions *session_options; /* Released by ReleaseSessionOptions() */
-  OrtSession *session; /* Released by ReleaseSession() */
-  OrtMemoryInfo *memory_info; /* Released by ReleaseMemoryInfo() */
-  OrtAllocator *allocator;  /* Released by ReleaseAllocator() */
+  OrtEnv *ort_env;  /* Released by ReleaseEnv() */
+  OrtSessionOptions *ort_session_options; /* Released by ReleaseSessionOptions() */
+  OrtSession *ort_session; /* Released by ReleaseSession() */
+  OrtMemoryInfo *ort_memory_info; /* Released by ReleaseMemoryInfo() */
+  OrtAllocator *ort_allocator;  /* Released by ReleaseAllocator() */
   /* Setup owns this temporary representation and releases it before
   ** publishing a successfully initialized engine. */
-  OnnxAlquimiaConfig config;  /* Released by OnnxAlquimiaFreeConfig()*/
+  OnnxAlquimiaConfig onnx_config;  /* Released by OnnxAlquimiaFreeConfig()*/
 
   /* Dynamic input info */
-  /* Align with num_inputs in config */
+  /* Align with num_inputs in onnx_config */
   size_t num_inputs;
-  /* Align with the tensor in config */
-  char **input_names; /* Released by OrtAllocator allocator */       
+  /* Align with the tensor in onnx_config */
+  char **input_names; /* Released by OrtAllocator ort_allocator */       
   /* Number of dimensions for each input tensor 
   ** 0 for a scalar tensor
   */
@@ -117,10 +117,10 @@ typedef struct
   OrtValue **input_tensor;  /* Released by ReleaseValue() */
 
   /* Dynamic output info */
-  /* Align with num_outputs in config */
+  /* Align with num_outputs in onnx_config */
   size_t num_outputs;
-  /* Align with the tensor in config */
-  char **output_names;  /* Released by OrtAllocator allocator */
+  /* Align with the tensor in onnx_config */
+  char **output_names;  /* Released by OrtAllocator ort_allocator */
   /* Number of dimensions for each output tensor */
   size_t *output_num_dim; /* Released by free() */
   /* [batch size, input features] / [input features] */
@@ -164,8 +164,8 @@ static bool CheckStatus(const OrtApi *g_ort, OrtStatus *status, AlquimiaEngineSt
 }
 
 /**
- * @brief Maps an exact config state-variable name to an AlquimiaState field.
- * @param name Case-sensitive alquimia_state value from the config.
+ * @brief Maps an exact onnx_config state-variable name to an AlquimiaState field.
+ * @param name Case-sensitive alquimia_state value from the onnx_config.
  * @param target Receives the corresponding mapping enum on success and remains
  *        unchanged when @p name is unsupported.
  * @return True when @p name identifies a supported scalar or vector field.
@@ -296,11 +296,11 @@ static void StoreMetadataName(
 }
 
 /**
- * @brief Copies a config feature name into adapter-owned storage.
+ * @brief Copies a onnx_config feature name into adapter-owned storage.
  * @param name Null-terminated feature name to copy.
  * @return A newly allocated copy, or NULL on allocation failure.
  *
- * The returned string outlives the parsed config and is released with the
+ * The returned string outlives the parsed onnx_config and is released with the
  * input mapping array during engine shutdown.
  */
 static char *CopyFeatureName(const char *name)
@@ -315,9 +315,9 @@ static char *CopyFeatureName(const char *name)
 }
 
 /**
- * @brief Converts one validated config destination into a runtime mapping.
+ * @brief Converts one validated onnx_config destination into a runtime mapping.
  * @param alquimia_state Case-sensitive AlquimiaState variable name.
- * @param alquimia_state_index Nonnegative state-vector index from the config.
+ * @param alquimia_state_index Nonnegative state-vector index from the onnx_config.
  * @param mapping Receives the runtime destination on success.
  * @param status Receives an engine-integrity error on incompatibility.
  * @return True when the state variable and index can be represented safely.
@@ -407,7 +407,7 @@ static void UpdateSizesForMapping(
 
 /**
  * @brief Resolves a tensor element index to the flat runtime mapping index.
- * @param tensor Case-sensitive tensor name from the config.
+ * @param tensor Case-sensitive tensor name from the onnx_config.
  * @param tensor_element_index Zero-based flattened index within that tensor.
  * @param num_tensors Number of model tensors in @p names and @p tensor_sizes.
  * @param names ONNX Runtime tensor names in session order.
@@ -476,7 +476,7 @@ static bool FindFlatTensorElement(
 }
 
 /**
- * @brief Clears all dimensions before deriving them solely from the config.
+ * @brief Clears all dimensions before deriving them solely from the onnx_config.
  * @param sizes Size structure returned through the generic engine interface.
  */
 static void InitializeSizes(AlquimiaSizes *sizes)
@@ -519,13 +519,13 @@ static bool ValidateUniqueInputFeature(
 }
 
 /**
- * @brief Builds complete flat input/output mappings from the parsed config.
+ * @brief Builds complete flat input/output mappings from the parsed onnx_config.
  * @param onnx_state Inspected model state and destination for runtime mappings.
  * @param sizes Receives dimensions derived from the highest mapped indices.
  * @param status Receives allocation or semantic-validation errors.
  * @return True only when every tensor element index has exactly one mapping.
  *
- * Input feature names are copied before the config is released. The seen
+ * Input feature names are copied before the onnx_config is released. The seen
  * arrays enforce complete coverage and prevent duplicate tensor indices;
  * name-category checks preserve the metadata representation invariant.
  */
@@ -564,16 +564,16 @@ static bool BuildConfigMappings(
   InitializeSizes(sizes);
 
   /* For every input tensor */
-  for (i = 0; i < onnx_state->config.num_inputs; ++i)
+  for (i = 0; i < onnx_state->onnx_config.num_inputs; ++i)
   {
-    /* This points to the real OnnxEngine->config.inputMapping */
-    const OnnxAlquimiaInputMappingSpec *spec = &onnx_state->config.inputs[i];
+    /* This points to the real OnnxEngine->onnx_config.inputMapping */
+    const OnnxAlquimiaInputMappingSpec *onnx_spec = &onnx_state->onnx_config.inputs[i];
     FeatureMapping *mapping;
     size_t flat_index;
     size_t j;
 
     /* Map the tensor element index into the 1-dimensional flattened array. */
-    if (!FindFlatTensorElement(spec->tensor, spec->tensor_element_index,
+    if (!FindFlatTensorElement(onnx_spec->tensor, onnx_spec->tensor_element_index,
                                onnx_state->num_inputs,
                                onnx_state->input_names,
                                onnx_state->input_total_size,
@@ -589,15 +589,15 @@ static bool BuildConfigMappings(
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
                "Duplicate ONNX input mapping for tensor '%s' element index %zu.",
-               spec->tensor, spec->tensor_element_index);
+               onnx_spec->tensor, onnx_spec->tensor_element_index);
       free(input_seen);
       free(output_seen);
       return false;
     }
     mapping = &onnx_state->input_mappings[flat_index];
     /* Parse the AlquimiaState value to the input mapping */
-    if (!ParseConfigMapping(spec->alquimia_state,
-                              spec->alquimia_state_index, mapping, status))
+    if (!ParseConfigMapping(onnx_spec->alquimia_state,
+                              onnx_spec->alquimia_state_index, mapping, status))
     {
       free(input_seen);
       free(output_seen);
@@ -606,7 +606,7 @@ static bool BuildConfigMappings(
     /* Check the duplicate input feature */
     if (!ValidateUniqueInputFeature(
             onnx_state->input_mappings, input_seen,
-            onnx_state->total_flat_inputs, spec->feature, status))
+            onnx_state->total_flat_inputs, onnx_spec->feature, status))
     {
       free(input_seen);
       free(output_seen);
@@ -624,21 +624,21 @@ static bool BuildConfigMappings(
           MetadataNameCategory(other->alquimia_state) ==
               MetadataNameCategory(mapping->alquimia_state) &&
           other->alquimia_state_index == mapping->alquimia_state_index &&
-          strcmp(other->feature, spec->feature) != 0)
+          strcmp(other->feature, onnx_spec->feature) != 0)
       {
         status->error = kAlquimiaErrorEngineIntegrity;
         snprintf(status->message, kAlquimiaMaxStringLength,
                  "Conflicting ONNX feature names '%s' and '%s' for "
                  "AlquimiaState variable '%s' index %d.",
-                 other->feature, spec->feature, spec->alquimia_state,
-                 spec->alquimia_state_index);
+                 other->feature, onnx_spec->feature, onnx_spec->alquimia_state,
+                 onnx_spec->alquimia_state_index);
         free(input_seen);
         free(output_seen);
         return false;
       }
     }
     /* Copy the feature name */
-    mapping->feature = CopyFeatureName(spec->feature);
+    mapping->feature = CopyFeatureName(onnx_spec->feature);
     if (mapping->feature == NULL)
     {
       status->error = kAlquimiaErrorEngineIntegrity;
@@ -655,15 +655,15 @@ static bool BuildConfigMappings(
   }
 
   /* For every output tensor */
-  for (i = 0; i < onnx_state->config.num_outputs; ++i)
+  for (i = 0; i < onnx_state->onnx_config.num_outputs; ++i)
   {
-    /* This points to the real OnnxEngine->config.outputMapping */
-    const OnnxAlquimiaOutputMappingSpec *spec = &onnx_state->config.outputs[i];
+    /* This points to the real OnnxEngine->onnx_config.outputMapping */
+    const OnnxAlquimiaOutputMappingSpec *onnx_spec = &onnx_state->onnx_config.outputs[i];
     FeatureMapping *mapping;
     size_t flat_index;
 
     /* Map the tensor element index into the 1-dimensional flattened array. */
-    if (!FindFlatTensorElement(spec->tensor, spec->tensor_element_index,
+    if (!FindFlatTensorElement(onnx_spec->tensor, onnx_spec->tensor_element_index,
                                onnx_state->num_outputs,
                                onnx_state->output_names,
                                onnx_state->output_total_size,
@@ -679,15 +679,15 @@ static bool BuildConfigMappings(
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
                "Duplicate ONNX output mapping for tensor '%s' element index %zu.",
-               spec->tensor, spec->tensor_element_index);
+               onnx_spec->tensor, onnx_spec->tensor_element_index);
       free(input_seen);
       free(output_seen);
       return false;
     }
     mapping = &onnx_state->output_mappings[flat_index];
     /* Parse the AlquimiaState value to the output mapping */
-    if (!ParseConfigMapping(spec->alquimia_state,
-                              spec->alquimia_state_index, mapping, status))
+    if (!ParseConfigMapping(onnx_spec->alquimia_state,
+                              onnx_spec->alquimia_state_index, mapping, status))
     {
       free(input_seen);
       free(output_seen);
@@ -732,67 +732,67 @@ static bool BuildConfigMappings(
 /**
  * @brief Reads one mapped scalar or vector element from an AlquimiaState.
  * @param state State containing the model input value.
- * @param map Validated destination field and zero-based vector index.
+ * @param mapping Validated destination field and zero-based vector index.
  * @param status Receives an engine integrity error for an unknown field, NULL
  *        vector storage, or an out-of-bounds vector index.
  * @return The mapped value on success, or 0.0 after recording an error.
  */
 static double GetAlquimiaValue(
     const AlquimiaState *state,
-    FeatureMapping map,
+    FeatureMapping mapping,
     AlquimiaEngineStatus *status)
 {
-  switch (map.alquimia_state)
+  switch (mapping.alquimia_state)
   {
   case ALQUIMIA_STRUCT_TOTAL_MOBILE:
-    if (state->total_mobile.data == NULL || map.alquimia_state_index >= state->total_mobile.size)
+    if (state->total_mobile.data == NULL || mapping.alquimia_state_index >= state->total_mobile.size)
     {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds total_mobile access: index %d, size %d.", map.alquimia_state_index, state->total_mobile.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds total_mobile access: index %d, size %d.", mapping.alquimia_state_index, state->total_mobile.size);
       return 0.0;
     }
-    return state->total_mobile.data[map.alquimia_state_index];
+    return state->total_mobile.data[mapping.alquimia_state_index];
 
   case ALQUIMIA_STRUCT_TOTAL_IMMOBILE:
-    if (state->total_immobile.data == NULL || map.alquimia_state_index >= state->total_immobile.size)
+    if (state->total_immobile.data == NULL || mapping.alquimia_state_index >= state->total_immobile.size)
     {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds total_immobile access: index %d, size %d.", map.alquimia_state_index, state->total_immobile.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds total_immobile access: index %d, size %d.", mapping.alquimia_state_index, state->total_immobile.size);
       return 0.0;
     }
-    return state->total_immobile.data[map.alquimia_state_index];
+    return state->total_immobile.data[mapping.alquimia_state_index];
 
   case ALQUIMIA_STRUCT_MINERAL_VOLUME_FRACTION:
-      if (state->mineral_volume_fraction.data == NULL || map.alquimia_state_index >= state->mineral_volume_fraction.size) {
+      if (state->mineral_volume_fraction.data == NULL || mapping.alquimia_state_index >= state->mineral_volume_fraction.size) {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds mineral_volume_fraction access: index %d, size %d.", map.alquimia_state_index, state->mineral_volume_fraction.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds mineral_volume_fraction access: index %d, size %d.", mapping.alquimia_state_index, state->mineral_volume_fraction.size);
       return 0.0;
     }
-    return state->mineral_volume_fraction.data[map.alquimia_state_index];
+    return state->mineral_volume_fraction.data[mapping.alquimia_state_index];
 
   case ALQUIMIA_STRUCT_MINERAL_SPECIFIC_SURFACE_AREA:
-      if (state->mineral_specific_surface_area.data == NULL || map.alquimia_state_index >= state->mineral_specific_surface_area.size) {
+      if (state->mineral_specific_surface_area.data == NULL || mapping.alquimia_state_index >= state->mineral_specific_surface_area.size) {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds mineral_specific_surface_area access: index %d, size %d.", map.alquimia_state_index, state->mineral_specific_surface_area.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds mineral_specific_surface_area access: index %d, size %d.", mapping.alquimia_state_index, state->mineral_specific_surface_area.size);
       return 0.0;
     }
-    return state->mineral_specific_surface_area.data[map.alquimia_state_index];
+    return state->mineral_specific_surface_area.data[mapping.alquimia_state_index];
 
   case ALQUIMIA_STRUCT_SURFACE_SITE_DENSITY:
-      if (state->surface_site_density.data == NULL || map.alquimia_state_index >= state->surface_site_density.size) {
+      if (state->surface_site_density.data == NULL || mapping.alquimia_state_index >= state->surface_site_density.size) {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds surface_site_density access: index %d, size %d.", map.alquimia_state_index, state->surface_site_density.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds surface_site_density access: index %d, size %d.", mapping.alquimia_state_index, state->surface_site_density.size);
       return 0.0;
     }
-    return state->surface_site_density.data[map.alquimia_state_index];
+    return state->surface_site_density.data[mapping.alquimia_state_index];
 
   case ALQUIMIA_STRUCT_CATION_EXCHANGE_CAPACITY:
-      if (state->cation_exchange_capacity.data == NULL || map.alquimia_state_index >= state->cation_exchange_capacity.size) {
+      if (state->cation_exchange_capacity.data == NULL || mapping.alquimia_state_index >= state->cation_exchange_capacity.size) {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds cation_exchange_capacity access: index %d, size %d.", map.alquimia_state_index, state->cation_exchange_capacity.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds cation_exchange_capacity access: index %d, size %d.", mapping.alquimia_state_index, state->cation_exchange_capacity.size);
       return 0.0;
     }
-    return state->cation_exchange_capacity.data[map.alquimia_state_index];
+    return state->cation_exchange_capacity.data[mapping.alquimia_state_index];
 
   case ALQUIMIA_STRUCT_POROSITY:
     return state->porosity;
@@ -807,16 +807,16 @@ static double GetAlquimiaValue(
     return state->water_density;
 
   case ALQUIMIA_STRUCT_GAS_CONCENTRATION:
-      if (state->gas_concentration.data == NULL || map.alquimia_state_index >= state->gas_concentration.size) {
+      if (state->gas_concentration.data == NULL || mapping.alquimia_state_index >= state->gas_concentration.size) {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds gas_concentration access: index %d, size %d.", map.alquimia_state_index, state->gas_concentration.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds gas_concentration access: index %d, size %d.", mapping.alquimia_state_index, state->gas_concentration.size);
       return 0.0;
     }
-    return state->gas_concentration.data[map.alquimia_state_index];
+    return state->gas_concentration.data[mapping.alquimia_state_index];
 
   default:
     status->error = kAlquimiaErrorEngineIntegrity;
-    snprintf(status->message, kAlquimiaMaxStringLength, "Unknown mapped struct type: %d.", map.alquimia_state);
+    snprintf(status->message, kAlquimiaMaxStringLength, "Unknown mapped struct type: %d.", mapping.alquimia_state);
     return 0.0;
   }
 }
@@ -824,75 +824,75 @@ static double GetAlquimiaValue(
 /**
  * @brief Writes one model output to a mapped AlquimiaState destination.
  * @param state State that receives the model output value.
- * @param map Validated destination field and zero-based vector index.
+ * @param mapping Validated destination field and zero-based vector index.
  * @param value Model output to assign.
  * @param status Receives an engine integrity error for an unknown field, NULL
  *        vector storage, or an out-of-bounds vector index.
  */
 static void SetAlquimiaValue(
     AlquimiaState *state,
-    FeatureMapping map,
+    FeatureMapping mapping,
     double value,
     AlquimiaEngineStatus *status)
 {
-  switch (map.alquimia_state)
+  switch (mapping.alquimia_state)
   {
   case ALQUIMIA_STRUCT_TOTAL_MOBILE:
-      if (state->total_mobile.data == NULL || map.alquimia_state_index >= state->total_mobile.size) {
+      if (state->total_mobile.data == NULL || mapping.alquimia_state_index >= state->total_mobile.size) {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds total_mobile write: index %d, size %d.", map.alquimia_state_index, state->total_mobile.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds total_mobile write: index %d, size %d.", mapping.alquimia_state_index, state->total_mobile.size);
       return;
     }
-    state->total_mobile.data[map.alquimia_state_index] = value;
+    state->total_mobile.data[mapping.alquimia_state_index] = value;
     break;
 
   case ALQUIMIA_STRUCT_TOTAL_IMMOBILE:
-      if (state->total_immobile.data == NULL || map.alquimia_state_index >= state->total_immobile.size) {
+      if (state->total_immobile.data == NULL || mapping.alquimia_state_index >= state->total_immobile.size) {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds total_immobile write: index %d, size %d.", map.alquimia_state_index, state->total_immobile.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds total_immobile write: index %d, size %d.", mapping.alquimia_state_index, state->total_immobile.size);
       return;
     }
-    state->total_immobile.data[map.alquimia_state_index] = value;
+    state->total_immobile.data[mapping.alquimia_state_index] = value;
     break;
 
   case ALQUIMIA_STRUCT_MINERAL_VOLUME_FRACTION:
-    if (state->mineral_volume_fraction.data == NULL || map.alquimia_state_index >= state->mineral_volume_fraction.size)
+    if (state->mineral_volume_fraction.data == NULL || mapping.alquimia_state_index >= state->mineral_volume_fraction.size)
     {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds mineral_volume_fraction write: index %d, size %d.", map.alquimia_state_index, state->mineral_volume_fraction.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds mineral_volume_fraction write: index %d, size %d.", mapping.alquimia_state_index, state->mineral_volume_fraction.size);
       return;
     }
-    state->mineral_volume_fraction.data[map.alquimia_state_index] = value;
+    state->mineral_volume_fraction.data[mapping.alquimia_state_index] = value;
     break;
 
   case ALQUIMIA_STRUCT_MINERAL_SPECIFIC_SURFACE_AREA:
-    if (state->mineral_specific_surface_area.data == NULL || map.alquimia_state_index >= state->mineral_specific_surface_area.size)
+    if (state->mineral_specific_surface_area.data == NULL || mapping.alquimia_state_index >= state->mineral_specific_surface_area.size)
     {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds mineral_specific_surface_area write: index %d, size %d.", map.alquimia_state_index, state->mineral_specific_surface_area.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds mineral_specific_surface_area write: index %d, size %d.", mapping.alquimia_state_index, state->mineral_specific_surface_area.size);
       return;
     }
-    state->mineral_specific_surface_area.data[map.alquimia_state_index] = value;
+    state->mineral_specific_surface_area.data[mapping.alquimia_state_index] = value;
     break;
 
   case ALQUIMIA_STRUCT_SURFACE_SITE_DENSITY:
-    if (state->surface_site_density.data == NULL || map.alquimia_state_index >= state->surface_site_density.size)
+    if (state->surface_site_density.data == NULL || mapping.alquimia_state_index >= state->surface_site_density.size)
     {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds surface_site_density write: index %d, size %d.", map.alquimia_state_index, state->surface_site_density.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds surface_site_density write: index %d, size %d.", mapping.alquimia_state_index, state->surface_site_density.size);
       return;
     }
-    state->surface_site_density.data[map.alquimia_state_index] = value;
+    state->surface_site_density.data[mapping.alquimia_state_index] = value;
     break;
 
   case ALQUIMIA_STRUCT_CATION_EXCHANGE_CAPACITY:
-    if (state->cation_exchange_capacity.data == NULL || map.alquimia_state_index >= state->cation_exchange_capacity.size)
+    if (state->cation_exchange_capacity.data == NULL || mapping.alquimia_state_index >= state->cation_exchange_capacity.size)
     {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds cation_exchange_capacity write: index %d, size %d.", map.alquimia_state_index, state->cation_exchange_capacity.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds cation_exchange_capacity write: index %d, size %d.", mapping.alquimia_state_index, state->cation_exchange_capacity.size);
       return;
     }
-    state->cation_exchange_capacity.data[map.alquimia_state_index] = value;
+    state->cation_exchange_capacity.data[mapping.alquimia_state_index] = value;
     break;
 
   case ALQUIMIA_STRUCT_POROSITY:
@@ -912,18 +912,18 @@ static void SetAlquimiaValue(
     break;
 
   case ALQUIMIA_STRUCT_GAS_CONCENTRATION:
-    if (state->gas_concentration.data == NULL || map.alquimia_state_index >= state->gas_concentration.size)
+    if (state->gas_concentration.data == NULL || mapping.alquimia_state_index >= state->gas_concentration.size)
     {
       status->error = kAlquimiaErrorEngineIntegrity;
-      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds gas_concentration write: index %d, size %d.", map.alquimia_state_index, state->gas_concentration.size);
+      snprintf(status->message, kAlquimiaMaxStringLength, "Out-of-bounds gas_concentration write: index %d, size %d.", mapping.alquimia_state_index, state->gas_concentration.size);
       return;
     }
-    state->gas_concentration.data[map.alquimia_state_index] = value;
+    state->gas_concentration.data[mapping.alquimia_state_index] = value;
     break;
 
   default:
     status->error = kAlquimiaErrorEngineIntegrity;
-    snprintf(status->message, kAlquimiaMaxStringLength, "Unknown mapped struct type: %d.", map.alquimia_state);
+    snprintf(status->message, kAlquimiaMaxStringLength, "Unknown mapped struct type: %d.", mapping.alquimia_state);
     break;
   }
 }
@@ -945,8 +945,8 @@ static void CleanupOnSetupFailure(OnnxEngineState **onnx_state)
 }
 
 /**
- * @brief Initializes an ONNX engine from a versioned JSON sidecar config.
- * @param input_filename config path; relative model paths resolve from its
+ * @brief Initializes an ONNX engine from a versioned JSON sidecar onnx_config.
+ * @param input_filename onnx_config path; relative model paths resolve from its
  *        directory.
  * @param hands_off Unused by this adapter.
  * @param onnx_engine_state Address that receives the initialized engine.
@@ -955,7 +955,7 @@ static void CleanupOnSetupFailure(OnnxEngineState **onnx_state)
  * @param status Receives setup errors without being overwritten by cleanup.
  *
  * The destination engine pointer is set to NULL before resource acquisition and
- * remains NULL on every failure. Parsed config storage is released before a
+ * remains NULL on every failure. Parsed onnx_config storage is released before a
  * successful engine is published.
  */
 void onnx_alquimia_setup(
@@ -993,23 +993,23 @@ void onnx_alquimia_setup(
     snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for OnnxEngineState.");
     return;
   }
-  /* Parse the JSON to the config */
+  /* Parse the JSON to the onnx_config */
   if (!OnnxAlquimiaLoadConfig(
-          input_filename, &onnx_state->config, status->message,
+          input_filename, &onnx_state->onnx_config, status->message,
           kAlquimiaMaxStringLength))
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     free(onnx_state);
     return;
   }
-  f = fopen(onnx_state->config.model_path, "rb");
+  f = fopen(onnx_state->onnx_config.model_path, "rb");
   if (f == NULL)
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
              "ONNX model file not found: %s",
-             onnx_state->config.model_path);
-    OnnxAlquimiaFreeConfig(&onnx_state->config);
+             onnx_state->onnx_config.model_path);
+    OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
     free(onnx_state);
     return;
   }
@@ -1020,48 +1020,48 @@ void onnx_alquimia_setup(
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength, "Failed to load ONNX Runtime API.");
-    OnnxAlquimiaFreeConfig(&onnx_state->config);
+    OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
     free(onnx_state);
     return;
   }
 
-  ort_status = onnx_state->g_ort->CreateEnv(ORT_LOGGING_LEVEL_WARNING, "onnx_alquimia_engine", &onnx_state->env);
+  ort_status = onnx_state->g_ort->CreateEnv(ORT_LOGGING_LEVEL_WARNING, "onnx_alquimia_engine", &onnx_state->ort_env);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
-    OnnxAlquimiaFreeConfig(&onnx_state->config);
+    OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
     free(onnx_state);
     return;
   }
 
-  ort_status = onnx_state->g_ort->CreateSessionOptions(&onnx_state->session_options);
+  ort_status = onnx_state->g_ort->CreateSessionOptions(&onnx_state->ort_session_options);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
-    onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    OnnxAlquimiaFreeConfig(&onnx_state->config);
+    onnx_state->g_ort->ReleaseEnv(onnx_state->ort_env);
+    OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
     free(onnx_state);
     return;
   }
 
   ort_status = onnx_state->g_ort->CreateSession(
-      onnx_state->env, onnx_state->config.model_path,
-      onnx_state->session_options, &onnx_state->session);
+      onnx_state->ort_env, onnx_state->onnx_config.model_path,
+      onnx_state->ort_session_options, &onnx_state->ort_session);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
-    onnx_state->g_ort->ReleaseSessionOptions(onnx_state->session_options);
-    onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-    OnnxAlquimiaFreeConfig(&onnx_state->config);
+    onnx_state->g_ort->ReleaseSessionOptions(onnx_state->ort_session_options);
+    onnx_state->g_ort->ReleaseEnv(onnx_state->ort_env);
+    OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
     free(onnx_state);
     return;
   }
 
-  ort_status = onnx_state->g_ort->CreateCpuMemoryInfo(OrtArenaAllocator, OrtMemTypeDefault, &onnx_state->memory_info);
+  ort_status = onnx_state->g_ort->CreateCpuMemoryInfo(OrtArenaAllocator, OrtMemTypeDefault, &onnx_state->ort_memory_info);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
     CleanupOnSetupFailure(&onnx_state);
     return;
   }
 
-  ort_status = onnx_state->g_ort->CreateAllocator(onnx_state->session, onnx_state->memory_info, &onnx_state->allocator);
+  ort_status = onnx_state->g_ort->CreateAllocator(onnx_state->ort_session, onnx_state->ort_memory_info, &onnx_state->ort_allocator);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
     CleanupOnSetupFailure(&onnx_state);
@@ -1070,7 +1070,7 @@ void onnx_alquimia_setup(
 
   /* Query input/output tensor count */
   size_t num_inputs = 0;
-  ort_status = onnx_state->g_ort->SessionGetInputCount(onnx_state->session, &num_inputs);
+  ort_status = onnx_state->g_ort->SessionGetInputCount(onnx_state->ort_session, &num_inputs);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
     CleanupOnSetupFailure(&onnx_state);
@@ -1079,7 +1079,7 @@ void onnx_alquimia_setup(
   onnx_state->num_inputs = num_inputs;
 
   size_t num_outputs = 0;
-  ort_status = onnx_state->g_ort->SessionGetOutputCount(onnx_state->session, &num_outputs);
+  ort_status = onnx_state->g_ort->SessionGetOutputCount(onnx_state->ort_session, &num_outputs);
   if (!CheckStatus(onnx_state->g_ort, ort_status, status))
   {
     CleanupOnSetupFailure(&onnx_state);
@@ -1120,7 +1120,7 @@ void onnx_alquimia_setup(
   {
     char *name = NULL;
     /* Get the names of the input tensor[i] */
-    ort_status = onnx_state->g_ort->SessionGetInputName(onnx_state->session, i, onnx_state->allocator, &name);
+    ort_status = onnx_state->g_ort->SessionGetInputName(onnx_state->ort_session, i, onnx_state->ort_allocator, &name);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
       CleanupOnSetupFailure(&onnx_state);
@@ -1128,37 +1128,37 @@ void onnx_alquimia_setup(
     }
     onnx_state->input_names[i] = name;
 
-    OrtTypeInfo *type_info = NULL;  /* Released by ReleaseTypeInfo */
-    ort_status = onnx_state->g_ort->SessionGetInputTypeInfo(onnx_state->session, i, &type_info);
+    OrtTypeInfo *ort_type_info = NULL;  /* Released by ReleaseTypeInfo */
+    ort_status = onnx_state->g_ort->SessionGetInputTypeInfo(onnx_state->ort_session, i, &ort_type_info);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
 
-    const OrtTensorTypeAndShapeInfo *tensor_info = NULL;  /* Do not free this value. It will be valid until type_info is freed */
+    const OrtTensorTypeAndShapeInfo *tensor_info = NULL;  /* Do not free this value. It will be valid until ort_type_info is freed */
     /* Check if the input data type is double */
-    ONNXTensorElementDataType element_type; /* No need to free. enum */
-    ort_status = onnx_state->g_ort->CastTypeInfoToTensorInfo(type_info, &tensor_info);
+    ONNXTensorElementDataType onnx_element_type; /* No need to free. enum */
+    ort_status = onnx_state->g_ort->CastTypeInfoToTensorInfo(ort_type_info, &tensor_info);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
     /* Get the input data type */
     ort_status = onnx_state->g_ort->GetTensorElementType(
-        tensor_info, &element_type);
+        tensor_info, &onnx_element_type);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
     /* Check if the input data type is double (important for geoscience) */
-    if (element_type != ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE)
+    if (onnx_element_type != ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE)
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
                "ONNX input tensor '%s' must have double elements.",
@@ -1172,7 +1172,7 @@ void onnx_alquimia_setup(
     ort_status = onnx_state->g_ort->GetDimensionsCount(tensor_info, &dim_count);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
@@ -1186,7 +1186,7 @@ void onnx_alquimia_setup(
       onnx_state->input_dim_values[i] = (int64_t *)calloc(1, sizeof(int64_t));
       if (onnx_state->input_dim_values[i] == NULL)
       {
-        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
         status->error = kAlquimiaErrorEngineIntegrity;
         snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for scalar input_dim_values.");
         CleanupOnSetupFailure(&onnx_state);
@@ -1201,7 +1201,7 @@ void onnx_alquimia_setup(
       onnx_state->input_dim_values[i] = (int64_t *)calloc(dim_count, sizeof(int64_t));
       if (onnx_state->input_dim_values[i] == NULL)
       {
-        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
         status->error = kAlquimiaErrorEngineIntegrity;
         snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for input_dim_values.");
         CleanupOnSetupFailure(&onnx_state);
@@ -1211,7 +1211,7 @@ void onnx_alquimia_setup(
       ort_status = onnx_state->g_ort->GetDimensions(tensor_info, onnx_state->input_dim_values[i], dim_count);
       if (!CheckStatus(onnx_state->g_ort, ort_status, status))
       {
-        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
         CleanupOnSetupFailure(&onnx_state);
         return;
       }
@@ -1231,7 +1231,7 @@ void onnx_alquimia_setup(
         /* Only when input_num_dim[i][0] == -1 */
         if (j != 0 || onnx_state->input_num_dim[i] == 1)
         {
-          onnx_state->g_ort->ReleaseTypeInfo(type_info);
+          onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
           status->error = kAlquimiaErrorEngineIntegrity;
           snprintf(status->message, kAlquimiaMaxStringLength,
                    "ONNX input tensor '%s' has an unsupported dynamic extent.",
@@ -1247,7 +1247,7 @@ void onnx_alquimia_setup(
       */
       if ((size_t)onnx_state->input_dim_values[i][j] > SIZE_MAX / total_size)
       {
-        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
         status->error = kAlquimiaErrorEngineIntegrity;
         snprintf(status->message, kAlquimiaMaxStringLength,
                  "ONNX input tensor '%s' element count overflows size_t.",
@@ -1263,7 +1263,7 @@ void onnx_alquimia_setup(
     onnx_state->input_data[i] = (double *)calloc(total_size, sizeof(double));
     if (onnx_state->input_data[i] == NULL)
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for input_data.");
       CleanupOnSetupFailure(&onnx_state);
@@ -1272,17 +1272,17 @@ void onnx_alquimia_setup(
 
     /* The OrtValue wraps input_data; ONNX Runtime does not own that buffer. */
     ort_status = onnx_state->g_ort->CreateTensorWithDataAsOrtValue(
-        onnx_state->memory_info, onnx_state->input_data[i], total_size * sizeof(double),
+        onnx_state->ort_memory_info, onnx_state->input_data[i], total_size * sizeof(double),
         onnx_state->input_dim_values[i], onnx_state->input_num_dim[i],
         ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE, &onnx_state->input_tensor[i]);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
     /* Release the type info */
-    onnx_state->g_ort->ReleaseTypeInfo(type_info);
+    onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
   }
 
   onnx_state->output_names = (char **)calloc(num_outputs, sizeof(char *));
@@ -1307,7 +1307,7 @@ void onnx_alquimia_setup(
   {
     char *name = NULL;
     /* Get the names of the output tensor[i] */
-    ort_status = onnx_state->g_ort->SessionGetOutputName(onnx_state->session, i, onnx_state->allocator, &name);
+    ort_status = onnx_state->g_ort->SessionGetOutputName(onnx_state->ort_session, i, onnx_state->ort_allocator, &name);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
       CleanupOnSetupFailure(&onnx_state);
@@ -1315,37 +1315,37 @@ void onnx_alquimia_setup(
     }
     onnx_state->output_names[i] = name;
 
-    OrtTypeInfo *type_info = NULL;  /* Released by ReleaseTypeInfo */
-    ort_status = onnx_state->g_ort->SessionGetOutputTypeInfo(onnx_state->session, i, &type_info);
+    OrtTypeInfo *ort_type_info = NULL;  /* Released by ReleaseTypeInfo */
+    ort_status = onnx_state->g_ort->SessionGetOutputTypeInfo(onnx_state->ort_session, i, &ort_type_info);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
 
-    const OrtTensorTypeAndShapeInfo *tensor_info = NULL;  /* Do not free this value. It will be valid until type_info is freed */
+    const OrtTensorTypeAndShapeInfo *tensor_info = NULL;  /* Do not free this value. It will be valid until ort_type_info is freed */
     /* Check if the output data type is double */
-    ONNXTensorElementDataType element_type; /* No need to free. enum */
-    ort_status = onnx_state->g_ort->CastTypeInfoToTensorInfo(type_info, &tensor_info);
+    ONNXTensorElementDataType onnx_element_type; /* No need to free. enum */
+    ort_status = onnx_state->g_ort->CastTypeInfoToTensorInfo(ort_type_info, &tensor_info);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
     /* Get the output data type */
     ort_status = onnx_state->g_ort->GetTensorElementType(
-        tensor_info, &element_type);
+        tensor_info, &onnx_element_type);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
     /* Check if the output data type is double (important for geoscience) */
-    if (element_type != ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE)
+    if (onnx_element_type != ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE)
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
                "ONNX output tensor '%s' must have double elements.",
@@ -1359,7 +1359,7 @@ void onnx_alquimia_setup(
     ort_status = onnx_state->g_ort->GetDimensionsCount(tensor_info, &dim_count);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
@@ -1373,7 +1373,7 @@ void onnx_alquimia_setup(
       onnx_state->output_dim_values[i] = (int64_t *)calloc(1, sizeof(int64_t));
       if (onnx_state->output_dim_values[i] == NULL)
       {
-        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
         status->error = kAlquimiaErrorEngineIntegrity;
         snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for scalar output_dim_values.");
         CleanupOnSetupFailure(&onnx_state);
@@ -1388,7 +1388,7 @@ void onnx_alquimia_setup(
       onnx_state->output_dim_values[i] = (int64_t *)calloc(dim_count, sizeof(int64_t));
       if (onnx_state->output_dim_values[i] == NULL)
       {
-        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
         status->error = kAlquimiaErrorEngineIntegrity;
         snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for output_dim_values.");
         CleanupOnSetupFailure(&onnx_state);
@@ -1398,7 +1398,7 @@ void onnx_alquimia_setup(
       ort_status = onnx_state->g_ort->GetDimensions(tensor_info, onnx_state->output_dim_values[i], dim_count);
       if (!CheckStatus(onnx_state->g_ort, ort_status, status))
       {
-        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
         CleanupOnSetupFailure(&onnx_state);
         return;
       }
@@ -1416,7 +1416,7 @@ void onnx_alquimia_setup(
         /* Only when output_num_dim[i][0] == -1 */
         if (j != 0 || onnx_state->output_num_dim[i] == 1)
         {
-          onnx_state->g_ort->ReleaseTypeInfo(type_info);
+          onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
           status->error = kAlquimiaErrorEngineIntegrity;
           snprintf(status->message, kAlquimiaMaxStringLength,
                    "ONNX output tensor '%s' has an unsupported dynamic extent.",
@@ -1432,7 +1432,7 @@ void onnx_alquimia_setup(
       */
       if ((size_t)onnx_state->output_dim_values[i][j] > SIZE_MAX / total_size)
       {
-        onnx_state->g_ort->ReleaseTypeInfo(type_info);
+        onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
         status->error = kAlquimiaErrorEngineIntegrity;
         snprintf(status->message, kAlquimiaMaxStringLength,
                  "ONNX output tensor '%s' element count overflows size_t.",
@@ -1448,7 +1448,7 @@ void onnx_alquimia_setup(
     onnx_state->output_data[i] = (double *)calloc(total_size, sizeof(double));
     if (onnx_state->output_data[i] == NULL)
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for output_data.");
       CleanupOnSetupFailure(&onnx_state);
@@ -1457,17 +1457,17 @@ void onnx_alquimia_setup(
 
     /* The OrtValue wraps output_data; ONNX Runtime does not own that buffer. */
     ort_status = onnx_state->g_ort->CreateTensorWithDataAsOrtValue(
-        onnx_state->memory_info, onnx_state->output_data[i], total_size * sizeof(double),
+        onnx_state->ort_memory_info, onnx_state->output_data[i], total_size * sizeof(double),
         onnx_state->output_dim_values[i], onnx_state->output_num_dim[i],
         ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE, &onnx_state->output_tensor[i]);
     if (!CheckStatus(onnx_state->g_ort, ort_status, status))
     {
-      onnx_state->g_ort->ReleaseTypeInfo(type_info);
+      onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
       CleanupOnSetupFailure(&onnx_state);
       return;
     }
     /* Release the type info */
-    onnx_state->g_ort->ReleaseTypeInfo(type_info);
+    onnx_state->g_ort->ReleaseTypeInfo(ort_type_info);
   }
 
   /* Each reaction step mutates the reusable tensors and backing buffers in
@@ -1525,8 +1525,8 @@ void onnx_alquimia_setup(
     return;
   }
 
-  /* Freed the config form the onnx_interface_config */
-  OnnxAlquimiaFreeConfig(&onnx_state->config);
+  /* Freed the onnx_config form the onnx_interface_config */
+  OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
   *(OnnxEngineState **)onnx_engine_state = onnx_state;
 }
 
@@ -1535,8 +1535,8 @@ void onnx_alquimia_setup(
  * @param onnx_engine_state Address of the engine pointer created by setup.
  * @param status Receives an invalid-engine error for a NULL engine.
  *
- * Tensor names must be released with the ONNX allocator, while dimensions,
- * buffers, mappings, and copied feature names use the C allocator. On success,
+ * Tensor names must be released with the ONNX ort_allocator, while dimensions,
+ * buffers, mappings, and copied feature names use the C ort_allocator. On success,
  * the caller's engine pointer is set to NULL.
  */
 void onnx_alquimia_shutdown(
@@ -1555,7 +1555,7 @@ void onnx_alquimia_shutdown(
   ** Memory Lifecycle & Cleanup Rules:
   ** 1. Input/output tensors and underlying data arrays are created via 
   **    independent API calls during setup and can be freed in any order.
-  ** 2. Core ONNX Runtime objects (session, env, etc.) maintain strict 
+  ** 2. Core ONNX Runtime objects (ort_session, ort_env, etc.) maintain strict 
   **    dependencies and must be released in reverse order of initialization (LIFO).
   */
   if (onnx_engine_state == NULL || *(OnnxEngineState **)onnx_engine_state == NULL)
@@ -1680,8 +1680,8 @@ void onnx_alquimia_shutdown(
       onnx_state->output_total_size = NULL;
     }
 
-    /* ONNX Runtime allocates tensor names with this allocator. */
-    if (onnx_state->allocator != NULL)
+    /* ONNX Runtime allocates tensor names with this ort_allocator. */
+    if (onnx_state->ort_allocator != NULL)
     {
       if (onnx_state->input_names != NULL)
       {
@@ -1689,7 +1689,7 @@ void onnx_alquimia_shutdown(
         {
           if (onnx_state->input_names[i] != NULL)
           {
-            onnx_state->allocator->Free(onnx_state->allocator, onnx_state->input_names[i]);
+            onnx_state->ort_allocator->Free(onnx_state->ort_allocator, onnx_state->input_names[i]);
           }
         }
         free(onnx_state->input_names);
@@ -1701,37 +1701,37 @@ void onnx_alquimia_shutdown(
         {
           if (onnx_state->output_names[i] != NULL)
           {
-            onnx_state->allocator->Free(onnx_state->allocator, onnx_state->output_names[i]);
+            onnx_state->ort_allocator->Free(onnx_state->ort_allocator, onnx_state->output_names[i]);
           }
         }
         free(onnx_state->output_names);
         onnx_state->output_names = NULL;
       }
-      onnx_state->g_ort->ReleaseAllocator(onnx_state->allocator);
-      onnx_state->allocator = NULL;
+      onnx_state->g_ort->ReleaseAllocator(onnx_state->ort_allocator);
+      onnx_state->ort_allocator = NULL;
     }
-    if (onnx_state->memory_info != NULL)
+    if (onnx_state->ort_memory_info != NULL)
     {
-      onnx_state->g_ort->ReleaseMemoryInfo(onnx_state->memory_info);
-      onnx_state->memory_info = NULL;
+      onnx_state->g_ort->ReleaseMemoryInfo(onnx_state->ort_memory_info);
+      onnx_state->ort_memory_info = NULL;
     }
-    if (onnx_state->session != NULL)
+    if (onnx_state->ort_session != NULL)
     {
-      onnx_state->g_ort->ReleaseSession(onnx_state->session);
-      onnx_state->session = NULL;
+      onnx_state->g_ort->ReleaseSession(onnx_state->ort_session);
+      onnx_state->ort_session = NULL;
     }
-    if (onnx_state->session_options != NULL)
+    if (onnx_state->ort_session_options != NULL)
     {
-      onnx_state->g_ort->ReleaseSessionOptions(onnx_state->session_options);
-      onnx_state->session_options = NULL;
+      onnx_state->g_ort->ReleaseSessionOptions(onnx_state->ort_session_options);
+      onnx_state->ort_session_options = NULL;
     }
-    if (onnx_state->env != NULL)
+    if (onnx_state->ort_env != NULL)
     {
-      onnx_state->g_ort->ReleaseEnv(onnx_state->env);
-      onnx_state->env = NULL;
+      onnx_state->g_ort->ReleaseEnv(onnx_state->ort_env);
+      onnx_state->ort_env = NULL;
     }
   }
-  OnnxAlquimiaFreeConfig(&onnx_state->config);
+  OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
   free(onnx_state);
   *(OnnxEngineState **)onnx_engine_state = NULL;
 }
@@ -1740,7 +1740,7 @@ void onnx_alquimia_shutdown(
  * @brief Applies named aqueous constraints to config-mapped model inputs.
  * @param onnx_engine_state Address of an initialized engine pointer.
  * @param condition Named constraints to apply; NULL or empty is a no-op.
- * @param props Unused by the ONNX adapter.
+ * @param properties Unused by the ONNX adapter.
  * @param state State receiving values for matching input feature names.
  * @param aux_data Unused by the ONNX adapter.
  * @param status Receives invalid-engine or mapped-state access errors.
@@ -1752,7 +1752,7 @@ void onnx_alquimia_shutdown(
 void onnx_alquimia_processcondition(
     void *onnx_engine_state,
     AlquimiaGeochemicalCondition *condition,
-    AlquimiaProperties *props,
+    AlquimiaProperties *properties,
     AlquimiaState *state,
     AlquimiaAuxiliaryData *aux_data,
     AlquimiaEngineStatus *status)
@@ -1763,7 +1763,7 @@ void onnx_alquimia_processcondition(
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
 
-  (void)props;
+  (void)properties;
   (void)aux_data;
 
   if (onnx_engine_state == NULL || *(OnnxEngineState **)onnx_engine_state == NULL)
@@ -1822,7 +1822,7 @@ void onnx_alquimia_processcondition(
  * @brief Runs one operator-split ONNX inference and routes its outputs.
  * @param onnx_engine_state Address of an initialized engine pointer.
  * @param delta_t Unused; the model receives only explicitly mapped state data.
- * @param props Unused by the ONNX adapter.
+ * @param properties Unused by the ONNX adapter.
  * @param state Supplies mapped inputs and receives mapped outputs.
  * @param aux_data Unused by the ONNX adapter.
  * @param natural_id Unused by the ONNX adapter.
@@ -1834,7 +1834,7 @@ void onnx_alquimia_processcondition(
 void onnx_alquimia_reactionstepoperatorsplit(
     void *onnx_engine_state,
     double delta_t,
-    AlquimiaProperties *props,
+    AlquimiaProperties *properties,
     AlquimiaState *state,
     AlquimiaAuxiliaryData *aux_data,
     int natural_id,
@@ -1851,7 +1851,7 @@ void onnx_alquimia_reactionstepoperatorsplit(
   ** They will be freed in the shutdown*/
   // Unused
   (void)delta_t;
-  (void)props;
+  (void)properties;
   (void)aux_data;
   (void)natural_id;
 
@@ -1890,7 +1890,7 @@ void onnx_alquimia_reactionstepoperatorsplit(
 
   /* Run inference using pre-allocated input and output tensors and dynamic names */
   ort_status = onnx_state->g_ort->Run(
-      onnx_state->session,
+      onnx_state->ort_session,
       NULL, /* RunOptions */
       (const char *const *)onnx_state->input_names,
       (const OrtValue *const *)onnx_state->input_tensor,
@@ -1909,6 +1909,7 @@ void onnx_alquimia_reactionstepoperatorsplit(
     size_t flat_idx = 0;
     for (i = 0; i < (int)onnx_state->num_outputs; ++i)
     {
+      /* Temporary output array used to store the data from the tensor */
       double *out_arr = NULL;
       /* Extract the data from the output tensor */
       ort_status = onnx_state->g_ort->GetTensorMutableData(onnx_state->output_tensor[i], (void **)&out_arr);
@@ -1946,7 +1947,7 @@ void onnx_alquimia_reactionstepoperatorsplit(
  */
 void onnx_alquimia_getauxiliaryoutput(
     void *onnx_engine_state,
-    AlquimiaProperties *props,
+    AlquimiaProperties *properties,
     AlquimiaState *state,
     AlquimiaAuxiliaryData *aux_data,
     AlquimiaAuxiliaryOutputData *aux_out,
@@ -1957,14 +1958,14 @@ void onnx_alquimia_getauxiliaryoutput(
 
   // Unused data
   (void)onnx_engine_state;
-  (void)props;
+  (void)properties;
   (void)state;
   (void)aux_data;
   (void)aux_out;
 }
 
 /**
- * @brief Copies config input feature names into problem metadata vectors.
+ * @brief Copies onnx_config input feature names into problem metadata vectors.
  * @param onnx_engine_state Address of an initialized engine pointer.
  * @param meta_data Metadata storage allocated from the setup-derived sizes.
  * @param status Receives invalid-engine or invalid-destination errors.
@@ -2003,10 +2004,10 @@ void onnx_alquimia_getproblemmetadata(
   {
     /* Directly point to the OnnxEngine-> input_mappings */ 
     FeatureMapping mapping = onnx_state->input_mappings[i];
-    AlquimiaVectorString *names = MetadataNamesForMapping(
+    AlquimiaVectorString *metadata_name = MetadataNamesForMapping(
         meta_data, mapping.alquimia_state);
     /* All the manipulation is to the OnnxEngine */
-    StoreMetadataName(names, mapping.alquimia_state_index, mapping.feature);
+    StoreMetadataName(metadata_name, mapping.alquimia_state_index, mapping.feature);
   }
 }
 
