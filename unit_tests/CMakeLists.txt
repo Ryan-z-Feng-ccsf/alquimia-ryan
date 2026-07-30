@@ -43,10 +43,10 @@ if (XSDK_WITH_ONNX)
     COMPILE_FLAGS
       "-DCMAKE_CURRENT_SOURCE_DIR=\\\"${CMAKE_CURRENT_SOURCE_DIR}\\\"")
 
-  add_test(NAME test_alquimia_onnx_routing
+  add_test(NAME test_alquimia_onnx_inference_routing
     COMMAND test_alquimia_onnx_inference_routing_exe routing)
   # Allows easy categorization when filtering tests via `ctest -L <label>`
-  set_tests_properties(test_alquimia_onnx_routing PROPERTIES
+  set_tests_properties(test_alquimia_onnx_inference_routing PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     LABELS "onnx;unit;routing")
 

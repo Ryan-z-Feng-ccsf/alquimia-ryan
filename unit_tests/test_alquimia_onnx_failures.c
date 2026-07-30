@@ -1,4 +1,4 @@
-/* -*-  mode: c; c-default-style: "google"; indent-tabs-mode: nil -*- 
+/* -*-  mode: c; c-default-style: "google"; indent-tabs-mode: nil -*-
 ** The goal of this file is to verify the robustness, error handling,
 ** and lifecycle management of the Alquimia ONNX interface.
 **
@@ -23,29 +23,30 @@
 /* Record the overall failure times */
 static int num_failures = 0;
 
-/* Prevents trailing semicolon (`;`) compiler warnings/errors.
-** 
-** When using the macro inside a block:
-**   if (condition) {
-**     CHECK_CASE(test_id, expr);
-**   }
-** 
-** Without do-while(0), an accidental trailing empty statement (e.g., `if (cond) { macro();; }`)
-** can trigger strict compilation flags (like -Wpedantic) and halt the build.
-** This do-while(0) pattern ensures safe block scoping and exact statement matching.
-** 
-** #define macro(x) if(){} => if(){}
-** if (condition) 
-**  CHECK_CASE(test_id, expr); => if(){}; 
-** End the outer if statement
-** Just in case of habit issue(adding ;)
-** 
-*/
-#define CHECK_CASE(test_id, expression)                                      \
+/* Report the test case and its intended behavior, not only the failed C
+** expression. The status-aware form also reports the engine's actual error. */
+#define CHECK_CASE(test_id, issue, expression)                                \
   do {                                                                        \
     if (!(expression)) {                                                      \
-      fprintf(stderr, "%s failed at %s:%d: %s\n",                            \
-              test_id, __FILE__, __LINE__, #expression);                      \
+      fprintf(stderr, "%s: %s\n"                                             \
+                      "  Failed check: %s\n"                                  \
+                      "  Location: %s:%d\n",                                  \
+              test_id, issue, #expression, __FILE__, __LINE__);               \
+      ++num_failures;                                                         \
+    }                                                                         \
+  } while (0)
+
+#define CHECK_STATUS_CASE(test_id, issue, expression, status_ptr)             \
+  do {                                                                        \
+    if (!(expression)) {                                                      \
+      const AlquimiaEngineStatus *check_status_ = (status_ptr);                \
+      fprintf(stderr, "%s: %s\n"                                             \
+                      "  Failed check: %s\n"                                  \
+                      "  Actual status: error=%d, message=\"%s\"\n"           \
+                      "  Location: %s:%d\n",                                  \
+              test_id, issue, #expression, check_status_->error,              \
+              check_status_->message != NULL ? check_status_->message : "",   \
+              __FILE__, __LINE__);                                            \
       ++num_failures;                                                         \
     }                                                                         \
   } while (0)
@@ -68,15 +69,17 @@ static void SetupAbsolutePath(const char *relative_path, char *path, size_t size
   /* Get the absolute path */
   int result = snprintf(path, size, "%s/onnx_test_cases/%s",
                         CMAKE_CURRENT_SOURCE_DIR, relative_path);
-  CHECK_CASE("relative-path", result >= 0 && (size_t)result < size);
+  CHECK_CASE("relative-path", "Unable to construct the ONNX test-case path",
+             result >= 0 && (size_t)result < size);
 }
 
 /* Set up the model path */
 static void ModelPath(const char *filename, char *path, size_t size) {
   int result = snprintf(path, size, "%s/../models/%s",
                         CMAKE_CURRENT_SOURCE_DIR, filename);
-  /* Expect: result */                        
-  CHECK_CASE("model-path", result >= 0 && (size_t)result < size);
+  /* Expect: result */
+  CHECK_CASE("model-path", "Unable to construct the ONNX model path",
+             result >= 0 && (size_t)result < size);
 }
 
 /* Create the Interface for test_id */
@@ -85,12 +88,9 @@ static int CreateOnnxInterface(
     AlquimiaEngineStatus *status,
     const char *test_id) {
   AllocateAlquimiaEngineStatus(status);
-  /* Fail status-> error != Null */
   CreateAlquimiaInterface("ONNX", interface, status);
-  /* If success, status->error = kAlquimiaNoError 
-  ** This will not print out anything
-  */
-  CHECK_CASE(test_id, status->error == kAlquimiaNoError);
+  CHECK_STATUS_CASE(test_id, "Unable to create the ONNX interface",
+                    status->error == kAlquimiaNoError, status);
   return status->error == kAlquimiaNoError;
 }
 
@@ -109,26 +109,26 @@ static void CheckSetupFailure(const SetupFailureCase *test_case) {
   /* Set up the absolute path for JSON file */
   SetupAbsolutePath(test_case->relative_path, path, sizeof(path));
   interface.Setup(path, false, &onnx_engine_state, &sizes, &functionality, &status);
-  /* Test case fail here */
-  /* Expect: status.error != kAlquimiaNoError */
-  /* This will not print out anything */
-  CHECK_CASE(test_case->test_id, status.error != kAlquimiaNoError);
-  /* engine.state == Nulll */
-  /* This will not print out anything */
-  CHECK_CASE(test_case->test_id, onnx_engine_state == NULL);
+  CHECK_STATUS_CASE(test_case->test_id, test_case->message_fragment,
+                    status.error != kAlquimiaNoError, &status);
+  CHECK_CASE(test_case->test_id,
+             "Setup failure published a non-NULL engine state",
+             onnx_engine_state == NULL);
   if (test_case->message_fragment != NULL) {
-    /* Expect: strstr != NULL */
-    /* This will not print out anything */
-    CHECK_CASE(test_case->test_id,
-               strstr(status.message, test_case->message_fragment) != NULL);
+    CHECK_STATUS_CASE(
+        test_case->test_id, test_case->message_fragment,
+        strstr(status.message, test_case->message_fragment) != NULL, &status);
   }
 
   interface.Shutdown(&onnx_engine_state, &status);
   /* | L03 | Setup failure is followed by shutdown | No double free | */
   /* Expect: status.error == Errors */
-  CHECK_CASE("L03", status.error == kAlquimiaErrorInvalidEngine);
+  CHECK_STATUS_CASE("L03",
+                    "Shutdown after failed setup did not reject the NULL engine",
+                    status.error == kAlquimiaErrorInvalidEngine, &status);
   /* Expect: onnx_engine_state == NULL */
-  CHECK_CASE("L03", onnx_engine_state == NULL);
+  CHECK_CASE("L03", "Shutdown after failed setup changed the engine pointer",
+             onnx_engine_state == NULL);
   FreeAlquimiaEngineStatus(&status);
 }
 /* | S03 | Raw ONNX file is passed as the setup input | Parse error; engine state remains `NULL` | */
@@ -151,11 +151,15 @@ static void CheckRawModelRejected(void) {
   /* Setup expects a JSON file */
   interface.Setup(path, false, &onnx_engine_state, &sizes, &functionality, &status);
   /* Expect: status.error == kAlquimiaErrorEngineIntegrity */
-  CHECK_CASE("S03", status.error == kAlquimiaErrorEngineIntegrity);
+  CHECK_STATUS_CASE("S03", "Raw ONNX file was not rejected as a config",
+                    status.error == kAlquimiaErrorEngineIntegrity, &status);
   /* Expect: strstr != NULL */
-  CHECK_CASE("S03", strstr(status.message, "strict JSON") != NULL);
+  CHECK_STATUS_CASE("S03",
+                    "Raw ONNX rejection did not report a strict JSON error",
+                    strstr(status.message, "strict JSON") != NULL, &status);
   /* Expect: onnx_engine_state == NULL */
-  CHECK_CASE("S03", onnx_engine_state == NULL);
+  CHECK_CASE("S03", "Raw ONNX rejection published a non-NULL engine state",
+             onnx_engine_state == NULL);
   FreeAlquimiaEngineStatus(&status);
 }
 
@@ -181,9 +185,11 @@ static int SetupOnnxEngine(
   /* Set up the interface */
   interface->Setup(path, false, onnx_engine_state, sizes, &functionality, status);
   /* If success, Expect: status->error == kAlquimiaError */
-  CHECK_CASE(test_id, status->error == kAlquimiaNoError);
+  CHECK_STATUS_CASE(test_id, "Unable to set up the ONNX test engine",
+                    status->error == kAlquimiaNoError, status);
   /* Expect: engine state != NULL */
-  CHECK_CASE(test_id, *onnx_engine_state != NULL);
+  CHECK_CASE(test_id, "Successful setup returned a NULL engine state",
+             *onnx_engine_state != NULL);
   return status->error == kAlquimiaNoError && *onnx_engine_state != NULL;
 }
 
@@ -237,25 +243,31 @@ static void CheckConditionGuards(void) {
   interface.ProcessCondition(&onnx_engine_state, NULL, &properties, &state,
                              &aux_data, &status);
   /* If success, Expect: status.error == kAlquimiaNoError*/
-  CHECK_CASE("C01", status.error == kAlquimiaNoError);
+  CHECK_STATUS_CASE("C01", "NULL condition was not accepted as a no-op",
+                    status.error == kAlquimiaNoError, &status);
   /* Expect: total_mobile.data[0] */
-  CHECK_CASE("C01", state.total_mobile.data[0] == 17.0);
+  CHECK_CASE("C01", "NULL condition changed the existing state",
+             state.total_mobile.data[0] == 17.0);
 
   /* | C02 | Condition has no aqueous constraints | No-op success | */
   AllocateAlquimiaGeochemicalCondition(5, 0, 0, &empty_condition);
   interface.ProcessCondition(&onnx_engine_state, &empty_condition, &properties,
                              &state, &aux_data, &status);
   /* Expect: status.error == kAlquimiaNoError */                             
-  CHECK_CASE("C02", status.error == kAlquimiaNoError);
+  CHECK_STATUS_CASE("C02",
+                    "Empty aqueous constraints were not accepted as a no-op",
+                    status.error == kAlquimiaNoError, &status);
   /* Expect: state.total_mobile.data[0] == 17.0 */
-  CHECK_CASE("C02", state.total_mobile.data[0] == 17.0);
+  CHECK_CASE("C02", "Empty aqueous constraints changed the existing state",
+             state.total_mobile.data[0] == 17.0);
   FreeAlquimiaGeochemicalCondition(&empty_condition);
 
   /* | C05 | State pointer is `NULL` | Integrity error | */
   interface.ProcessCondition(&onnx_engine_state, NULL, &properties, NULL,
                              &aux_data, &status);
   /* Expect: status.error == kAlquimiaErrorEngineIntegrity */                             
-  CHECK_CASE("C05", status.error == kAlquimiaErrorEngineIntegrity);
+  CHECK_STATUS_CASE("C05", "NULL state pointer was not rejected",
+                    status.error == kAlquimiaErrorEngineIntegrity, &status);
 
   /* | C06 | Mapped state-vector storage is `NULL` | Integrity error | */
   AllocateAlquimiaGeochemicalCondition(5, 1, 0, &condition);
@@ -267,7 +279,8 @@ static void CheckConditionGuards(void) {
   interface.ProcessCondition(&onnx_engine_state, &condition, &properties, &state,
                              &aux_data, &status);
   /* Expect: status.error == kAlquimiaErrorEngineIntegrity */                             
-  CHECK_CASE("C06", status.error == kAlquimiaErrorEngineIntegrity);
+  CHECK_STATUS_CASE("C06", "NULL mapped state-vector storage was not rejected",
+                    status.error == kAlquimiaErrorEngineIntegrity, &status);
   state.total_mobile.data = saved_data;
 
   /* | C07 | Runtime state vector is smaller than the derived setup size | Integrity error | */
@@ -276,16 +289,21 @@ static void CheckConditionGuards(void) {
   interface.ProcessCondition(&onnx_engine_state, &condition, &properties, &state,
                              &aux_data, &status);
   /* Expect: status.error == kAlquimiaErrorEngineIntegrity */                             
-  CHECK_CASE("C07", status.error == kAlquimiaErrorEngineIntegrity);
+  CHECK_STATUS_CASE("C07", "Undersized runtime state vector was not rejected",
+                    status.error == kAlquimiaErrorEngineIntegrity, &status);
   state.total_mobile.size = saved_size;
 
   FreeAlquimiaGeochemicalCondition(&condition);
   FreeAlquimiaState(&state);
   interface.Shutdown(&onnx_engine_state, &status);
   /* Expect: status.error == kAlquimiaNoError */
-  CHECK_CASE("condition-shutdown", status.error == kAlquimiaNoError);
+  CHECK_STATUS_CASE("condition-shutdown",
+                    "Condition-test engine shutdown failed",
+                    status.error == kAlquimiaNoError, &status);
   /* Expect: onnx_engine_state == NULL */
-  CHECK_CASE("condition-shutdown", onnx_engine_state == NULL);
+  CHECK_CASE("condition-shutdown",
+             "Condition-test shutdown left a non-NULL engine state",
+             onnx_engine_state == NULL);
   FreeAlquimiaEngineStatus(&status);
 }
 
@@ -316,32 +334,42 @@ static void CheckMixedCondition(void) {
                              &aux_data, &status);
   /* Expect: status.error == kAlquimiaNoError */ 
   /* porosity is a scalar */                            
-  CHECK_CASE("C09", status.error == kAlquimiaNoError);
+  CHECK_STATUS_CASE("C09", "Mixed scalar/vector condition processing failed",
+                    status.error == kAlquimiaNoError, &status);
   /* Expect: state.porosity == 0.31 */
-  CHECK_CASE("C09", state.porosity == 0.31);
+  CHECK_CASE("C09", "Porosity constraint was inaccurate",
+             state.porosity == 0.31);
   /* Expect: state.total_mobile.data != NULL */
-  CHECK_CASE("C09", state.total_mobile.data != NULL);
+  CHECK_CASE("C09", "Mobile-total storage is NULL",
+             state.total_mobile.data != NULL);
   /* Expect: state.total_mobile.size > 1 */
-  CHECK_CASE("C09", state.total_mobile.size > 1);
+  CHECK_CASE("C09", "Mobile-total storage is too small for mapped index 1",
+             state.total_mobile.size > 1);
   if (state.total_mobile.data != NULL && state.total_mobile.size > 1) {
     /* Expect: state.total_mobile.data[1] == 4.25 */
-    CHECK_CASE("C09", state.total_mobile.data[1] == 4.25);
+    CHECK_CASE("C09", "Mobile-total constraint was inaccurate",
+               state.total_mobile.data[1] == 4.25);
   }
   /* Expect: state.gas_concentration.data != NULL */
-  CHECK_CASE("C09", state.gas_concentration.data != NULL);
+  CHECK_CASE("C09", "Gas-concentration storage is NULL",
+             state.gas_concentration.data != NULL);
   /* Expect: state.gas_concentration.size > 0 */
-  CHECK_CASE("C09", state.gas_concentration.size > 0);
+  CHECK_CASE("C09", "Gas-concentration storage is too small for mapped index 0",
+             state.gas_concentration.size > 0);
   if (state.gas_concentration.data != NULL &&
       state.gas_concentration.size > 0) {
     /* Expect: state.gas_concentration.data[0] == 8.5 */
-    CHECK_CASE("C09", state.gas_concentration.data[0] == 8.5);
+    CHECK_CASE("C09", "Gas-concentration constraint was inaccurate",
+               state.gas_concentration.data[0] == 8.5);
   }
 
   FreeAlquimiaGeochemicalCondition(&condition);
   FreeAlquimiaState(&state);
   interface.Shutdown(&onnx_engine_state, &status);
-  CHECK_CASE("C09", status.error == kAlquimiaNoError);
-  CHECK_CASE("C09", onnx_engine_state == NULL);
+  CHECK_STATUS_CASE("C09", "Mixed-condition engine shutdown failed",
+                    status.error == kAlquimiaNoError, &status);
+  CHECK_CASE("C09", "Mixed-condition shutdown left a non-NULL engine state",
+             onnx_engine_state == NULL);
   FreeAlquimiaEngineStatus(&status);
 }
  
@@ -363,12 +391,15 @@ static void CheckNullShutdown(void) {
   }
   interface.Shutdown(NULL, &status);
   /* Expect: status.error == kAlquimiaErrorInvalidEngine*/
-  CHECK_CASE("L02", status.error == kAlquimiaErrorInvalidEngine);
+  CHECK_STATUS_CASE("L02", "Shutdown did not reject a NULL state destination",
+                    status.error == kAlquimiaErrorInvalidEngine, &status);
   interface.Shutdown(&onnx_engine_state, &status);
   /* Expect: status.error == kAlquimiaErrorInvalidEngine */
-  CHECK_CASE("L02", status.error == kAlquimiaErrorInvalidEngine);
+  CHECK_STATUS_CASE("L02", "Shutdown did not reject a NULL engine state",
+                    status.error == kAlquimiaErrorInvalidEngine, &status);
   /* Expect: onnx_engine_state == NULL */
-  CHECK_CASE("L02", onnx_engine_state == NULL);
+  CHECK_CASE("L02", "Invalid shutdown changed the NULL engine state",
+             onnx_engine_state == NULL);
   FreeAlquimiaEngineStatus(&status);
 }
 
@@ -399,16 +430,20 @@ static void CheckRepeatedLifecycle(void) {
         &onnx_engine_state, 1.0, &properties, &state, &aux_data,
         iteration, &status);
     /* Expect: status.error == kAlquimiaNoError */
-    CHECK_CASE("L04", status.error == kAlquimiaNoError);
+    CHECK_STATUS_CASE("L04", "Repeated lifecycle inference failed",
+                      status.error == kAlquimiaNoError, &status);
     /* Expect: state.total_mobile.data[0] == (double)iteration + 0.5 */
-    CHECK_CASE("L04", state.total_mobile.data[0] ==
-                          (double)iteration + 0.5);
+    CHECK_CASE("L04", "Repeated lifecycle inference returned the wrong value",
+               state.total_mobile.data[0] == (double)iteration + 0.5);
     FreeAlquimiaState(&state);
     interface.Shutdown(&onnx_engine_state, &status);
     /* Expect: status.error == kAlquimiaNoError */
-    CHECK_CASE("L01/L04", status.error == kAlquimiaNoError);
+    CHECK_STATUS_CASE("L01/L04", "Repeated lifecycle shutdown failed",
+                      status.error == kAlquimiaNoError, &status);
     /* Expect: onnx_engine_state == NULL */
-    CHECK_CASE("L01/L04", onnx_engine_state == NULL);
+    CHECK_CASE("L01/L04",
+               "Repeated lifecycle shutdown left a non-NULL engine state",
+               onnx_engine_state == NULL);
     FreeAlquimiaEngineStatus(&status);
   }
 }

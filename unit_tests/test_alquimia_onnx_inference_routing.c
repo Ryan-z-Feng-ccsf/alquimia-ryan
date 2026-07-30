@@ -12,6 +12,7 @@
 ** | R08 | ONNX Runtime inference fails | Translated status; engine remains safe to shut down |
 ** | R09 | Repeated inference calls | Reusable buffers retain no incorrect prior values |
 ** | R10 | Two independent engine instances | No state or buffer sharing between instances |
+** | R11 | Multiple rank-0 scalar inputs and outputs | Preserve scalar tensor rank during inference |
 */
 
 #include <math.h>
@@ -426,6 +427,27 @@ static void TestR10IndependentInstances(void) {
   ShutdownEngine(&second);
 }
 
+// | R11 | Multiple rank-0 scalar inputs and outputs | Preserve scalar tensor rank during inference |
+static void TestR11MultipleScalarInputsOutputs(void) {
+  OnnxTestEngine engine;
+  AlquimiaState state;
+
+  SetupEngine("deterministic/multiple_scalar_inputs_outputs.json", &engine);
+  CHECK(engine.sizes.num_primary == 1);
+  AllocateState(&engine, &state);
+  state.total_mobile.data[0] = 2.5;
+  state.porosity = -1.0;
+
+  RunInference(&engine, &state);
+
+  CheckClose(state.water_density, 1.5);
+  CheckClose(state.aqueous_pressure, 3.5);
+  CheckClose(state.total_mobile.data[0], 2.5);
+  CheckClose(state.porosity, -1.0);
+  FreeAlquimiaState(&state);
+  ShutdownEngine(&engine);
+}
+
 // | F01 | Linear or identity graph | Baseline tensor and operator compatibility |
 static void TestF01LinearAffine(void) {
   OnnxTestEngine engine;
@@ -538,7 +560,8 @@ static void RunRoutingTests(void) {
   TestR08RuntimeInferenceFailure();
   TestR09RepeatedInference();
   TestR10IndependentInstances();
-  printf("ONNX routing cases R01-R10 passed.\n");
+  TestR11MultipleScalarInputsOutputs();
+  printf("ONNX routing cases R01-R11 passed.\n");
 }
 
 /*
