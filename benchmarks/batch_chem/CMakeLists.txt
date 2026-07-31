@@ -41,5 +41,6 @@ endif()
 if (ALQUIMIA_HAVE_ONNX)
   add_alquimia_batch_chem_benchmark(isotherms_onnx_1 isotherms-onnx-1.cfg)
   add_alquimia_batch_chem_benchmark(isotherms_onnx_2 isotherms-onnx-2.cfg)
+  add_alquimia_batch_chem_benchmark(isotherms_onnx_5 isotherms-onnx-5.cfg)
+  add_alquimia_batch_chem_benchmark(isotherms_onnx_6 isotherms-onnx-6.cfg)
 endif()
-

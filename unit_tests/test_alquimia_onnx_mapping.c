@@ -21,7 +21,9 @@
 ** | M16 | Similar but invalid property has trailing text | Property is rejected rather than partially matched |
 ** | M17 | Model path is relative to the config | Correct path is resolved from the config directory |
 ** | M18 | Two input mappings use the same feature name | Setup rejects the duplicate lookup key |
-**
+** | M19 | Conditions cover all required inputs and include extra features | Configuration parses successfully | 
+** | M20 | Invalid conditions schema (e.g., wrong types, duplicate/empty names, non-finite values) | Parser rejects the configuration with a specific error message |
+** | M21 | A defined condition is missing a required input feature | Parser rejects the configuration indicating the missing feature |
 ** Here we use the LSURF model for testing
 ** This model has 1 input/output tensor
 ** input tensor: 2 inputs
@@ -39,6 +41,7 @@
 #include "alquimia/alquimia_interface.h"
 #include "alquimia/alquimia_memory.h"
 #include "alquimia/alquimia_util.h"
+#include "alquimia/onnx_alquimia_config.h"
 
 #if ALQUIMIA_HAVE_ONNX
 
@@ -54,6 +57,7 @@
   CMAKE_CURRENT_SOURCE_DIR                                             \
   "/onnx_test_cases/configs/model_2_relative.json"
 #define TEMP_CONFIG "test_alquimia_onnx_config_case.json"
+#define TEST_ERROR_MESSAGE_SIZE 512
 
 // Match the first input of the model
 #define VALID_INPUT_0                                                  \
@@ -93,6 +97,134 @@ static void WriteTemporaryConfig(const char *contents)
   ALQUIMIA_ASSERT(fwrite(contents, 1, length, file) == length);
   ALQUIMIA_ASSERT(fclose(file) == 0);
 }
+
+static void ExpectConfigParseFailure(
+    const char *test_id,
+    const char *config_contents,
+    const char *expected_message)
+{
+  OnnxAlquimiaConfig config = {0};
+  char error_message[TEST_ERROR_MESSAGE_SIZE] = {0};
+
+  printf("  %s\n", test_id);
+  WriteTemporaryConfig(config_contents);
+  ALQUIMIA_ASSERT(!OnnxAlquimiaLoadConfig(
+      TEMP_CONFIG, &config, error_message, sizeof(error_message)));
+  ALQUIMIA_ASSERT(strstr(error_message, expected_message) != NULL);
+  OnnxAlquimiaFreeConfig(&config);
+  ALQUIMIA_ASSERT(remove(TEMP_CONFIG) == 0);
+}
+
+/* | M19 | Conditions cover all required inputs and include extra features | Configuration parses successfully | */
+/* | M20 | Invalid conditions schema (e.g., wrong types, duplicate/empty names, non-finite values) | Parser rejects the configuration with a specific error message | */
+/* | M21 | A defined condition is missing a required input feature | Parser rejects the configuration indicating the missing feature | */
+static void TestConditionConfigCases(void)
+{
+  static const char valid_config[] =
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"uranium_total\":-6.67,"
+      "\"U_species14\":-37.48,\"unused_feature\":7}},"
+      "\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1 "],"
+      "\"outputs\":[" VALID_OUTPUT "]}";
+  OnnxAlquimiaConfig config = {0};
+  char error_message[TEST_ERROR_MESSAGE_SIZE] = {0};
+
+  printf("  M19 conditions cover inputs and allow extra features\n");
+  WriteTemporaryConfig(valid_config);
+  ALQUIMIA_ASSERT(OnnxAlquimiaLoadConfig(
+      TEMP_CONFIG, &config, error_message, sizeof(error_message)));
+  ALQUIMIA_ASSERT(config.num_conditions == 1);
+  ALQUIMIA_ASSERT(strcmp(config.conditions[0].name, "initial") == 0);
+  ALQUIMIA_ASSERT(config.conditions[0].num_items == 3);
+  ALQUIMIA_ASSERT(
+      strcmp(config.conditions[0].items[0].feature, "uranium_total") == 0);
+  ALQUIMIA_ASSERT(config.conditions[0].items[0].value == -6.67);
+  ALQUIMIA_ASSERT(
+      strcmp(config.conditions[0].items[2].feature, "unused_feature") == 0);
+  ALQUIMIA_ASSERT(config.conditions[0].items[2].value == 7.0);
+  OnnxAlquimiaFreeConfig(&config);
+  ALQUIMIA_ASSERT(config.conditions == NULL);
+  ALQUIMIA_ASSERT(config.num_conditions == 0);
+  ALQUIMIA_ASSERT(remove(TEMP_CONFIG) == 0);
+
+  // Conditions is an object
+  ExpectConfigParseFailure(
+      "M20 conditions must be an object",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":[],\"inputs\":[],\"outputs\":[]}",
+      "conditions must be an object");
+
+  // Duplicate conditions
+  ExpectConfigParseFailure(
+      "M20 duplicate conditions property",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{},\"conditions\":{},\"inputs\":[],\"outputs\":[]}",
+      "Duplicate property 'conditions'");
+
+  // Duplicate condition name
+  ExpectConfigParseFailure(
+      "M20 duplicate condition name",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{},\"initial\":{}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "Duplicate name 'initial'");
+
+  // Empty condition 
+  ExpectConfigParseFailure(
+      "M20 empty condition name",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"\":{}},\"inputs\":[],\"outputs\":[]}",
+      "must be nonempty");
+
+  // Initial is an object
+  ExpectConfigParseFailure(
+      "M20 condition must be an object",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":1},\"inputs\":[],\"outputs\":[]}",
+      "Condition 'initial' must be an object");
+
+  // Duplicate items
+  ExpectConfigParseFailure(
+      "M20 duplicate condition feature",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"f\":1,\"f\":2}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "Duplicate name 'f'");
+
+  // Empty items
+  ExpectConfigParseFailure(
+      "M20 empty condition feature",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"\":1}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "must be nonempty");
+
+  // Invalid value
+  ExpectConfigParseFailure(
+      "M20 condition feature must be numeric",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"f\":\"1\"}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "must be a finite number");
+
+  // Invalid value
+  ExpectConfigParseFailure(
+      "M20 condition feature must be finite",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"f\":1e999}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "must be a finite number");
+
+  // Missing features
+  ExpectConfigParseFailure(
+      "M21 condition must cover every input feature",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"uranium_total\":-6.67}},"
+      "\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1 "],"
+      "\"outputs\":[" VALID_OUTPUT "]}",
+      "Condition 'initial' is missing input feature 'U_species14'");
+}
+
 /* Expected: fail */
 static void ExpectSetupFailure(
     AlquimiaInterface *interface,
@@ -282,6 +414,7 @@ static void TestConfigContract(void)
   printf("Running strict ONNX config contract cases.\n");
   AllocateAlquimiaEngineStatus(&status);
   CreateOnnxInterface(&interface, &status);
+
   /* MODEL_2_PATH = absolute file .../models/lsurf_model_2_float_64.onnx */
   /* | M01 | Schema version is missing, malformed, or unsupported | Setup error naming `schema_version` | */
   ExpectSetupFailure(&interface, &status, "M01 missing schema version",
@@ -531,7 +664,7 @@ static void TestConfigContract(void)
       "\",\"inputs\":[{\"tensor\":\"double_input_2\",\"tensor_element_index\":0,"
       "\"feature\":\"first_name\",\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0},{\"tensor\":\"double_input_2\",\"tensor_element_index\":1,"
-      "\"feature\":\"second_name\",\"alquimia_state\":\"total_immobile\","
+      "\"feature\":\"second_name\",\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0}],\"outputs\":[" VALID_OUTPUT "]}",
       "Conflicting ONNX feature names");
 
@@ -576,6 +709,8 @@ int main(int argc, char **argv)
   {
     // Enter: ./test_alquimia_onnx config to test the JSON parser, otherwise test the lifecycle
     TestConfigContract();
+    // Check 19-21
+    TestConditionConfigCases();
   }
   else
   {

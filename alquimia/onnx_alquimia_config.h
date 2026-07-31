@@ -21,7 +21,7 @@ typedef struct {
   /* Alquimia_state andalquimia_state_index identify the corresponding AlquimiaState location. */
   char *alquimia_state;
   int alquimia_state_index;
-} OnnxAlquimiaInputMappingSpec;
+} OnnxAlquimiaInputMapping;
 
 /* Maps one ONNX output tensor element to an AlquimiaState field element. */
 typedef struct {
@@ -32,17 +32,35 @@ typedef struct {
   /* Alquimia_state andalquimia_state_index identify the corresponding AlquimiaState location. */
   char *alquimia_state;
   int alquimia_state_index;
-} OnnxAlquimiaOutputMappingSpec;
+} OnnxAlquimiaOutputMapping;
+
+/* One named feature value supplied by a JSON initial condition. */
+/* Item -> key: value */
+typedef struct {
+  char *feature;
+  double value;
+} OnnxAlquimiaConditionItem;
+
+/* One condition selected by an exact .cfg initial_condition name. */
+typedef struct {
+  // Condition name in the .cfg file
+  char *name;
+  OnnxAlquimiaConditionItem *items;
+  size_t num_items;
+} OnnxAlquimiaCondition;
 
 /* The input/output tensor would be >=1 */
 typedef struct {
   char *model_path;
+  /* Optional named initial conditions retained for ProcessCondition. */
+  OnnxAlquimiaCondition *conditions;
+  size_t num_conditions;
   /* Store the respective input value in the JSON file */
-  OnnxAlquimiaInputMappingSpec *inputs;
+  OnnxAlquimiaInputMapping *inputs;
   /* Number of the input tensor */
   size_t num_inputs;
   /* Store the respective output value in the JSON file */
-  OnnxAlquimiaOutputMappingSpec *outputs;
+  OnnxAlquimiaOutputMapping *outputs;
   /* Number of the output tensor */
   size_t num_outputs;
 } OnnxAlquimiaConfig;

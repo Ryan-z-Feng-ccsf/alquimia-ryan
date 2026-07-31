@@ -91,9 +91,10 @@ typedef struct
   OrtSession *ort_session; /* Released by ReleaseSession() */
   OrtMemoryInfo *ort_memory_info; /* Released by ReleaseMemoryInfo() */
   OrtAllocator *ort_allocator;  /* Released by ReleaseAllocator() */
-  /* Setup owns this temporary representation and releases it before
-  ** publishing a successfully initialized engine. */
+  /* Retained for named JSON conditions used by ProcessCondition. */
   OnnxAlquimiaConfig onnx_config;  /* Released by OnnxAlquimiaFreeConfig()*/
+  /* Selects JSON-backed initialization instead of driver constraints. */
+  bool hands_off;
 
   /* Dynamic input info */
   /* Align with num_inputs in onnx_config */
@@ -258,17 +259,19 @@ static int MetadataNameCategory(AlquimiaMappedStruct alquimia_state)
   switch (alquimia_state)
   {
   case ALQUIMIA_STRUCT_TOTAL_MOBILE:
-  case ALQUIMIA_STRUCT_TOTAL_IMMOBILE:
     return 0;
-  case ALQUIMIA_STRUCT_MINERAL_VOLUME_FRACTION:
-  case ALQUIMIA_STRUCT_MINERAL_SPECIFIC_SURFACE_AREA:
+  case ALQUIMIA_STRUCT_TOTAL_IMMOBILE:
     return 1;
-  case ALQUIMIA_STRUCT_SURFACE_SITE_DENSITY:
+  case ALQUIMIA_STRUCT_MINERAL_VOLUME_FRACTION:
     return 2;
-  case ALQUIMIA_STRUCT_CATION_EXCHANGE_CAPACITY:
+  case ALQUIMIA_STRUCT_MINERAL_SPECIFIC_SURFACE_AREA:
     return 3;
-  case ALQUIMIA_STRUCT_GAS_CONCENTRATION:
+  case ALQUIMIA_STRUCT_SURFACE_SITE_DENSITY:
     return 4;
+  case ALQUIMIA_STRUCT_CATION_EXCHANGE_CAPACITY:
+    return 5;
+  case ALQUIMIA_STRUCT_GAS_CONCENTRATION:
+    return 6;
   default:
     return -1;
   }
@@ -566,13 +569,13 @@ static bool BuildConfigMappings(
   for (i = 0; i < onnx_state->onnx_config.num_inputs; ++i)
   {
     /* This points to the real OnnxEngine->onnx_config.inputMapping */
-    const OnnxAlquimiaInputMappingSpec *onnx_spec = &onnx_state->onnx_config.inputs[i];
+    const OnnxAlquimiaInputMapping *onnx_inputs = &onnx_state->onnx_config.inputs[i];
     FeatureMapping *mapping;
     size_t flat_index;
     size_t j;
 
     /* Map the tensor element index into the 1-dimensional flattened array. */
-    if (!FindFlatTensorElement(onnx_spec->tensor, onnx_spec->tensor_element_index,
+    if (!FindFlatTensorElement(onnx_inputs->tensor, onnx_inputs->tensor_element_index,
                                onnx_state->num_inputs,
                                onnx_state->input_names,
                                onnx_state->input_total_size,
@@ -588,15 +591,15 @@ static bool BuildConfigMappings(
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
                "Duplicate ONNX input mapping for tensor '%s' element index %zu.",
-               onnx_spec->tensor, onnx_spec->tensor_element_index);
+               onnx_inputs->tensor, onnx_inputs->tensor_element_index);
       free(input_seen);
       free(output_seen);
       return false;
     }
     mapping = &onnx_state->input_mappings[flat_index];
     /* Parse the AlquimiaState value to the input mapping */
-    if (!ParseConfigMapping(onnx_spec->alquimia_state,
-                              onnx_spec->alquimia_state_index, mapping, status))
+    if (!ParseConfigMapping(onnx_inputs->alquimia_state,
+                              onnx_inputs->alquimia_state_index, mapping, status))
     {
       free(input_seen);
       free(output_seen);
@@ -605,7 +608,7 @@ static bool BuildConfigMappings(
     /* Check the duplicate input feature */
     if (!ValidateUniqueInputFeature(
             onnx_state->input_mappings, input_seen,
-            onnx_state->total_flat_inputs, onnx_spec->feature, status))
+            onnx_state->total_flat_inputs, onnx_inputs->feature, status))
     {
       free(input_seen);
       free(output_seen);
@@ -615,7 +618,7 @@ static bool BuildConfigMappings(
     {
       const FeatureMapping *other = &onnx_state->input_mappings[j];
       /* Check if there are conflicted input feature 
-      ** alquimia_state[index]=alquimia_state[index]
+      ** alquimia_state[index] = alquimia_state[index]
       ** input_feature[index] != input_feature[index]
       */
       if (input_seen[j] &&
@@ -623,21 +626,21 @@ static bool BuildConfigMappings(
           MetadataNameCategory(other->alquimia_state) ==
               MetadataNameCategory(mapping->alquimia_state) &&
           other->alquimia_state_index == mapping->alquimia_state_index &&
-          strcmp(other->feature, onnx_spec->feature) != 0)
+          strcmp(other->feature, onnx_inputs->feature) != 0)
       {
         status->error = kAlquimiaErrorEngineIntegrity;
         snprintf(status->message, kAlquimiaMaxStringLength,
                  "Conflicting ONNX feature names '%s' and '%s' for "
                  "AlquimiaState variable '%s' index %d.",
-                 other->feature, onnx_spec->feature, onnx_spec->alquimia_state,
-                 onnx_spec->alquimia_state_index);
+                 other->feature, onnx_inputs->feature, onnx_inputs->alquimia_state,
+                 onnx_inputs->alquimia_state_index);
         free(input_seen);
         free(output_seen);
         return false;
       }
     }
     /* Copy the feature name */
-    mapping->feature = CopyFeatureName(onnx_spec->feature);
+    mapping->feature = CopyFeatureName(onnx_inputs->feature);
     if (mapping->feature == NULL)
     {
       status->error = kAlquimiaErrorEngineIntegrity;
@@ -657,12 +660,12 @@ static bool BuildConfigMappings(
   for (i = 0; i < onnx_state->onnx_config.num_outputs; ++i)
   {
     /* This points to the real OnnxEngine->onnx_config.outputMapping */
-    const OnnxAlquimiaOutputMappingSpec *onnx_spec = &onnx_state->onnx_config.outputs[i];
+    const OnnxAlquimiaOutputMapping *onnx_inputs = &onnx_state->onnx_config.outputs[i];
     FeatureMapping *mapping;
     size_t flat_index;
 
     /* Map the tensor element index into the 1-dimensional flattened array. */
-    if (!FindFlatTensorElement(onnx_spec->tensor, onnx_spec->tensor_element_index,
+    if (!FindFlatTensorElement(onnx_inputs->tensor, onnx_inputs->tensor_element_index,
                                onnx_state->num_outputs,
                                onnx_state->output_names,
                                onnx_state->output_total_size,
@@ -678,15 +681,15 @@ static bool BuildConfigMappings(
       status->error = kAlquimiaErrorEngineIntegrity;
       snprintf(status->message, kAlquimiaMaxStringLength,
                "Duplicate ONNX output mapping for tensor '%s' element index %zu.",
-               onnx_spec->tensor, onnx_spec->tensor_element_index);
+               onnx_inputs->tensor, onnx_inputs->tensor_element_index);
       free(input_seen);
       free(output_seen);
       return false;
     }
     mapping = &onnx_state->output_mappings[flat_index];
     /* Parse the AlquimiaState value to the output mapping */
-    if (!ParseConfigMapping(onnx_spec->alquimia_state,
-                              onnx_spec->alquimia_state_index, mapping, status))
+    if (!ParseConfigMapping(onnx_inputs->alquimia_state,
+                              onnx_inputs->alquimia_state_index, mapping, status))
     {
       free(input_seen);
       free(output_seen);
@@ -947,15 +950,15 @@ static void CleanupOnSetupFailure(OnnxEngineState **onnx_state)
  * @brief Initializes an ONNX engine from a versioned JSON sidecar onnx_config.
  * @param input_filename onnx_config path; relative model paths resolve from its
  *        directory.
- * @param hands_off Unused by this adapter.
+ * @param hands_off Selects named JSON conditions for initialization.
  * @param onnx_engine_state Address that receives the initialized engine.
  * @param sizes Receives state-vector sizes derived from explicit mappings.
  * @param functionality Receives the ONNX adapter capability flags.
  * @param status Receives setup errors without being overwritten by cleanup.
  *
  * The destination engine pointer is set to NULL before resource acquisition and
- * remains NULL on every failure. Parsed onnx_config storage is released before a
- * successful engine is published.
+ * remains NULL on every failure. Parsed config storage remains engine-owned so
+ * named conditions are available to ProcessCondition.
  */
 void onnx_alquimia_setup(
     const char *input_filename,
@@ -972,9 +975,6 @@ void onnx_alquimia_setup(
 
   status->error = kAlquimiaNoError;
   status->message[0] = '\0';
-
-  // Unused
-  (void)hands_off;
 
   if (onnx_engine_state == NULL)
   {
@@ -998,6 +998,16 @@ void onnx_alquimia_setup(
           kAlquimiaMaxStringLength))
   {
     status->error = kAlquimiaErrorEngineIntegrity;
+    free(onnx_state);
+    return;
+  }
+  onnx_state->hands_off = hands_off;
+  if (hands_off && onnx_state->onnx_config.num_conditions == 0)
+  {
+    status->error = kAlquimiaErrorEngineIntegrity;
+    snprintf(status->message, kAlquimiaMaxStringLength,
+             "ONNX hands-off setup requires at least one JSON condition.");
+    OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
     free(onnx_state);
     return;
   }
@@ -1523,9 +1533,7 @@ void onnx_alquimia_setup(
     CleanupOnSetupFailure(&onnx_state);
     return;
   }
-
-  /* Freed the onnx_config form the onnx_interface_config */
-  OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
+ 
   *(OnnxEngineState **)onnx_engine_state = onnx_state;
 }
 
@@ -1736,17 +1744,18 @@ void onnx_alquimia_shutdown(
 }
 
 /**
- * @brief Applies named aqueous constraints to config-mapped model inputs.
+ * @brief Applies JSON or driver conditions to config-mapped model inputs.
  * @param onnx_engine_state Address of an initialized engine pointer.
- * @param condition Named constraints to apply; NULL or empty is a no-op.
+ * @param condition Condition whose exact name selects JSON values in hands-off
+ *        mode, or whose aqueous constraints supply values in normal mode.
  * @param properties Unused by the ONNX adapter.
  * @param state State receiving values for matching input feature names.
  * @param aux_data Unused by the ONNX adapter.
  * @param status Receives invalid-engine or mapped-state access errors.
  *
- * Constraints absent from @p condition leave their mapped state values
- * unchanged. This preserves the generic condition-processing behavior while
- * allowing callers to initialize only the features they provide.
+ * Hands-off mode ignores driver constraint values and requires an exact JSON
+ * condition-name match. Normal mode preserves the generic constraint behavior:
+ * absent constraints leave their mapped state values unchanged.
  */
 void onnx_alquimia_processcondition(
     void *onnx_engine_state,
@@ -1781,6 +1790,79 @@ void onnx_alquimia_processcondition(
     return;
   }
 
+  // Initial condition provided by JSON
+  if (onnx_state->hands_off)
+  {
+    // Point to the related onnx_config.conditions
+    const OnnxAlquimiaCondition *matching_condition = NULL;
+    size_t condition_index;
+    
+    // Passed by the driver
+    if (condition != NULL && condition->name != NULL)
+    {
+      for (condition_index = 0;
+           condition_index < onnx_state->onnx_config.num_conditions;
+           ++condition_index)
+      {
+        const OnnxAlquimiaCondition *current_condition =
+            &onnx_state->onnx_config.conditions[condition_index];
+        // Find the related initial condition in the JSON file
+        if (strcmp(current_condition->name, condition->name) == 0)
+        {
+          matching_condition = current_condition;
+          break;
+        }
+      }
+    }
+    if (matching_condition == NULL)
+    {
+      status->error = kAlquimiaErrorUnknownConstraintName;
+      snprintf(status->message, kAlquimiaMaxStringLength,
+               "Unknown ONNX JSON condition name '%s'.",
+               condition != NULL && condition->name != NULL
+                   ? condition->name
+                   : "");
+      return;
+    }
+
+    for (k = 0; k < onnx_state->total_flat_inputs; ++k)
+    {
+      const char *feature = onnx_state->input_mappings[k].feature;
+      // Record the key: value pair in JSON
+      const OnnxAlquimiaConditionItem *matching_item = NULL;
+      size_t item_index;
+
+      for (item_index = 0;
+           item_index < matching_condition->num_items;
+           ++item_index)
+      {
+        if (strcmp(matching_condition->items[item_index].feature,
+                   feature) == 0)
+        {
+          matching_item = &matching_condition->items[item_index];
+          break;
+        }
+      }
+      // Fail to find the key: value pair
+      if (matching_item == NULL)
+      {
+        status->error = kAlquimiaErrorEngineIntegrity;
+        snprintf(status->message, kAlquimiaMaxStringLength,
+                 "ONNX JSON condition '%s' is missing input feature '%s'.",
+                 matching_condition->name, feature);
+        return;
+      }
+      SetAlquimiaValue(state, onnx_state->input_mappings[k],
+                       matching_item->value, status);
+      if (status->error != kAlquimiaNoError)
+      {
+        return;
+      }
+    }
+    return;
+  }
+
+  // Initial condition provided by driver
   /* An absent condition intentionally preserves all existing state values. */
   if (condition == NULL || condition->aqueous_constraints.data == NULL || condition->aqueous_constraints.size <= 0)
   {
