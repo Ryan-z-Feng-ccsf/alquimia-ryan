@@ -106,7 +106,6 @@ static void ExpectConfigParseFailure(
   OnnxAlquimiaConfig config = {0};
   char error_message[TEST_ERROR_MESSAGE_SIZE] = {0};
 
-  printf("  %s\n", test_id);
   WriteTemporaryConfig(config_contents);
   ALQUIMIA_ASSERT(!OnnxAlquimiaLoadConfig(
       TEMP_CONFIG, &config, error_message, sizeof(error_message)));
@@ -237,7 +236,6 @@ static void ExpectSetupFailure(
   AlquimiaSizes sizes = {0};
   void *engine_state = NULL;
 
-  printf("  %s\n", test_id);
   /* Write the contents: config to the temporary file */
   /* config: JSON 
   */
@@ -280,7 +278,7 @@ static void TestModel2Lifecycle(void)
   printf("Running successful model-2 ONNX lifecycle.\n");
   AllocateAlquimiaEngineStatus(&status);
   CreateOnnxInterface(&interface, &status);
-
+ 
   interface.Setup(MODEL_2_CONFIG, false, &engine_state, &sizes,
                   &functionality, &status);
   if (status.error != kAlquimiaNoError)
@@ -365,7 +363,6 @@ static void TestSuccessfulMappingCases(
   AlquimiaSizes sizes = {0};
   void *engine_state = NULL;
 
-  printf("  M14 feature names populate separate metadata categories\n");
   /* Write the contents: config to the temporary file */
   /* config: JSON 
   */
@@ -390,7 +387,6 @@ static void TestSuccessfulMappingCases(
   ALQUIMIA_ASSERT(remove(TEMP_CONFIG) == 0);
 
   // Test the ResolvePath in the onnx_alquimia_config.c 
-  printf("  M17 model path resolves relative to the config\n");
   interface->Setup(MODEL_2_RELATIVE_CONFIG, false, &engine_state, &sizes,
                    &functionality, status);
   if (status->error != kAlquimiaNoError)

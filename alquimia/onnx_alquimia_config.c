@@ -907,7 +907,7 @@ void OnnxAlquimiaFreeConfig(OnnxAlquimiaConfig *onnx_config)
 }
 
 /**
- * @brief Loads and strictly validates a version 1 ONNX sidecar config.
+ * @brief Loads and strictly validates a versioned ONNX sidecar config.
  * @param config_path JSON filesystem path.
  * @param onnx_config Receives owned model-path and mapping storage on success.
  * @param error_message Destination for the first read, parse, or schema error.
