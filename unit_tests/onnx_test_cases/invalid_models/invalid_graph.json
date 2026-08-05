@@ -6,6 +6,7 @@
     {
       "tensor": "output",
       "tensor_element_index": 0,
+      "feature": "output_feature",
       "alquimia_state": "total_mobile",
       "alquimia_state_index": 0
     }

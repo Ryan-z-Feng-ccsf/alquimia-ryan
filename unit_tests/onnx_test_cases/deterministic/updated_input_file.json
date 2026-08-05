@@ -25,6 +25,7 @@
     {
       "tensor": "double_output_1",
       "tensor_element_index": 0,
+      "feature": "uranium_total",
       "alquimia_state": "total_mobile",
       "alquimia_state_index": 0
     }

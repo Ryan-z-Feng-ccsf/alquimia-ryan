@@ -6,7 +6,7 @@
     {"tensor": "right", "tensor_element_index": 0, "feature": "porosity_feature", "alquimia_state": "porosity", "alquimia_state_index": 0}
   ],
   "outputs": [
-    {"tensor": "sum", "tensor_element_index": 0, "alquimia_state": "water_density", "alquimia_state_index": 0},
-    {"tensor": "difference", "tensor_element_index": 0, "alquimia_state": "aqueous_pressure", "alquimia_state_index": 0}
+    {"tensor": "sum", "tensor_element_index": 0, "feature": "sum_feature", "alquimia_state": "water_density", "alquimia_state_index": 0},
+    {"tensor": "difference", "tensor_element_index": 0, "feature": "difference_feature", "alquimia_state": "aqueous_pressure", "alquimia_state_index": 0}
   ]
 }

@@ -13,6 +13,7 @@
 ** | R09 | Repeated inference calls | Reusable buffers retain no incorrect prior values |
 ** | R10 | Two independent engine instances | No state or buffer sharing between instances |
 ** | R11 | Multiple rank-0 scalar inputs and outputs | Preserve scalar tensor rank during inference |
+** | R12 | One phase output changes a paired component | Preserve mobile plus immobile total |
 */
 
 #include <math.h>
@@ -63,6 +64,18 @@ typedef struct {
 
 static void CheckClose(double actual, double expected) {
   CHECK(fabs(actual - expected) < 1.0e-12);
+}
+
+static void CheckCloseCase(
+    const char *test_id,
+    const char *value_name,
+    double actual,
+    double expected) {
+  if (fabs(actual - expected) >= 1.0e-12) {
+    fprintf(stderr, "%s: %s was %.17g; expected %.17g.\n",
+            test_id, value_name, actual, expected);
+    exit(EXIT_FAILURE);
+  }
 }
 
 /**
@@ -448,6 +461,40 @@ static void TestR11MultipleScalarInputsOutputs(void) {
   ShutdownEngine(&engine);
 }
 
+// | R12 | One phase output changes a paired component | Preserve mobile plus immobile total |
+static void TestR12MobileImmobileConservation(void) {
+  OnnxTestEngine engine;
+  AlquimiaState state;
+
+  SetupEngine("deterministic/mobile_immobile_conservation.json", &engine);
+  CHECK(engine.sizes.num_primary == 2);
+  CHECK(engine.sizes.num_sorbed == 2);
+  AllocateState(&engine, &state);
+
+  state.total_mobile.data[0] = 3.0;
+  state.total_mobile.data[1] = 4.0;
+  state.total_immobile.data[0] = 17.0;
+  state.total_immobile.data[1] = 6.0;
+
+  RunInference(&engine, &state);
+
+  /* shifted[0] changes mobile component 0 from 3 to 13. Its paired
+  ** immobile value must decrease by 10 to preserve the total of 20. */
+  CheckCloseCase("R12 mobile-immobile conservation", "total_mobile[0]",
+                 state.total_mobile.data[0], 13.0);
+  CheckCloseCase("R12 mobile-immobile conservation", "total_immobile[0]",
+                 state.total_immobile.data[0], 7.0);
+  /* shifted[1] changes immobile component 1 from 6 to 24. Its paired
+  ** mobile value must decrease by 18 to preserve the total of 10. */
+  CheckCloseCase("R12 mobile-immobile conservation", "total_mobile[1]",
+                 state.total_mobile.data[1], -14.0);
+  CheckCloseCase("R12 mobile-immobile conservation", "total_immobile[1]",
+                 state.total_immobile.data[1], 24.0);
+
+  FreeAlquimiaState(&state);
+  ShutdownEngine(&engine);
+}
+
 // | F01 | Linear or identity graph | Baseline tensor and operator compatibility |
 static void TestF01LinearAffine(void) {
   OnnxTestEngine engine;
@@ -548,7 +595,7 @@ static void TestF05MultiTarget(void) {
   FreeAlquimiaState(&state);
   ShutdownEngine(&engine);
 }
-/* Testing R01-R10 */
+/* Testing R01-R12 */
 static void RunRoutingTests(void) {
   TestR01SingleInputSingleOutput();
   TestR02MultipleInputsSingleOutput();
@@ -561,7 +608,8 @@ static void RunRoutingTests(void) {
   TestR09RepeatedInference();
   TestR10IndependentInstances();
   TestR11MultipleScalarInputsOutputs();
-  printf("ONNX routing cases R01-R11 passed.\n");
+  TestR12MobileImmobileConservation();
+  printf("ONNX routing cases R01-R12 passed.\n");
 }
 
 /*

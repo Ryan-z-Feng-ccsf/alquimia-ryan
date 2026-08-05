@@ -10,29 +10,18 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-/* Maps one ONNX input tensor element to an AlquimiaState field element. */
+/* Maps one ONNX tensor element to an AlquimiaState field element. */
 typedef struct {
-  /* Tensor name the input tensor */
+  /* Tensor names the model input or output tensor. */
   char *tensor;
-  /* Tensor_element_index selects its element. */
+  /* Tensor_element_index selects one flattened tensor element. */
   size_t tensor_element_index;
-  /* Feature names the model input feature */
+  /* Feature names the model input or output feature. */
   char *feature;
-  /* Alquimia_state andalquimia_state_index identify the corresponding AlquimiaState location. */
+  /* Alquimia_state and alquimia_state_index identify its AlquimiaState location. */
   char *alquimia_state;
   int alquimia_state_index;
-} OnnxAlquimiaInputMapping;
-
-/* Maps one ONNX output tensor element to an AlquimiaState field element. */
-typedef struct {
-  /* Tensor name the input tensor */
-  char *tensor;
-  /* Tensor_element_index selects its element. */
-  size_t tensor_element_index;
-  /* Alquimia_state andalquimia_state_index identify the corresponding AlquimiaState location. */
-  char *alquimia_state;
-  int alquimia_state_index;
-} OnnxAlquimiaOutputMapping;
+} OnnxAlquimiaMapping;
 
 /* One named feature value supplied by a JSON initial condition. */
 /* Item -> key: value */
@@ -56,11 +45,11 @@ typedef struct {
   OnnxAlquimiaCondition *conditions;
   size_t num_conditions;
   /* Store the respective input value in the JSON file */
-  OnnxAlquimiaInputMapping *inputs;
+  OnnxAlquimiaMapping *inputs;
   /* Number of the input tensor */
   size_t num_inputs;
   /* Store the respective output value in the JSON file */
-  OnnxAlquimiaOutputMapping *outputs;
+  OnnxAlquimiaMapping *outputs;
   /* Number of the output tensor */
   size_t num_outputs;
 } OnnxAlquimiaConfig;

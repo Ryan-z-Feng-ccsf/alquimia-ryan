@@ -74,7 +74,8 @@
 // Match the only output of the model
 #define VALID_OUTPUT                                                   \
   "{\"tensor\":\"double_output_2\",\"tensor_element_index\":0,"       \
-  "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}"
+  "\"feature\":\"uranium_total\",\"alquimia_state\":\"total_mobile\"," \
+  "\"alquimia_state_index\":0}"
 
 static void CreateOnnxInterface(
     AlquimiaInterface *interface,
@@ -250,11 +251,14 @@ static void ExpectSetupFailure(
     fprintf(stderr,
             "%s returned error %d and message '%s' (expected '%s').\n",
             test_id, status->error, status->message, expected_message);
+    exit(EXIT_FAILURE);
   }
-  ALQUIMIA_ASSERT(status->error == kAlquimiaErrorEngineIntegrity);
-  ALQUIMIA_ASSERT(engine_state == NULL);
-  ALQUIMIA_ASSERT(strstr(status->message, expected_message) != NULL);
-  ALQUIMIA_ASSERT(remove(TEMP_CONFIG) == 0);
+  if (remove(TEMP_CONFIG) != 0)
+  {
+    fprintf(stderr, "%s could not remove temporary config '%s'.\n",
+            test_id, TEMP_CONFIG);
+    exit(EXIT_FAILURE);
+  }
 }
 
 /* Test the whole lifecycle */
@@ -357,7 +361,10 @@ static void TestSuccessfulMappingCases(
       "\"alquimia_state_index\":0},"
       "{\"tensor\":\"double_input_2\",\"tensor_element_index\":1,"
       "\"feature\":\"gas_feature\",\"alquimia_state\":\"gas_concentration\","
-      "\"alquimia_state_index\":0}],\"outputs\":[" VALID_OUTPUT "]}";
+      "\"alquimia_state_index\":0}],\"outputs\":[{"
+      "\"tensor\":\"double_output_2\",\"tensor_element_index\":0,"
+      "\"feature\":\"output_feature\",\"alquimia_state\":\"total_mobile\","
+      "\"alquimia_state_index\":1}]}";
   AlquimiaEngineFunctionality functionality = {0};
   AlquimiaProblemMetaData meta_data;
   AlquimiaSizes sizes = {0};
@@ -372,13 +379,15 @@ static void TestSuccessfulMappingCases(
   // Expected value:                  
   ALQUIMIA_ASSERT(status->error == kAlquimiaNoError);
   ALQUIMIA_ASSERT(engine_state != NULL);
-  ALQUIMIA_ASSERT(sizes.num_primary == 1);
+  ALQUIMIA_ASSERT(sizes.num_primary == 2);
   ALQUIMIA_ASSERT(sizes.num_gases == 1);
   AllocateAlquimiaProblemMetaData(&sizes, &meta_data);
   interface->GetProblemMetaData(&engine_state, &meta_data, status);
   ALQUIMIA_ASSERT(status->error == kAlquimiaNoError);
   ALQUIMIA_ASSERT(strcmp(meta_data.primary_names.data[0],
                          "aqueous_feature") == 0);
+  ALQUIMIA_ASSERT(strcmp(meta_data.primary_names.data[1],
+                         "output_feature") == 0);
   ALQUIMIA_ASSERT(strcmp(meta_data.gas_names.data[0], "gas_feature") == 0);
   FreeAlquimiaProblemMetaData(&meta_data);
   interface->Shutdown(&engine_state, status);
@@ -470,26 +479,36 @@ static void TestConfigContract(void)
   ExpectSetupFailure(&interface, &status, "M04 missing output tensor",
       "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
       "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
-      "],\"outputs\":[{\"tensor_element_index\":0,\"alquimia_state\":\"total_mobile\","
+      "],\"outputs\":[{\"tensor_element_index\":0,\"feature\":\"uranium_total\","
+      "\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0}]}", "tensor");
   ExpectSetupFailure(&interface, &status,
       "M04 missing output tensor element index",
       "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
       "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"double_output_2\","
-      "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}]}", "tensor_element_index");
+      "\"feature\":\"uranium_total\",\"alquimia_state\":\"total_mobile\","
+      "\"alquimia_state_index\":0}]}", "tensor_element_index");
+  ExpectSetupFailure(&interface, &status, "M04 missing output feature",
+      "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
+      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+      "],\"outputs\":[{\"tensor\":\"double_output_2\","
+      "\"tensor_element_index\":0,\"alquimia_state\":\"total_mobile\","
+      "\"alquimia_state_index\":0}]}", "feature");
   ExpectSetupFailure(&interface, &status,
       "M04 missing output Alquimia state variable",
       "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
       "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"double_output_2\",\"tensor_element_index\":0,"
-      "\"alquimia_state_index\":0}]}", "alquimia_state");
+      "\"feature\":\"uranium_total\",\"alquimia_state_index\":0}]}",
+      "alquimia_state");
   ExpectSetupFailure(&interface, &status,
       "M04 missing output Alquimia state index",
       "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
       "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"double_output_2\",\"tensor_element_index\":0,"
-      "\"alquimia_state\":\"total_mobile\"}]}", "alquimia_state_index");
+      "\"feature\":\"uranium_total\",\"alquimia_state\":\"total_mobile\"}]}",
+      "alquimia_state_index");
 
   // | M05 | Unknown or duplicate JSON property | Setup error |
   ExpectSetupFailure(&interface, &status, "M05 unknown property",
@@ -514,7 +533,7 @@ static void TestConfigContract(void)
       "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
       "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"double_output_2\",\"tensor_element_index\":0,"
-      "\"alquimia_state\":\"total_mobile\","
+      "\"feature\":\"uranium_total\",\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0,\"alquimia_state_index\":0}]}",
       "Duplicate property 'alquimia_state_index'");
 
@@ -608,7 +627,8 @@ static void TestConfigContract(void)
       "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
       // This model only has 1 output, index = 1 means there are 2 outputs
       "],\"outputs\":[{\"tensor\":\"double_output_2\",\"tensor_element_index\":1,"
-      "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}]}", "out of range");
+      "\"feature\":\"uranium_total\",\"alquimia_state\":\"total_mobile\","
+      "\"alquimia_state_index\":0}]}", "out of range");
   ExpectSetupFailure(&interface, &status,
       "M11 duplicate tensor element index",
       "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
@@ -662,6 +682,22 @@ static void TestConfigContract(void)
       "\"alquimia_state_index\":0},{\"tensor\":\"double_input_2\",\"tensor_element_index\":1,"
       "\"feature\":\"second_name\",\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0}],\"outputs\":[" VALID_OUTPUT "]}",
+      "Conflicting ONNX feature names");
+  ExpectSetupFailure(&interface, &status,
+      "M15 conflicting input and output feature names",
+      "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
+      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+      "],\"outputs\":[{\"tensor\":\"double_output_2\","
+      "\"tensor_element_index\":0,\"feature\":\"different_name\","
+      "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}]}",
+      "Conflicting ONNX feature names");
+  ExpectSetupFailure(&interface, &status,
+      "M15 conflicting mobile and immobile feature names",
+      "{\"schema_version\":1,\"model\":\"" MODEL_2_PATH
+      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+      "],\"outputs\":[{\"tensor\":\"double_output_2\","
+      "\"tensor_element_index\":0,\"feature\":\"different_name\","
+      "\"alquimia_state\":\"total_immobile\",\"alquimia_state_index\":0}]}",
       "Conflicting ONNX feature names");
 
   // | M16 | Similar but invalid property has trailing text | Property is rejected rather than partially matched |

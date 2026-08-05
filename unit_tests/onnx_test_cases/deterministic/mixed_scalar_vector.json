@@ -7,8 +7,8 @@
     {"tensor": "input", "tensor_element_index": 2, "feature": "gas_feature", "alquimia_state": "gas_concentration", "alquimia_state_index": 0}
   ],
   "outputs": [
-    {"tensor": "output", "tensor_element_index": 0, "alquimia_state": "temperature", "alquimia_state_index": 0},
-    {"tensor": "output", "tensor_element_index": 1, "alquimia_state": "mineral_volume_fraction", "alquimia_state_index": 1},
-    {"tensor": "output", "tensor_element_index": 2, "alquimia_state": "surface_site_density", "alquimia_state_index": 0}
+    {"tensor": "output", "tensor_element_index": 0, "feature": "temperature_feature", "alquimia_state": "temperature", "alquimia_state_index": 0},
+    {"tensor": "output", "tensor_element_index": 1, "feature": "mineral_output_feature", "alquimia_state": "mineral_volume_fraction", "alquimia_state_index": 1},
+    {"tensor": "output", "tensor_element_index": 2, "feature": "surface_output_feature", "alquimia_state": "surface_site_density", "alquimia_state_index": 0}
   ]
 }

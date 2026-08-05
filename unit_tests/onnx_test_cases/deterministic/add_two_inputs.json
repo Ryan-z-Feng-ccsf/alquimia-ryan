@@ -6,6 +6,6 @@
     {"tensor": "right", "tensor_element_index": 0, "feature": "right_feature", "alquimia_state": "total_mobile", "alquimia_state_index": 1}
   ],
   "outputs": [
-    {"tensor": "sum", "tensor_element_index": 0, "alquimia_state": "total_mobile", "alquimia_state_index": 2}
+    {"tensor": "sum", "tensor_element_index": 0, "feature": "sum_feature", "alquimia_state": "total_mobile", "alquimia_state_index": 2}
   ]
 }

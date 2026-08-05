@@ -6,6 +6,6 @@
     {"tensor": "input", "tensor_element_index": 1, "feature": "runtime_input_1", "alquimia_state": "total_mobile", "alquimia_state_index": 1}
   ],
   "outputs": [
-    {"tensor": "output", "tensor_element_index": 0, "alquimia_state": "total_mobile", "alquimia_state_index": 2}
+    {"tensor": "output", "tensor_element_index": 0, "feature": "runtime_output", "alquimia_state": "total_mobile", "alquimia_state_index": 2}
   ]
 }

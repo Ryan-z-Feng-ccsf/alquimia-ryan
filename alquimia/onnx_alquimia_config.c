@@ -17,9 +17,9 @@
 
 /**
  * @brief Copies a fixed error detail when the caller supplied a buffer.
- * @param error_message Destination buffer, which may be NULL.
- * @param error_message_size Size of @p message in bytes.
- * @param detail Null-terminated error detail.
+ * @param[out] error_message Destination buffer, which may be NULL.
+ * @param[in] error_message_size Size of @p error_message in bytes.
+ * @param[in] error_detail Null-terminated error detail.
  */
 static void SetError(char *error_message, size_t error_message_size, const char *error_detail)
 {
@@ -31,7 +31,7 @@ static void SetError(char *error_message, size_t error_message_size, const char 
 
 /**
  * @brief Creates a C-allocator-owned copy of a parsed JSON string.
- * @param str_value Null-terminated source string owned by cJSON.
+ * @param[in] str_value Null-terminated source string owned by cJSON.
  * @return Newly allocated storage, or NULL on allocation failure.
  */
 static char *CopyString(const char *str_value)
@@ -47,9 +47,9 @@ static char *CopyString(const char *str_value)
 
 /**
  * @brief Checks a property name against an exact, case-sensitive allowlist.
- * @param name Property name to check.
- * @param allowed_schema_fields Accepted property names.
- * @param num_allowed_schema_fields Number of entries in @p allowed.
+ * @param[in] name Property name to check.
+ * @param[in] allowed_schema_fields Accepted property names.
+ * @param[in] num_allowed_schema_fields Number of entries in @p allowed_schema_fields.
  * @return True only for an exact allowlist match.
  */
 static bool IsAllowedProperty(
@@ -70,12 +70,12 @@ static bool IsAllowedProperty(
 
 /**
  * @brief Rejects unknown and duplicate members in one config object.
- * @param cjson_object cJSON object whose direct children are inspected.
- * @param allowed_schema_fields Exact property allowlist for this object type.
- * @param num_allowed_schema_fields Number of entries in @p allowed_schema_fields.
- * @param context Human-readable object name used in errors.
- * @param error_message Destination for the first validation error.
- * @param error_message_size Size of @p error_message in bytes.
+ * @param[in] cjson_object cJSON object whose direct children are inspected.
+ * @param[in] allowed_schema_fields Exact property allowlist for this object type.
+ * @param[in] num_allowed_schema_fields Number of entries in @p allowed_schema_fields.
+ * @param[in] context Human-readable object name used in errors.
+ * @param[out] error_message Destination for the first validation error.
+ * @param[in] error_message_size Size of @p error_message in bytes.
  * @return True when every member is allowed_schema_fields and appears at most once.
  *
  * cJSON permits duplicate object keys and lookup returns only one occurrence,
@@ -144,12 +144,12 @@ static bool ValidateProperties(
 
 /**
  * @brief Reads and copies a required nonempty string property.
- * @param cjson_object Object containing the property.
- * @param name Exact property name.
- * @param context Human-readable object name used in errors.
- * @param str_value Receives C-allocator-owned storage on success.
- * @param error_message Destination for validation or allocation errors.
- * @param error_message_size Size of @p error_message in bytes.
+ * @param[in] cjson_object Object containing the property.
+ * @param[in] name Exact property name.
+ * @param[in] context Human-readable object name used in errors.
+ * @param[out] str_value Receives C-allocator-owned storage on success.
+ * @param[out] error_message Destination for validation or allocation errors.
+ * @param[in] error_message_size Size of @p error_message in bytes.
  * @return True when the property is a nonempty string and copying succeeds.
  *
  * Copying detaches the config representation from the cJSON tree lifetime.
@@ -183,12 +183,12 @@ static bool GetRequiredString(
 
 /**
  * @brief Reads a required integer representable as a nonnegative C int.
- * @param cjson_object Object containing the property.
- * @param name Exact property name.
- * @param context Human-readable object name used in errors.
- * @param int_value Receives the parsed integer on success.
- * @param error_message Destination for validation errors.
- * @param error_message_size Size of @p error_message in bytes.
+ * @param[in] cjson_object Object containing the property.
+ * @param[in] name Exact property name.
+ * @param[in] context Human-readable object name used in errors.
+ * @param[out] int_value Receives the parsed integer on success.
+ * @param[out] error_message Destination for validation errors.
+ * @param[in] error_message_size Size of @p error_message in bytes.
  * @return True when the JSON number is integral and lies in [0, INT_MAX].
  *
  * cJSON stores numbers as double, so the round-trip comparison rejects
@@ -218,11 +218,11 @@ static bool GetRequiredInteger(
 
 /**
  * @brief Resolves the config model entry to an owned filesystem path.
- * @param config_path Path used to open the config.
- * @param model Nonempty model entry from the config.
- * @param model_path Receives newly allocated path storage.
- * @param error_message Destination for overflow or allocation errors.
- * @param error_message_size Size of @p error_message in bytes.
+ * @param[in] config_path Path used to open the config.
+ * @param[in] model Nonempty model entry from the config.
+ * @param[out] model_path Receives newly allocated path storage.
+ * @param[out] error_message Destination for overflow or allocation errors.
+ * @param[in] error_message_size Size of @p error_message in bytes.
  * @return True when path construction succeeds.
  *
  * Absolute paths are preserved. Relative paths use the config's directory,
@@ -279,87 +279,103 @@ static bool ResolveModelPath(
 }
 
 /**
- * @brief Parses input mapping objects into the owned config representation.
- * @param cjson_array Validated JSON array from the config root.
- * @param onnx_config Destination whose input array and strings become owned.
- * @param error_message Destination for validation or allocation errors.
- * @param error_message_size Size of @p error_message in bytes.
- * @return True when every input mapping satisfies the version 1 contract.
+ * @brief Parses input or output mappings into owned config storage.
+ * @param[in] cjson_array Validated JSON array from the config root.
+ * @param[in] mapping_role Human-readable mapping role, such as "input".
+ * @param[out] mappings Receives an allocated array and owned strings.
+ * @param[out] num_mappings Receives the number of parsed mappings.
+ * @param[out] error_message Destination for validation or allocation errors.
+ * @param[in] error_message_size Size of @p error_message in bytes.
+ * @return True when every mapping satisfies the versioned contract.
  *
- * On failure, the caller releases any partially populated entries through
+ * Input and output mapping objects have the same schema. Role-specific
+ * behavior, such as condition coverage, is validated outside this parser.
+ * On failure, the caller releases partially populated entries through
  * OnnxAlquimiaFreeConfig.
  */
-static bool ParseInputMappings(
+static bool ParseMappings(
     const cJSON *cjson_array,
-    OnnxAlquimiaConfig *onnx_config,
+    const char *mapping_role,
+    OnnxAlquimiaMapping **mappings,
+    size_t *num_mappings,
     char *error_message,
     size_t error_message_size)
 {
   static const char *const allowed_schema_fields[] = {
       "tensor", "tensor_element_index", "feature", "alquimia_state",
       "alquimia_state_index"};
+  char mapping_context[32];
   cJSON *cjson_item;
   size_t i = 0;
   /* In cJSON API, Array is key:[key : value,key : value,...]*/
+  /* inputs:[
+  ** {  tensor: ... },
+  ** {  tensor: ... }
+  ** ] */
   int count = cJSON_GetArraySize(cjson_array);
 
-  /* Check if it's empty 
-  ** Check if count * total input tensor exceeds the size_t
-  */
-  if (count < 0 || (size_t)count > SIZE_MAX / sizeof(*onnx_config->inputs))
+  snprintf(mapping_context, sizeof(mapping_context), "%s mapping", mapping_role);
+  if (count < 0 || (size_t)count > SIZE_MAX / sizeof(**mappings))
   {
-    SetError(error_message, error_message_size,
-             "ONNX config input mapping array is too large.");
+    if (error_message != NULL && error_message_size > 0)
+    {
+      snprintf(error_message, error_message_size,
+               "ONNX config %s mapping array is too large.", mapping_role);
+    }
     return false;
   }
-  onnx_config->num_inputs = (size_t)count;
-  /* Check if there is key inside the inputs */
+  *num_mappings = (size_t)count;
   if (count > 0)
   {
-    onnx_config->inputs = (OnnxAlquimiaInputMapping *)calloc(
-        (size_t)count, sizeof(*onnx_config->inputs));
-    if (onnx_config->inputs == NULL)
+    *mappings = (OnnxAlquimiaMapping *)calloc(
+        (size_t)count, sizeof(**mappings));
+    if (*mappings == NULL)
     {
-      SetError(error_message, error_message_size,
-               "Memory allocation failed for ONNX input mappings.");
+      if (error_message != NULL && error_message_size > 0)
+      {
+        snprintf(error_message, error_message_size,
+                 "Memory allocation failed for ONNX %s mappings.",
+                 mapping_role);
+      }
       return false;
     }
   }
-  /* Traverse all the elements in inputs */
+  /* Traverse all the items */
   cJSON_ArrayForEach(cjson_item, cjson_array)
   {
     int tensor_element_index;
+    OnnxAlquimiaMapping *mapping = &(*mappings)[i];
     if (!cJSON_IsObject(cjson_item) ||
-        /* Check if there are duplicate keys */
-        !ValidateProperties(cjson_item, allowed_schema_fields, 5, "input mapping",
+        !ValidateProperties(cjson_item, allowed_schema_fields, 5,
+                            mapping_context,
                             error_message, error_message_size) ||
-        /* Assign the value to the OnnxEngineStatus engine->config->inputMapping */
-        /* Assign the value to the OnnxEngineStatus engine->config->inputMapping */
-        !GetRequiredString(cjson_item, "tensor", "input mapping",
-                           &onnx_config->inputs[i].tensor,
+        !GetRequiredString(cjson_item, "tensor", mapping_context,
+                           &mapping->tensor,
                            error_message, error_message_size) ||
-        !GetRequiredInteger(cjson_item, "tensor_element_index", "input mapping",
+        !GetRequiredInteger(cjson_item, "tensor_element_index", mapping_context,
                             &tensor_element_index, error_message,
                             error_message_size) ||
-        !GetRequiredString(cjson_item, "feature", "input mapping",
-                           &onnx_config->inputs[i].feature,
+        !GetRequiredString(cjson_item, "feature", mapping_context,
+                           &mapping->feature,
                            error_message, error_message_size) ||
-        !GetRequiredString(cjson_item, "alquimia_state", "input mapping",
-                           &onnx_config->inputs[i].alquimia_state,
+        !GetRequiredString(cjson_item, "alquimia_state", mapping_context,
+                           &mapping->alquimia_state,
                            error_message, error_message_size) ||
-        !GetRequiredInteger(cjson_item, "alquimia_state_index", "input mapping",
-                            &onnx_config->inputs[i].alquimia_state_index,
+        !GetRequiredInteger(cjson_item, "alquimia_state_index", mapping_context,
+                            &mapping->alquimia_state_index,
                             error_message, error_message_size))
     {
       if (!cJSON_IsObject(cjson_item))
       {
-        SetError(error_message, error_message_size,
-                 "Every ONNX input mapping must be an object.");
+        if (error_message != NULL && error_message_size > 0)
+        {
+          snprintf(error_message, error_message_size,
+                   "Every ONNX %s mapping must be an object.", mapping_role);
+        }
       }
       return false;
     }
-    onnx_config->inputs[i].tensor_element_index =
-        (size_t)tensor_element_index;
+    mapping->tensor_element_index = (size_t)tensor_element_index;
     ++i;
   }
   return true;
@@ -367,10 +383,10 @@ static bool ParseInputMappings(
 
 /**
  * @brief Rejects empty or duplicate arbitrary member names in an object.
- * @param cjson_object Object whose direct members are checked.
- * @param context Human-readable object name used in errors.
- * @param error_message Destination for the first validation error.
- * @param error_message_size Size of @p error_message in bytes.
+ * @param[in] cjson_object Object whose direct members are checked.
+ * @param[in] context Human-readable object name used in errors.
+ * @param[out] error_message Destination for the first validation error.
+ * @param[in] error_message_size Size of @p error_message in bytes.
  * @return True when every direct member has a unique, nonempty name.
  *
  * Condition and feature names are user-defined, so they cannot use the fixed
@@ -415,9 +431,9 @@ static bool ValidateUniqueMember(
 
 /**
  * @brief Verifies that every condition supplies every mapped input feature.
- * @param onnx_config Config containing parsed inputs and conditions.
- * @param error_message Destination for the first validation error.
- * @param error_message_size Size of @p error_message in bytes.
+ * @param[in] onnx_config Config containing parsed inputs and conditions.
+ * @param[out] error_message Destination for the first validation error.
+ * @param[in] error_message_size Size of @p error_message in bytes.
  * @return True when all mapped features exist in each condition.
  *
  * Conditions may contain additional features so a shared condition can serve
@@ -465,10 +481,10 @@ static bool ValidateConditionFeature(
 
 /**
  * @brief Parses optional named JSON initial conditions.
- * @param cjson_conditions Conditions object from the config root.
- * @param onnx_config Destination whose condition storage becomes owned.
- * @param error_message Destination for validation or allocation errors.
- * @param error_message_size Size of @p error_message in bytes.
+ * @param[in] cjson_conditions Conditions object from the config root.
+ * @param[in,out] onnx_config Destination whose condition storage becomes owned.
+ * @param[out] error_message Destination for validation or allocation errors.
+ * @param[in] error_message_size Size of @p error_message in bytes.
  * @return True when all names and numeric feature values are valid.
  */
 static bool ParseConditions(
@@ -545,7 +561,7 @@ static bool ParseConditions(
   {
     OnnxAlquimiaCondition *condition =
         &onnx_config->conditions[condition_index];
-    const cJSON *cjson_value;
+    const cJSON *cjson_item;
     size_t item_index = 0;
     int item_count;
 
@@ -596,25 +612,25 @@ static bool ParseConditions(
       }
     }
     // Traverse the members of the condition
-    cJSON_ArrayForEach(cjson_value, cjson_condition)
+    cJSON_ArrayForEach(cjson_item, cjson_condition)
     {
-      if (!cJSON_IsNumber(cjson_value) ||
-          !isfinite(cjson_value->valuedouble))
+      if (!cJSON_IsNumber(cjson_item) ||
+          !isfinite(cjson_item->valuedouble))
       {
         snprintf(error_message, error_message_size,
                  "Feature '%s' in condition '%s' must be a finite number.",
-                 cjson_value->string, condition->name);
+                 cjson_item->string, condition->name);
         return false;
       }
       condition->items[item_index].feature =
-          CopyString(cjson_value->string);
+          CopyString(cjson_item->string);
       if (condition->items[item_index].feature == NULL)
       {
         SetError(error_message, error_message_size,
                  "Memory allocation failed for an ONNX condition feature.");
         return false;
       }
-      condition->items[item_index].value = cjson_value->valuedouble;
+      condition->items[item_index].value = cjson_item->valuedouble;
       ++item_index;
     }
     ++condition_index;
@@ -626,88 +642,12 @@ static bool ParseConditions(
 }
 
 /**
- * @brief Parses output mapping objects into the owned config representation.
- * @param cjson_array Validated JSON array from the config root.
- * @param onnx_config Destination whose output array and strings become owned.
- * @param error_message Destination for validation or allocation errors.
- * @param error_message_size Size of @p error_message in bytes.
- * @return True when every output mapping satisfies the version 1 contract.
- *
- * Outputs omit feature names because conditions and problem metadata describe
- * model inputs only.
- */
-static bool ParseOutputMappings(
-    const cJSON *cjson_array,
-    OnnxAlquimiaConfig *onnx_config,
-    char *error_message,
-    size_t error_message_size)
-{
-  static const char *const allowed_schema_fields[] = {
-      "tensor", "tensor_element_index", "alquimia_state",
-      "alquimia_state_index"};
-  cJSON *cjson_item;
-  size_t i = 0;
-  int count = cJSON_GetArraySize(cjson_array);
-
-  if (count < 0 || (size_t)count > SIZE_MAX / sizeof(*onnx_config->outputs))
-  {
-    SetError(error_message, error_message_size,
-             "ONNX config output mapping array is too large.");
-    return false;
-  }
-  onnx_config->num_outputs = (size_t)count;
-  if (count > 0)
-  {
-    onnx_config->outputs = (OnnxAlquimiaOutputMapping *)calloc(
-        (size_t)count, sizeof(*onnx_config->outputs));
-    if (onnx_config->outputs == NULL)
-    {
-      SetError(error_message, error_message_size,
-               "Memory allocation failed for ONNX output mappings.");
-      return false;
-    }
-  }
-
-  cJSON_ArrayForEach(cjson_item, cjson_array)
-  {
-    int tensor_element_index;
-    if (!cJSON_IsObject(cjson_item) ||
-        !ValidateProperties(cjson_item, allowed_schema_fields, 4, "output mapping",
-                            error_message, error_message_size) ||
-        !GetRequiredString(cjson_item, "tensor", "output mapping",
-                           &onnx_config->outputs[i].tensor,
-                           error_message, error_message_size) ||
-        !GetRequiredInteger(cjson_item, "tensor_element_index", "output mapping",
-                            &tensor_element_index, error_message,
-                            error_message_size) ||
-        !GetRequiredString(cjson_item, "alquimia_state", "output mapping",
-                           &onnx_config->outputs[i].alquimia_state,
-                           error_message, error_message_size) ||
-        !GetRequiredInteger(cjson_item, "alquimia_state_index", "output mapping",
-                            &onnx_config->outputs[i].alquimia_state_index,
-                            error_message, error_message_size))
-    {
-      if (!cJSON_IsObject(cjson_item))
-      {
-        SetError(error_message, error_message_size,
-                 "Every ONNX output mapping must be an object.");
-      }
-      return false;
-    }
-    onnx_config->outputs[i].tensor_element_index =
-        (size_t)tensor_element_index;
-    ++i;
-  }
-  return true;
-}
-
-/**
  * @brief Reads a complete config file into a null-terminated buffer.
- * @param config_path config filesystem path.
- * @param json_contents Receives newly allocated file json_contents.
- * @param file_length Receives the file length, excluding the terminator.
- * @param error_message Destination for read or allocation errors.
- * @param error_message_size Size of @p error_message in bytes.
+ * @param[in] config_path config filesystem path.
+ * @param[out] json_contents Returns newly allocated file json_contents.
+ * @param[out] file_length Receives the file length, excluding the terminator.
+ * @param[out] error_message Destination for read or allocation errors.
+ * @param[in] error_message_size Size of @p error_message in bytes.
  * @return True on success; false after closing the file and freeing partial
  *         storage.
  *
@@ -783,12 +723,12 @@ static bool ReadConfigjson_contents(
 
 /**
  * @brief Validates the root object and populates owned config storage.
- * @param config_path config path used to resolve a relative model entry.
- * @param cjson_root Parsed cJSON root; ownership remains with the caller.
- * @param onnx_config Destination for copied paths and mapping specifications.
- * @param error_message Destination for schema or allocation errors.
- * @param error_message_size Size of @p error_message in bytes.
- * @return True when the root satisfies the complete version 1 contract.
+ * @param[in] config_path JSON config path used to resolve a relative model entry.
+ * @param[in] cjson_root Parsed cJSON root; ownership remains with the caller.
+ * @param[in,out] onnx_config Destination for copied paths and mapping specifications.
+ * @param[out] error_message Destination for schema or allocation errors.
+ * @param[in] error_message_size Size of @p error_message in bytes.
+ * @return True when the root satisfies the complete version contract.
  */
 static bool PopulateConfig(
     const char *config_path,
@@ -847,26 +787,43 @@ static bool PopulateConfig(
              "ONNX config inputs and outputs must be arrays.");
     return false;
   }
-  /* Set values for the OnnxEngineStatus engine->config */
-  /* engine->config->model_path, engine
-  ** engine->config->inputMapping
-  ** engine->config->outpuMapping
-  ** The input mapping is almost the same as the output mapping
-  ** But the output mapping doesn't have the output feature
-  */
+  /* Input and output arrays share one mapping schema. Conditions are parsed
+  ** afterward because their coverage applies only to model inputs. */
   return ResolveModelPath(config_path, cjson_model->valuestring, &onnx_config->model_path,
                           error_message, error_message_size) &&
-         ParseInputMappings(cjson_inputs, onnx_config, error_message,
-                            error_message_size) &&
-         ParseOutputMappings(cjson_outputs, onnx_config, error_message,
-                             error_message_size) &&
+         ParseMappings(cjson_inputs, "input", &onnx_config->inputs,
+                       &onnx_config->num_inputs, error_message,
+                       error_message_size) &&
+         ParseMappings(cjson_outputs, "output", &onnx_config->outputs,
+                       &onnx_config->num_outputs, error_message,
+                       error_message_size) &&
          ParseConditions(cjson_conditions, onnx_config, error_message,
                          error_message_size);
 }
 
 /**
+ * @brief Releases an input or output mapping array and its owned strings.
+ * @param[in,out] mappings Mapping array to release, which may be NULL.
+ * @param[in] num_mappings Number of entries in @p mappings.
+ */
+static void FreeMappings(
+    OnnxAlquimiaMapping *mappings,
+    size_t num_mappings)
+{
+  size_t i;
+
+  for (i = 0; i < num_mappings; ++i)
+  {
+    free(mappings[i].tensor);
+    free(mappings[i].feature);
+    free(mappings[i].alquimia_state);
+  }
+  free(mappings);
+}
+
+/**
  * @brief Releases a complete or partially initialized config.
- * @param onnx_config config whose owned paths, mappings, and strings are freed.
+ * @param[in,out] onnx_config config whose owned paths, mappings, and strings are freed.
  *
  * The structure is zeroed after cleanup, making repeated cleanup and setup
  * failure paths safe.
@@ -890,28 +847,17 @@ void OnnxAlquimiaFreeConfig(OnnxAlquimiaConfig *onnx_config)
     free(onnx_config->conditions[i].items);
   }
   free(onnx_config->conditions);
-  for (i = 0; i < onnx_config->num_inputs; ++i)
-  {
-    free(onnx_config->inputs[i].tensor);
-    free(onnx_config->inputs[i].feature);
-    free(onnx_config->inputs[i].alquimia_state);
-  }
-  free(onnx_config->inputs);
-  for (i = 0; i < onnx_config->num_outputs; ++i)
-  {
-    free(onnx_config->outputs[i].tensor);
-    free(onnx_config->outputs[i].alquimia_state);
-  }
-  free(onnx_config->outputs);
+  FreeMappings(onnx_config->inputs, onnx_config->num_inputs);
+  FreeMappings(onnx_config->outputs, onnx_config->num_outputs);
   memset(onnx_config, 0, sizeof(*onnx_config));
 }
 
 /**
  * @brief Loads and strictly validates a versioned ONNX sidecar config.
- * @param config_path JSON filesystem path.
- * @param onnx_config Receives owned model-path and mapping storage on success.
- * @param error_message Destination for the first read, parse, or schema error.
- * @param error_message_size Size of @p error_message in bytes.
+ * @param[in] config_path JSON filesystem path.
+ * @param[in,out] onnx_config Returns owned model-path and mapping storage on success.
+ * @param[out] error_message Destination for the first read, parse, or schema error.
+ * @param[in] error_message_size Size of @p error_message in bytes.
  * @return True on success; false after releasing all partial allocations.
  *
  * Parsing is length-aware, requires one complete JSON document, and rejects

@@ -6,7 +6,7 @@
     {"tensor": "right", "tensor_element_index": 0, "feature": "mobile_feature", "alquimia_state": "total_mobile", "alquimia_state_index": 0}
   ],
   "outputs": [
-    {"tensor": "sum", "tensor_element_index": 0, "alquimia_state": "temperature", "alquimia_state_index": 0},
-    {"tensor": "weighted", "tensor_element_index": 0, "alquimia_state": "gas_concentration", "alquimia_state_index": 0}
+    {"tensor": "sum", "tensor_element_index": 0, "feature": "sum_feature", "alquimia_state": "temperature", "alquimia_state_index": 0},
+    {"tensor": "weighted", "tensor_element_index": 0, "feature": "weighted_feature", "alquimia_state": "gas_concentration", "alquimia_state_index": 0}
   ]
 }
