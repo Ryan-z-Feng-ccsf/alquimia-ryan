@@ -153,6 +153,8 @@ typedef struct {
 
   FeatureMapping *input_mappings;  /* Array of size total_flat_inputs */
   FeatureMapping *output_mappings; /* Array of size total_flat_outputs */
+  /* Parallel lookup indicating that the paired phase is also an output. */
+  bool *output_has_paired_mapping;
 } OnnxEngineState;
 
 /* ------------- HELPER and ONNX-RELATED FUNCTIONS USED HERE ONLY -----------------*/
@@ -1021,10 +1023,59 @@ static bool HasMappedOutput(
 }
 
 /**
+ * @brief Caches whether each output explicitly maps its paired phase.
+ * @param[in,out] onnx_state Engine containing the completed output mappings.
+ * @param[out] status Returns an allocation error for the lookup array.
+ * @return True when the output-aligned lookup is initialized.
+ *
+ * The one-time setup scan keeps paired-output detection out of the repeated
+ * inference path.
+ */
+static bool BuildPairedOutputLookup(
+    OnnxEngineState *onnx_state,
+    AlquimiaEngineStatus *status)
+{
+  size_t i;
+
+  onnx_state->output_has_paired_mapping = (bool *)calloc(
+      onnx_state->total_flat_outputs,
+      sizeof(*onnx_state->output_has_paired_mapping));
+  if (onnx_state->output_has_paired_mapping == NULL)
+  {
+    status->error = kAlquimiaErrorEngineIntegrity;
+    snprintf(status->message, kAlquimiaMaxStringLength,
+             "Memory allocation failed for ONNX paired output lookup.");
+    return false;
+  }
+
+  for (i = 0; i < onnx_state->total_flat_outputs; ++i)
+  {
+    const FeatureMapping *mapping = &onnx_state->output_mappings[i];
+    AlquimiaMappedStruct paired_state;
+
+    if (mapping->alquimia_state == ALQUIMIA_STRUCT_TOTAL_MOBILE)
+    {
+      paired_state = ALQUIMIA_STRUCT_TOTAL_IMMOBILE;
+    }
+    else if (mapping->alquimia_state == ALQUIMIA_STRUCT_TOTAL_IMMOBILE)
+    {
+      paired_state = ALQUIMIA_STRUCT_TOTAL_MOBILE;
+    }
+    else
+    {
+      continue;
+    }
+    onnx_state->output_has_paired_mapping[i] = HasMappedOutput(
+        onnx_state, paired_state, mapping->alquimia_state_index);
+  }
+  return true;
+}
+
+/**
  * @brief Writes one model output and preserves a paired component total.
- * @param[in] onnx_state Engine containing all explicit output destinations.
  * @param[in,out] state State receiving the model output and any paired update.
  * @param[in] mapping Validated model-output destination.
+ * @param[in] has_paired_mapping Whether the paired phase is an explicit output.
  * @param[in] value Model output to assign.
  * @param[out] status Returns mapped-state access errors.
  *
@@ -1033,9 +1084,9 @@ static bool HasMappedOutput(
  * conserved. Explicit model outputs for both values remain authoritative.
  */
 static void SetAlquimiaModelOutput(
-    const OnnxEngineState *onnx_state,
     AlquimiaState *state,
     FeatureMapping mapping,
+    bool has_paired_mapping,
     double value,
     AlquimiaEngineStatus *status)
 {
@@ -1078,10 +1129,8 @@ static void SetAlquimiaModelOutput(
     return;
   }
 
-  // If mobile[index] and immobile[index] exist at the same JSON
-  // The model inference output prioritize
-  // It may have some bugs?(For not conservative)
-  if (HasMappedOutput(onnx_state, paired_mapping.alquimia_state, index))
+  /* Explicit model outputs for both phases remain authoritative. */
+  if (has_paired_mapping)
   {
     SetAlquimiaValue(state, mapping, value, status);
     return;
@@ -1825,7 +1874,9 @@ void onnx_alquimia_setup(
   /* Set up the mapping rules inside the OnnxEngine->mapping struct 
   ** Initialize AlquimiaSize
   */
-  if (!BuildConfigMappings(onnx_state, sizes, status))
+  if (!BuildConfigMappings(onnx_state, sizes, status) ||
+      // Check if the paired outputs for mobile and immobile exist
+      !BuildPairedOutputLookup(onnx_state, status))
   {
     CleanupOnSetupFailure(&onnx_state);
     return;
@@ -1891,6 +1942,8 @@ void onnx_alquimia_shutdown(
       free(onnx_state->output_mappings);
       onnx_state->output_mappings = NULL;
     }
+    free(onnx_state->output_has_paired_mapping);
+    onnx_state->output_has_paired_mapping = NULL;
 
     /* Input and output collections own independent tensors and buffers. */
     ReleaseOrtTensors(&onnx_state->input_tensors, &onnx_state->ort);
@@ -2199,8 +2252,9 @@ void onnx_alquimia_reactionstepoperatorsplit(
       for (k = 0; k < onnx_state->output_tensors.total_size[i]; ++k)
       {
         SetAlquimiaModelOutput(
-            onnx_state, state, onnx_state->output_mappings[flat_index],
-            out_arr[k], status);
+            state, onnx_state->output_mappings[flat_index],
+            onnx_state->output_has_paired_mapping[flat_index], out_arr[k],
+            status);
         if (status->error != kAlquimiaNoError)
         {
           return;

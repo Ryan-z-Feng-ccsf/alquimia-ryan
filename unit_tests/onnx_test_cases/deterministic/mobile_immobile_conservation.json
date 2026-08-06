@@ -7,7 +7,7 @@
   ],
   "outputs": [
     {"tensor": "copy", "tensor_element_index": 0, "feature": "temperature_feature", "alquimia_state": "temperature", "alquimia_state_index": 0},
-    {"tensor": "copy", "tensor_element_index": 1, "feature": "porosity_feature", "alquimia_state": "porosity", "alquimia_state_index": 0},
+    {"tensor": "copy", "tensor_element_index": 1, "feature": "component_1", "alquimia_state": "total_mobile", "alquimia_state_index": 1},
     {"tensor": "shifted", "tensor_element_index": 0, "feature": "component_0", "alquimia_state": "total_mobile", "alquimia_state_index": 0},
     {"tensor": "shifted", "tensor_element_index": 1, "feature": "component_1", "alquimia_state": "total_immobile", "alquimia_state_index": 1}
   ]

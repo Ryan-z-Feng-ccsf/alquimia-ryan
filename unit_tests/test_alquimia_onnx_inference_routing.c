@@ -13,7 +13,7 @@
 ** | R09 | Repeated inference calls | Reusable buffers retain no incorrect prior values |
 ** | R10 | Two independent engine instances | No state or buffer sharing between instances |
 ** | R11 | Multiple rank-0 scalar inputs and outputs | Preserve scalar tensor rank during inference |
-** | R12 | One phase output changes a paired component | Preserve mobile plus immobile total |
+** | R12 | One or both phase outputs change paired components | Conserve only one-sided outputs |
 */
 
 #include <math.h>
@@ -461,7 +461,7 @@ static void TestR11MultipleScalarInputsOutputs(void) {
   ShutdownEngine(&engine);
 }
 
-// | R12 | One phase output changes a paired component | Preserve mobile plus immobile total |
+// | R12 | One or both phase outputs change paired components | Conserve only one-sided outputs |
 static void TestR12MobileImmobileConservation(void) {
   OnnxTestEngine engine;
   AlquimiaState state;
@@ -484,10 +484,10 @@ static void TestR12MobileImmobileConservation(void) {
                  state.total_mobile.data[0], 13.0);
   CheckCloseCase("R12 mobile-immobile conservation", "total_immobile[0]",
                  state.total_immobile.data[0], 7.0);
-  /* shifted[1] changes immobile component 1 from 6 to 24. Its paired
-  ** mobile value must decrease by 18 to preserve the total of 10. */
+  /* copy[1] and shifted[1] explicitly output both phases of component 1,
+  ** so both model values remain authoritative without conservation. */
   CheckCloseCase("R12 mobile-immobile conservation", "total_mobile[1]",
-                 state.total_mobile.data[1], -14.0);
+                 state.total_mobile.data[1], 4.0);
   CheckCloseCase("R12 mobile-immobile conservation", "total_immobile[1]",
                  state.total_immobile.data[1], 24.0);
 
