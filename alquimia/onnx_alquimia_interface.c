@@ -130,11 +130,11 @@ typedef struct {
   /* OnnxRuntime API */
   /* Const pointer to the global OrtApi function table. Do NOT release. */
   const OrtApi *g_ort;
-  OrtEnv *ort_env;
-  OrtSessionOptions *ort_session_options;
-  OrtSession *ort_session;
-  OrtMemoryInfo *ort_memory_info;
-  OrtAllocator *ort_allocator;
+  OrtEnv *env;
+  OrtSessionOptions *session_options;
+  OrtSession *session;
+  OrtMemoryInfo *memory_info;
+  OrtAllocator *allocator;
 } Ort;
 
 typedef struct {
@@ -1202,7 +1202,7 @@ static void ReleaseOrtTensors(OrtTensor *tensors, Ort *ort)
   }
 
   /* ONNX Runtime allocates tensor names with the OrtAllocator. */
-  if(ort->ort_allocator != NULL)
+  if(ort->allocator != NULL)
   {
     if (tensors->names != NULL)
   {
@@ -1210,7 +1210,7 @@ static void ReleaseOrtTensors(OrtTensor *tensors, Ort *ort)
     {
       if (tensors->names[i] != NULL)
       {
-        ort->ort_allocator->Free(ort->ort_allocator, tensors->names[i]);
+        ort->allocator->Free(ort->allocator, tensors->names[i]);
       }
     }
     free(tensors->names);
@@ -1329,7 +1329,7 @@ void onnx_alquimia_setup(
   /* Read the ONNX file that contains that contains the model */ 
   ort_status = onnx_state->ort.g_ort->CreateEnv(
       ORT_LOGGING_LEVEL_WARNING, "onnx_alquimia_engine",
-      &onnx_state->ort.ort_env);
+      &onnx_state->ort.env);
   if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
   {
     OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
@@ -1338,23 +1338,23 @@ void onnx_alquimia_setup(
   }
 
   ort_status = onnx_state->ort.g_ort->CreateSessionOptions(
-      &onnx_state->ort.ort_session_options);
+      &onnx_state->ort.session_options);
   if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
   {
-    onnx_state->ort.g_ort->ReleaseEnv(onnx_state->ort.ort_env);
+    onnx_state->ort.g_ort->ReleaseEnv(onnx_state->ort.env);
     OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
     free(onnx_state);
     return;
   }
 
   ort_status = onnx_state->ort.g_ort->CreateSession(
-      onnx_state->ort.ort_env, onnx_state->onnx_config.model_path,
-      onnx_state->ort.ort_session_options, &onnx_state->ort.ort_session);
+      onnx_state->ort.env, onnx_state->onnx_config.model_path,
+      onnx_state->ort.session_options, &onnx_state->ort.session);
   if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
   {
     onnx_state->ort.g_ort->ReleaseSessionOptions(
-        onnx_state->ort.ort_session_options);
-    onnx_state->ort.g_ort->ReleaseEnv(onnx_state->ort.ort_env);
+        onnx_state->ort.session_options);
+    onnx_state->ort.g_ort->ReleaseEnv(onnx_state->ort.env);
     OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
     free(onnx_state);
     return;
@@ -1362,7 +1362,7 @@ void onnx_alquimia_setup(
 
   ort_status = onnx_state->ort.g_ort->CreateCpuMemoryInfo(
       OrtArenaAllocator, OrtMemTypeDefault,
-      &onnx_state->ort.ort_memory_info);
+      &onnx_state->ort.memory_info);
   if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
   {
     CleanupOnSetupFailure(&onnx_state);
@@ -1370,8 +1370,8 @@ void onnx_alquimia_setup(
   }
 
   ort_status = onnx_state->ort.g_ort->CreateAllocator(
-      onnx_state->ort.ort_session, onnx_state->ort.ort_memory_info,
-      &onnx_state->ort.ort_allocator);
+      onnx_state->ort.session, onnx_state->ort.memory_info,
+      &onnx_state->ort.allocator);
   if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
   {
     CleanupOnSetupFailure(&onnx_state);
@@ -1381,7 +1381,7 @@ void onnx_alquimia_setup(
   /* Query input/output tensor count */
   size_t num_inputs = 0;
   ort_status = onnx_state->ort.g_ort->SessionGetInputCount(
-      onnx_state->ort.ort_session, &num_inputs);
+      onnx_state->ort.session, &num_inputs);
   if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
   {
     CleanupOnSetupFailure(&onnx_state);
@@ -1391,7 +1391,7 @@ void onnx_alquimia_setup(
 
   size_t num_outputs = 0;
   ort_status = onnx_state->ort.g_ort->SessionGetOutputCount(
-      onnx_state->ort.ort_session, &num_outputs);
+      onnx_state->ort.session, &num_outputs);
   if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
   {
     CleanupOnSetupFailure(&onnx_state);
@@ -1442,7 +1442,7 @@ void onnx_alquimia_setup(
     char *name = NULL;
     /* Get the names of the input tensor[i] */
     ort_status = onnx_state->ort.g_ort->SessionGetInputName(
-        onnx_state->ort.ort_session, i, onnx_state->ort.ort_allocator, &name);
+        onnx_state->ort.session, i, onnx_state->ort.allocator, &name);
     if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
     {
       CleanupOnSetupFailure(&onnx_state);
@@ -1452,7 +1452,7 @@ void onnx_alquimia_setup(
 
     OrtTypeInfo *ort_type_info = NULL;  /* Released by ReleaseTypeInfo */
     ort_status = onnx_state->ort.g_ort->SessionGetInputTypeInfo(
-        onnx_state->ort.ort_session, i, &ort_type_info);
+        onnx_state->ort.session, i, &ort_type_info);
     if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
     {
       CleanupOnSetupFailure(&onnx_state);
@@ -1602,7 +1602,7 @@ void onnx_alquimia_setup(
 
     /* The OrtValue wraps input_data; ONNX Runtime does not own that buffer. */
     ort_status = onnx_state->ort.g_ort->CreateTensorWithDataAsOrtValue(
-        onnx_state->ort.ort_memory_info, onnx_state->input_tensors.data[i],
+        onnx_state->ort.memory_info, onnx_state->input_tensors.data[i],
         total_size * sizeof(double), onnx_state->input_tensors.dim_values[i],
         onnx_state->input_tensors.num_dim[i],
         ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE,
@@ -1649,7 +1649,7 @@ void onnx_alquimia_setup(
     char *name = NULL;
     /* Get the names of the output tensor[i] */
     ort_status = onnx_state->ort.g_ort->SessionGetOutputName(
-        onnx_state->ort.ort_session, i, onnx_state->ort.ort_allocator, &name);
+        onnx_state->ort.session, i, onnx_state->ort.allocator, &name);
     if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
     {
       CleanupOnSetupFailure(&onnx_state);
@@ -1659,7 +1659,7 @@ void onnx_alquimia_setup(
 
     OrtTypeInfo *ort_type_info = NULL;  /* Released by ReleaseTypeInfo */
     ort_status = onnx_state->ort.g_ort->SessionGetOutputTypeInfo(
-        onnx_state->ort.ort_session, i, &ort_type_info);
+        onnx_state->ort.session, i, &ort_type_info);
     if (!CheckStatus(onnx_state->ort.g_ort, ort_status, status))
     {
       CleanupOnSetupFailure(&onnx_state);
@@ -1807,7 +1807,7 @@ void onnx_alquimia_setup(
 
     /* The OrtValue wraps output_data; ONNX Runtime does not own that buffer. */
     ort_status = onnx_state->ort.g_ort->CreateTensorWithDataAsOrtValue(
-        onnx_state->ort.ort_memory_info, onnx_state->output_tensors.data[i],
+        onnx_state->ort.memory_info, onnx_state->output_tensors.data[i],
         total_size * sizeof(double),
         onnx_state->output_tensors.dim_values[i],
         onnx_state->output_tensors.num_dim[i],
@@ -1910,7 +1910,7 @@ void onnx_alquimia_shutdown(
   ** Memory Lifecycle & Cleanup Rules:
   ** 1. Input/output tensors and underlying data arrays are created via 
   **    independent API calls during setup and can be freed in any order.
-  ** 2. Core ONNX Runtime objects (ort_session, ort_env, etc.) maintain strict 
+  ** 2. Core ONNX Runtime objects (session, env, etc.) maintain strict 
   **    dependencies and must be released in reverse order of initialization (LIFO).
   */
   if (onnx_engine_state == NULL || *(OnnxEngineState **)onnx_engine_state == NULL)
@@ -1950,32 +1950,32 @@ void onnx_alquimia_shutdown(
     ReleaseOrtTensors(&onnx_state->output_tensors, &onnx_state->ort);
 
     /* Release core ONNX Runtime objects in reverse initialization order. */
-    if (onnx_state->ort.ort_allocator != NULL)
+    if (onnx_state->ort.allocator != NULL)
     {
-      onnx_state->ort.g_ort->ReleaseAllocator(onnx_state->ort.ort_allocator);
-      onnx_state->ort.ort_allocator = NULL;
+      onnx_state->ort.g_ort->ReleaseAllocator(onnx_state->ort.allocator);
+      onnx_state->ort.allocator = NULL;
     }
-    if (onnx_state->ort.ort_memory_info != NULL)
+    if (onnx_state->ort.memory_info != NULL)
     {
       onnx_state->ort.g_ort->ReleaseMemoryInfo(
-          onnx_state->ort.ort_memory_info);
-      onnx_state->ort.ort_memory_info = NULL;
+          onnx_state->ort.memory_info);
+      onnx_state->ort.memory_info = NULL;
     }
-    if (onnx_state->ort.ort_session != NULL)
+    if (onnx_state->ort.session != NULL)
     {
-      onnx_state->ort.g_ort->ReleaseSession(onnx_state->ort.ort_session);
-      onnx_state->ort.ort_session = NULL;
+      onnx_state->ort.g_ort->ReleaseSession(onnx_state->ort.session);
+      onnx_state->ort.session = NULL;
     }
-    if (onnx_state->ort.ort_session_options != NULL)
+    if (onnx_state->ort.session_options != NULL)
     {
       onnx_state->ort.g_ort->ReleaseSessionOptions(
-          onnx_state->ort.ort_session_options);
-      onnx_state->ort.ort_session_options = NULL;
+          onnx_state->ort.session_options);
+      onnx_state->ort.session_options = NULL;
     }
-    if (onnx_state->ort.ort_env != NULL)
+    if (onnx_state->ort.env != NULL)
     {
-      onnx_state->ort.g_ort->ReleaseEnv(onnx_state->ort.ort_env);
-      onnx_state->ort.ort_env = NULL;
+      onnx_state->ort.g_ort->ReleaseEnv(onnx_state->ort.env);
+      onnx_state->ort.env = NULL;
     }
   }
   OnnxAlquimiaFreeConfig(&onnx_state->onnx_config);
@@ -2212,7 +2212,7 @@ void onnx_alquimia_reactionstepoperatorsplit(
 
   /* Run inference using pre-allocated input and output tensors and dynamic names */
   ort_status = onnx_state->ort.g_ort->Run(
-      onnx_state->ort.ort_session,
+      onnx_state->ort.session,
       NULL, /* RunOptions */
       (const char *const *)onnx_state->input_tensors.names,
       (const OrtValue *const *)onnx_state->input_tensors.tensor,
