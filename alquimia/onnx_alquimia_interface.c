@@ -1502,28 +1502,11 @@ void onnx_alquimia_setup(
       return;
     }
 
-    /* ONNX scalars report zero dimensions; normalize them to a one-element
-    ** tensor so setup and shutdown can use the same tensor path. */
-    if (dim_count == 0)
+    /* Preserve the model rank. A scalar has zero dimensions and keeps the
+    ** NULL dimension array initialized by calloc. */
+    onnx_state->input_tensors.num_dim[i] = dim_count;
+    if (dim_count > 0)
     {
-      onnx_state->input_tensors.num_dim[i] = 1;
-      /* Set up slot for the input data */
-      onnx_state->input_tensors.dim_values[i] =
-          (int64_t *)calloc(1, sizeof(int64_t));
-      if (onnx_state->input_tensors.dim_values[i] == NULL)
-      {
-        onnx_state->ort.g_ort->ReleaseTypeInfo(ort_type_info);
-        status->error = kAlquimiaErrorEngineIntegrity;
-        snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for scalar input_dim_values.");
-        CleanupOnSetupFailure(&onnx_state);
-        return;
-      }
-      onnx_state->input_tensors.dim_values[i][0] = 1;
-    }
-    /* Vector tensor */
-    else
-    {
-      onnx_state->input_tensors.num_dim[i] = dim_count;
       onnx_state->input_tensors.dim_values[i] =
           (int64_t *)calloc(dim_count, sizeof(int64_t));
       if (onnx_state->input_tensors.dim_values[i] == NULL)
@@ -1709,28 +1692,23 @@ void onnx_alquimia_setup(
       return;
     }
 
-    /* ONNX scalars report zero dimensions; normalize them to a one-element
-    ** tensor so setup and shutdown can use the same tensor path. */
-    if (dim_count == 0)
+    /* For a scalar:
+    **
+    ** - num_dim = 0
+    ** - dim_values = NULL
+    ** - total_size = 1
+    ** - data[i] holds one double
+    ** - OrtValue *tensor[i] is a valid rank-0 tensor
+
+    ** Before OrtRun, routing writes the scalar to data[i][0]. The OrtValue already
+    ** references that buffer, so inference reads the assigned value directly. Only
+    ** the shape pointer is NULL, indicating rank 0. 
+    */
+    /* Preserve the model rank. A scalar has zero dimensions and keeps the
+    ** NULL dimension array initialized by calloc. */
+    onnx_state->output_tensors.num_dim[i] = dim_count;
+    if (dim_count > 0)
     {
-      onnx_state->output_tensors.num_dim[i] = 1;
-      /* Set up slot for the output data */
-      onnx_state->output_tensors.dim_values[i] =
-          (int64_t *)calloc(1, sizeof(int64_t));
-      if (onnx_state->output_tensors.dim_values[i] == NULL)
-      {
-        onnx_state->ort.g_ort->ReleaseTypeInfo(ort_type_info);
-        status->error = kAlquimiaErrorEngineIntegrity;
-        snprintf(status->message, kAlquimiaMaxStringLength, "Memory allocation failed for scalar output_dim_values.");
-        CleanupOnSetupFailure(&onnx_state);
-        return;
-      }
-      onnx_state->output_tensors.dim_values[i][0] = 1;
-    }
-    /* Vector tensor */
-    else
-    {
-      onnx_state->output_tensors.num_dim[i] = dim_count;
       onnx_state->output_tensors.dim_values[i] =
           (int64_t *)calloc(dim_count, sizeof(int64_t));
       if (onnx_state->output_tensors.dim_values[i] == NULL)

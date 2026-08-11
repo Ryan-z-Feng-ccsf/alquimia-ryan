@@ -160,7 +160,8 @@ static void CheckRawModelRejected(void)
   }
   /* Get the model absolute path */
   /* path = model absolute path */
-  ModelPath("lsurf_model_2_float_64.onnx", path, sizeof(path));
+  ModelPath("alsurf_nn/zn_h_regressor_integrated_1D.onnx", path,
+            sizeof(path));
   /* Setup expects a JSON file */
   interface.Setup(path, false, &onnx_engine_state, &sizes, &functionality, &status);
   /* Expect: status.error == kAlquimiaErrorEngineIntegrity */
@@ -433,7 +434,7 @@ static void CheckJsonConditions(void)
 
   // Get the input from the engine side
   if (!SetupOnnxEngine(
-          "C10", "deterministic/updated_input_file.json", true, &interface, &status,
+          "C10", "deterministic/named_condition.json", true, &interface, &status,
           &sizes, &onnx_engine_state))
   {
     FreeAlquimiaEngineStatus(&status);
@@ -446,29 +447,29 @@ static void CheckJsonConditions(void)
   strcpy(condition.name, "initial");
 
   // Simulate the data from the driver side
-  first_state.total_immobile.data[0] = 91.0;
+  first_state.total_mobile.data[0] = 91.0;
   interface.ProcessCondition(
       &onnx_engine_state, &condition, &properties, &first_state, &aux_data,
       &status);
   CHECK_STATUS_CASE("C10", "Named JSON condition was not applied",
                     status.error == kAlquimiaNoError, &status);
   CHECK_CASE("C10", "JSON input value was routed to the wrong state location",
-             first_state.total_immobile.data[0] == -6.677780705266080);
+             first_state.total_mobile.data[0] == 9.999999999999999e-06);
 
-  first_state.total_immobile.data[0] = 12.0;
+  first_state.total_mobile.data[0] = 12.0;
   interface.ProcessCondition(
       &onnx_engine_state, &condition, &properties, &second_state, &aux_data,
       &status);
   CHECK_STATUS_CASE("C10", "Second-cell JSON condition was not applied",
                     status.error == kAlquimiaNoError, &status);
   CHECK_CASE("C10", "Second cell did not receive its own JSON input value",
-             second_state.total_immobile.data[0] == -6.677780705266080);
+             second_state.total_mobile.data[0] == 9.999999999999999e-06);
   CHECK_CASE("C10", "Initializing a second cell changed the first cell",
-             first_state.total_immobile.data[0] == 12.0);
+             first_state.total_mobile.data[0] == 12.0);
 
   // Unmatched condition name
   strcpy(condition.name, "Initial");
-  second_state.total_immobile.data[0] = 44.0;
+  second_state.total_mobile.data[0] = 44.0;
   interface.ProcessCondition(
       &onnx_engine_state, &condition, &properties, &second_state, &aux_data,
       &status);
@@ -476,7 +477,7 @@ static void CheckJsonConditions(void)
                     status.error == kAlquimiaErrorUnknownConstraintName,
                     &status);
   CHECK_CASE("C11", "Unknown JSON condition changed the state",
-             second_state.total_immobile.data[0] == 44.0);
+             second_state.total_mobile.data[0] == 44.0);
 
   FreeAlquimiaGeochemicalCondition(&condition);
   FreeAlquimiaState(&first_state);
@@ -492,7 +493,7 @@ static void CheckJsonConditions(void)
 
   // Get the input from the driver side
   if (!SetupOnnxEngine(
-          "C12", "deterministic/updated_input_file.json", false, &interface, &status,
+          "C12", "deterministic/named_condition.json", false, &interface, &status,
           &sizes, &onnx_engine_state))
   {
     FreeAlquimiaEngineStatus(&status);
@@ -502,14 +503,16 @@ static void CheckJsonConditions(void)
   AllocateAlquimiaGeochemicalCondition(
       (int)strlen("driver"), 1, 0, &driver_condition);
   strcpy(driver_condition.name, "driver");
-  InitializeConstraint(&driver_condition, 0, "uranium_total", 3.25);
+
+  // Aqueous constraint
+  InitializeConstraint(&driver_condition, 0, "H", 3.25);
   interface.ProcessCondition(
       &onnx_engine_state, &driver_condition, &properties, &first_state,
       &aux_data, &status);
   CHECK_STATUS_CASE("C12", "Normal mode rejected driver constraints",
                     status.error == kAlquimiaNoError, &status);
   CHECK_CASE("C12", "Normal mode did not preserve driver constraint routing",
-             first_state.total_immobile.data[0] == 3.25);
+             first_state.total_mobile.data[0] == 3.25);
 
   FreeAlquimiaGeochemicalCondition(&driver_condition);
   FreeAlquimiaState(&first_state);

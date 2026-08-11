@@ -1,0 +1,10 @@
+{
+    "input_features": [
+        "H (mobile)",
+        "Zn (mobile)"
+    ],
+    "output_features": [
+        "H (immobile)",
+        "Zn (immobile)"
+    ]
+}

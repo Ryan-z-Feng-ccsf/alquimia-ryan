@@ -108,6 +108,35 @@ static void SetupEngine(const char *relative_path, OnnxTestEngine *engine) {
   CHECK(engine->engine_state != NULL);
 }
 
+/**
+ * @brief Sets up a shared ALSURF model config in hands-off mode.
+ *
+ * @param[in] relative_path Config path relative to the repository's models folder.
+ * @param[out] engine ONNX engine initialized from the shared config.
+ */
+static void SetupSharedModelEngine(
+    const char *relative_path,
+    OnnxTestEngine *engine) {
+  char config_path[2048];
+
+  memset(engine, 0, sizeof(*engine));
+  AllocateAlquimiaEngineStatus(&engine->status);
+  CreateAlquimiaInterface("ONNX", &engine->interface, &engine->status);
+  CHECK(engine->status.error == kAlquimiaNoError);
+
+  snprintf(config_path, sizeof(config_path), "%s/../models/%s",
+           CMAKE_CURRENT_SOURCE_DIR, relative_path);
+  engine->interface.Setup(config_path, true, &engine->engine_state,
+                          &engine->sizes, &engine->functionality,
+                          &engine->status);
+  if (engine->status.error != kAlquimiaNoError) {
+    fprintf(stderr, "Setup failed for %s: %s\n", relative_path,
+            engine->status.message);
+    exit(EXIT_FAILURE);
+  }
+  CHECK(engine->engine_state != NULL);
+}
+
 static void ShutdownEngine(OnnxTestEngine *engine) {
   engine->interface.Shutdown(&engine->engine_state, &engine->status);
   CHECK(engine->status.error == kAlquimiaNoError);
@@ -135,6 +164,30 @@ static void RunInference(OnnxTestEngine *engine, AlquimiaState *state) {
     fprintf(stderr, "Inference failed: %s\n", engine->status.message);
     exit(EXIT_FAILURE);
   }
+}
+
+/**
+ * @brief Applies the shared config's row-0 named condition to one state.
+ */
+static void ApplyInitialCondition(
+    OnnxTestEngine *engine,
+    AlquimiaState *state) {
+  AlquimiaAuxiliaryData auxiliary_data = {0};
+  AlquimiaGeochemicalCondition condition = {0};
+  AlquimiaProperties properties = {0};
+
+  AllocateAlquimiaGeochemicalCondition(
+      (int)strlen("initial"), 0, 0, &condition);
+  strcpy(condition.name, "initial");
+  engine->interface.ProcessCondition(
+      &engine->engine_state, &condition, &properties, state, &auxiliary_data,
+      &engine->status);
+  if (engine->status.error != kAlquimiaNoError) {
+    fprintf(stderr, "Unable to apply ALSURF initial condition: %s\n",
+            engine->status.message);
+    exit(EXIT_FAILURE);
+  }
+  FreeAlquimiaGeochemicalCondition(&condition);
 }
 
 // | R01 | Single input, single output | Exact expected state values |
@@ -595,6 +648,80 @@ static void TestF05MultiTarget(void) {
   FreeAlquimiaState(&state);
   ShutdownEngine(&engine);
 }
+
+typedef struct {
+  const char *test_id;
+  const char *config_path;
+  double expected_h;
+  double expected_zn;
+} AlsurfModelCase;
+
+static void CheckAlsurfPrediction(
+    const char *test_id,
+    const char *feature,
+    double actual,
+    double expected) {
+  double tolerance = fabs(expected) * 1.0e-10 + 1.0e-18;
+
+  if (!isfinite(actual) || fabs(actual - expected) > tolerance) {
+    fprintf(stderr,
+            "%s: %s prediction was %.17g; expected %.17g "
+            "within %.17g.\n",
+            test_id, feature, actual, expected, tolerance);
+    exit(EXIT_FAILURE);
+  }
+}
+
+// | F06 | Shared ALSURF models | Every supported tensor shape preserves H/Zn output routing and lifecycle |
+static void TestF06AlsurfModels(void) {
+  static const double nn_h = 1.2306658377131264e-4;
+  static const double nn_zn = 1.47994968124545e-7;
+  static const double rf_h = 1.271885656770001e-4;
+  static const double rf_zn = 3.9111416932674e-10;
+  static const AlsurfModelCase cases[] = {
+      {"F06-NN-1D", "alsurf_nn/zn_h_regressor_integrated_1D.json",
+       nn_h, nn_zn},
+      {"F06-NN-batch1",
+       "alsurf_nn/zn_h_regressor_integrated_batch1.json", nn_h, nn_zn},
+      {"F06-NN-dynamic",
+       "alsurf_nn/zn_h_regressor_integrated_dyn_batch.json", nn_h, nn_zn},
+      {"F06-RF-batch1", "alsurf_rf/alsurf_9_batch1.json", rf_h, rf_zn},
+      {"F06-RF-dynamic", "alsurf_rf/alsurf_9_dynamic_batch.json", rf_h,
+       rf_zn},
+      {"F06-RF-vector", "alsurf_rf/alsurf_9_feature_vector.json", rf_h,
+       rf_zn},
+      {"F06-RF-6", "alsurf_rf/alsurf_6.json", rf_h, rf_zn},
+      {"F06-RF-scalar", "alsurf_rf/alsurf_9_scalar.json", rf_h, rf_zn},
+  };
+  size_t i;
+
+  for (i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
+    const AlsurfModelCase *test_case = &cases[i];
+    OnnxTestEngine engine;
+    AlquimiaState state;
+
+    printf("Running shared ALSURF model case %s.\n", test_case->test_id);
+
+    // hands-off
+    SetupSharedModelEngine(test_case->config_path, &engine);
+    // For NN (2 inputs, 2 outputs) and RF (6/9 inputs, 2outputs)
+    CHECK(engine.sizes.num_primary >= 2);
+    CHECK(engine.sizes.num_sorbed == 2);
+    AllocateState(&engine, &state);
+    ApplyInitialCondition(&engine, &state);
+    RunInference(&engine, &state); 
+
+    CheckAlsurfPrediction(test_case->test_id, "H(immobile)",
+                          state.total_immobile.data[0],
+                          test_case->expected_h);
+    CheckAlsurfPrediction(test_case->test_id, "Zn(immobile)",
+                          state.total_immobile.data[1],
+                          test_case->expected_zn);
+
+    FreeAlquimiaState(&state);
+    ShutdownEngine(&engine);
+  }
+}
 /* Testing R01-R12 */
 static void RunRoutingTests(void) {
   TestR01SingleInputSingleOutput();
@@ -620,6 +747,7 @@ static void RunRoutingTests(void) {
 ** | F03 | Small neural network | Standard dense activation graph compatibility |
 ** | F04 | Tree ensemble | `ai.onnx.ml` tree operator compatibility |
 ** | F05 | Multi-target model | Compatibility with multiple outputs |
+** | F06 | Shared ALSURF models | H/Zn output routing across all supported tensor shapes |
 */
 static void RunModelFamilyTests(void) {
   TestF01LinearAffine();
@@ -627,7 +755,8 @@ static void RunModelFamilyTests(void) {
   TestF03SmallNeuralNetwork();
   TestF04TreeEnsemble();
   TestF05MultiTarget();
-  printf("ONNX model-family cases F01-F05 passed.\n");
+  TestF06AlsurfModels();
+  printf("ONNX model-family cases F01-F06 passed.\n");
 }
 
 #endif
