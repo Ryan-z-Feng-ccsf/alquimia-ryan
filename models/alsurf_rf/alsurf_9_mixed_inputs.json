@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "model": "alsurf_9_mixed_inputs.onnx",
+  "conditions": {
+    "initial": {
+      "Zn(OH)2(aq)": 1.813505366090861e-15,
+      "Zn(OH)3-": 7.349990948801437e-22,
+      "Zn(OH)4--": 2.7351872885715046e-29,
+      "ZnOH+": 5.6323585057657926e-12,
+      "Zn++": 9.960327396019113e-08,
+      "Na+": 0.0999877981223431,
+      "NO3-": 0.1000000031975435,
+      "Fe++": 2.9324029589485202e-12,
+      "O2(aq)": 0.0002464700291695
+    }
+  },
+  "inputs": [
+    {"tensor": "chemical_dynamic", "tensor_element_index": 0, "feature": "Zn(OH)2(aq)", "alquimia_state": "total_mobile", "alquimia_state_index": 2},
+    {"tensor": "chemical_dynamic", "tensor_element_index": 1, "feature": "Zn(OH)3-", "alquimia_state": "total_mobile", "alquimia_state_index": 3},
+    {"tensor": "chemical_dynamic", "tensor_element_index": 2, "feature": "Zn(OH)4--", "alquimia_state": "total_mobile", "alquimia_state_index": 4},
+    {"tensor": "chemical_vector", "tensor_element_index": 0, "feature": "ZnOH+", "alquimia_state": "total_mobile", "alquimia_state_index": 5},
+    {"tensor": "chemical_vector", "tensor_element_index": 1, "feature": "Zn++", "alquimia_state": "total_mobile", "alquimia_state_index": 6},
+    {"tensor": "chemical_vector", "tensor_element_index": 2, "feature": "Na+", "alquimia_state": "total_mobile", "alquimia_state_index": 7},
+    {"tensor": "chemical_batch1", "tensor_element_index": 0, "feature": "NO3-", "alquimia_state": "total_mobile", "alquimia_state_index": 8},
+    {"tensor": "chemical_batch1", "tensor_element_index": 1, "feature": "Fe++", "alquimia_state": "total_mobile", "alquimia_state_index": 9},
+    {"tensor": "chemical_scalar", "tensor_element_index": 0, "feature": "O2(aq)", "alquimia_state": "total_mobile", "alquimia_state_index": 10}
+  ],
+  "outputs": [
+    {"tensor": "sorbed_output_raw", "tensor_element_index": 0, "feature": "H", "alquimia_state": "total_immobile", "alquimia_state_index": 0},
+    {"tensor": "sorbed_output_raw", "tensor_element_index": 1, "feature": "Zn", "alquimia_state": "total_immobile", "alquimia_state_index": 1}
+  ]
+}

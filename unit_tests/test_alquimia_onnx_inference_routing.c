@@ -692,6 +692,8 @@ static void TestF06AlsurfModels(void) {
        rf_zn},
       {"F06-RF-6", "alsurf_rf/alsurf_6.json", rf_h, rf_zn},
       {"F06-RF-scalar", "alsurf_rf/alsurf_9_scalar.json", rf_h, rf_zn},
+      {"F06-RF-mixed-input-ranks", "alsurf_rf/alsurf_9_mixed_inputs.json",
+       rf_h, rf_zn},
   };
   size_t i;
 
