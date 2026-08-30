@@ -1,38 +1,53 @@
-/* -*-  mode: c; c-default-style: "google"; indent-tabs-mode: nil -*- 
-** This file is used to test the JSON Mapping contract
-** The related test case is below:
-** | ID | Scenario | Expected result |
-** |---|---|---|
-** | M01 | Schema version is missing, malformed, or unsupported | Setup error naming `schema_version` |
-** | M02 | Required top-level object or array is missing | Setup error naming the property |
-** | M03 | Input mapping property is missing | Setup error naming the property |
-** | M04 | Output mapping property is missing | Setup error naming the property |
-** | M05 | Unknown or duplicate JSON property | Setup error |
-** | M06 | `alquimia_state` is unsupported | Setup error |
-** | M07 | `alquimia_state_index` or `tensor_element_index` is invalid | Setup error |
-** | M08 | Scalar mapping uses a nonzero `alquimia_state_index` | Setup error |
-** | M09 | Tensor name is unknown | Setup error naming the tensor |
-** | M10 | `tensor_element_index` exceeds its flattened extent | Setup error |
-** | M11 | A tensor element index is mapped more than once | Setup error |
-** | M12 | A required model tensor element index is unmapped | Setup error |
-** | M13 | Mappings derive unsafe or overflowing Alquimia sizes | Setup error |
-** | M14 | Feature names target different state categories | Correct problem-metadata vectors are populated |
-** | M15 | Two names target the same metadata destination | Setup rejects the ambiguity |
-** | M16 | Similar but invalid property has trailing text | Property is rejected rather than partially matched |
-** | M17 | Model path is relative to the config | Correct path is resolved from the config directory |
-** | M18 | Two input mappings use the same feature name | Setup rejects the duplicate lookup key |
-** | M19 | Conditions cover all required inputs and include extra features | Configuration parses successfully | 
-** | M20 | Invalid conditions schema (e.g., wrong types, duplicate/empty names, non-finite values) | Parser rejects the configuration with a specific error message |
-** | M21 | A defined condition is missing a required input feature | Parser rejects the configuration indicating the missing feature |
-** Here we use the ALSURF neural-network model for testing.
-** This model has one input tensor and one output tensor.
-** input tensor: 2 inputs
-** output tensor: 2 outputs
-** input tensor name: "chemical_input_raw"
-** output tensor name: "sorbed_output_raw"
+/* -*-  mode: c; c-default-style: "google"; indent-tabs-mode: nil -*- */
+
+/*
+** Alquimia Copyright (c) 2013-2016, The Regents of the University of California,
+** through Lawrence Berkeley National Laboratory (subject to receipt of any
+** required approvals from the U.S. Dept. of Energy).  All rights reserved.
+**
+** Alquimia is available under a BSD license. See LICENSE.txt for more
+** information.
+**
+** If you have questions about your rights to use or distribute this software,
+** please contact Berkeley Lab's Technology Transfer and Intellectual Property
+** Management at TTD@lbl.gov referring to Alquimia (LBNL Ref. 2013-119).
+**
+** NOTICE.  This software was developed under funding from the U.S. Department
+** of Energy.  As such, the U.S. Government has been granted for itself and
+** others acting on its behalf a paid-up, nonexclusive, irrevocable, worldwide
+** license in the Software to reproduce, prepare derivative works, and perform
+** publicly and display publicly.  Beginning five (5) years after the date
+** permission to assert copyright is obtained from the U.S. Department of Energy,
+** and subject to any subsequent five (5) year renewals, the U.S. Government is
+** granted for itself and others acting on its behalf a paid-up, nonexclusive,
+** irrevocable, worldwide license in the Software to reproduce, prepare derivative
+** works, distribute copies to the public, perform publicly and display publicly,
+** and to permit others to do so.
 */
 
-#include <math.h>
+/* ****************************************************************************
+**
+** ONNX mapping/configuration unit tests.
+**
+** Authors:
+**        Zhuolei Feng, Sergi Molins
+**
+** Notes:
+**
+**  * This file verifies the strict JSON config contract, feature-to-state
+**    mapping metadata, and relative model-path resolution.
+**  * Test IDs use one prefix plus a two-digit stable case number.
+**      M01, M02, ...: standard mapping/config success cases.
+**      E01, E02, ...: parser/setup contract failures.
+**  * Example: M01 is the first mapping success case; E01 is the first
+**    mapping/config error case.
+**  * Tightly coupled: validates by matching substrings in the interface's
+**    error message.
+**  * Test JSON is assembled in each test function.
+**
+** ****************************************************************************
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,370 +57,66 @@
 #include "alquimia/alquimia_memory.h"
 #include "alquimia/alquimia_util.h"
 #include "alquimia/onnx_alquimia_config.h"
+#include "onnx_test_utils.h"
 
 #if ALQUIMIA_HAVE_ONNX
 
-#define ALSURF_MODEL_PATH                                                \
-  CMAKE_CURRENT_SOURCE_DIR                                               \
-  "/../models/alsurf_nn/zn_h_regressor_integrated_1D.onnx"
-#define ALSURF_NAMED_CONFIG                                      \
-  CMAKE_CURRENT_SOURCE_DIR                                      \
-  "/onnx_test_cases/deterministic/named_condition.json"
-#define ALSURF_RELATIVE_CONFIG                                  \
-  CMAKE_CURRENT_SOURCE_DIR                                      \
-  "/onnx_test_cases/configs/alsurf_relative.json"
-#define TEMP_CONFIG "test_alquimia_onnx_config_case.json"
-#define TEST_ERROR_MESSAGE_SIZE 512
+/* ---------- Standard Cases ---------- */
 
-#define CHECK(condition)                                                    \
-  do                                                                        \
-  {                                                                         \
-    if (!(condition))                                                       \
-    {                                                                       \
-      fprintf(stderr, "Check failed at %s:%d: %s\n", __FILE__, __LINE__, \
-              #condition);                                                  \
-      exit(EXIT_FAILURE);                                                   \
-    }                                                                       \
-  } while (0)
-
-// Match the first input of the model
-#define VALID_INPUT_0                                                  \
-  "{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"     \
-  "\"feature\":\"H\",\"alquimia_state\":\"total_mobile\","             \
-  "\"alquimia_state_index\":0}"
-
-// Match the second input of the model
-#define VALID_INPUT_1                                                  \
-  "{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":1,"     \
-  "\"feature\":\"Zn\",\"alquimia_state\":\"total_mobile\","            \
-  "\"alquimia_state_index\":1}"
-
-// Match both outputs of the model
-#define VALID_OUTPUT_0                                                   \
-  "{\"tensor\":\"sorbed_output_raw\",\"tensor_element_index\":0,"      \
-  "\"feature\":\"H\",\"alquimia_state\":\"total_immobile\","           \
-  "\"alquimia_state_index\":0}"
-#define VALID_OUTPUT_1                                                   \
-  "{\"tensor\":\"sorbed_output_raw\",\"tensor_element_index\":1,"      \
-  "\"feature\":\"Zn\",\"alquimia_state\":\"total_immobile\","          \
-  "\"alquimia_state_index\":1}"
-#define VALID_OUTPUT VALID_OUTPUT_0 "," VALID_OUTPUT_1
-
-static void CreateOnnxInterface(
-    AlquimiaInterface *interface,
-    AlquimiaEngineStatus *status)
-{
-  CreateAlquimiaInterface("ONNX", interface, status);
-  CHECK(status->error == kAlquimiaNoError);
-}
-/* Write the contents: config to the temporary file 
-** config: JSON 
-** If used, needed to remove() manually
-*/
-static void WriteTemporaryConfig(const char *contents)
-{
-  /* TEMP_CONFIG = "test_alquimia_onnx_config_case.json" */
-  FILE *file = fopen(TEMP_CONFIG, "wb");
-  size_t length = strlen(contents);
-
-  if (file == NULL)
-  {
-    fprintf(stderr, "Unable to open temporary config '%s'.\n", TEMP_CONFIG);
-    exit(EXIT_FAILURE);
-  }
-  if (fwrite(contents, 1, length, file) != length)
-  {
-    fprintf(stderr, "Unable to write temporary config '%s'.\n", TEMP_CONFIG);
-    fclose(file);
-    exit(EXIT_FAILURE);
-  }
-  if (fclose(file) != 0)
-  {
-    fprintf(stderr, "Unable to close temporary config '%s'.\n", TEMP_CONFIG);
-    exit(EXIT_FAILURE);
-  }
-}
-
-static void RemoveTemporaryConfig(const char *test_id)
-{
-  if (remove(TEMP_CONFIG) != 0)
-  {
-    fprintf(stderr, "%s could not remove temporary config '%s'.\n",
-            test_id, TEMP_CONFIG);
-    exit(EXIT_FAILURE);
-  }
-}
-
-static void ExpectConfigParseFailure(
-    const char *test_id,
-    const char *config_contents,
-    const char *expected_message)
-{
-  OnnxAlquimiaConfig config = {0};
-  char error_message[TEST_ERROR_MESSAGE_SIZE] = {0};
-  bool loaded;
-
-  WriteTemporaryConfig(config_contents);
-  loaded = OnnxAlquimiaLoadConfig(
-      TEMP_CONFIG, &config, error_message, sizeof(error_message));
-  if (loaded || strstr(error_message, expected_message) == NULL)
-  {
-    fprintf(stderr, "%s returned '%s' (expected '%s').\n",
-            test_id, error_message, expected_message);
-    OnnxAlquimiaFreeConfig(&config);
-    RemoveTemporaryConfig(test_id);
-    exit(EXIT_FAILURE);
-  }
-  OnnxAlquimiaFreeConfig(&config);
-  RemoveTemporaryConfig(test_id);
-}
-
-/* | M19 | Conditions cover all required inputs and include extra features | Configuration parses successfully | */
-/* | M20 | Invalid conditions schema (e.g., wrong types, duplicate/empty names, non-finite values) | Parser rejects the configuration with a specific error message | */
-/* | M21 | A defined condition is missing a required input feature | Parser rejects the configuration indicating the missing feature | */
-static void TestConditionConfigCases(void)
+/**
+ * @brief Verifies valid named conditions parse and preserve extra features.
+ *
+ * | M01 | Conditions cover all required inputs and include extra features | Configuration parses successfully |
+ */
+static void TestM01ConditionConfigSuccess(void)
 {
   static const char valid_config[] =
       "{\"schema_version\":1,\"model\":\"model.onnx\","
       "\"conditions\":{\"initial\":{\"H\":1e-5,"
       "\"Zn\":1e-7,\"unused_feature\":7}},"
-      "\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1 "],"
-      "\"outputs\":[" VALID_OUTPUT "]}";
+      "\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1 "],"
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}";
+
   OnnxAlquimiaConfig config = {0};
-  char error_message[TEST_ERROR_MESSAGE_SIZE] = {0};
+  char error_message[ONNX_TEST_ERROR_MESSAGE_SIZE] = {0};
 
-  printf("  M19 conditions cover inputs and allow extra features\n");
-  WriteTemporaryConfig(valid_config);
+  printf("  M01 conditions cover inputs and allow extra features\n");
+  OnnxWriteTemporaryConfig(valid_config);
+
   if (!OnnxAlquimiaLoadConfig(
-      TEMP_CONFIG, &config, error_message, sizeof(error_message)))
+      ONNX_TEST_TEMP_CONFIG, &config, error_message, sizeof(error_message)))
   {
-    fprintf(stderr, "M19 could not parse valid conditions: %s\n",
+    fprintf(stderr, "M01 could not parse valid conditions: %s\n",
             error_message);
-    RemoveTemporaryConfig("M19");
+    OnnxRemoveTemporaryConfig("M01");
     exit(EXIT_FAILURE);
   }
-  CHECK(config.num_conditions == 1);
-  CHECK(strcmp(config.conditions[0].name, "initial") == 0);
-  CHECK(config.conditions[0].num_items == 3);
-  CHECK(
+
+  ONNX_TEST_REQUIRE(config.num_conditions == 1);
+  ONNX_TEST_REQUIRE(strcmp(config.conditions[0].name, "initial") == 0);
+  ONNX_TEST_REQUIRE(config.conditions[0].num_items == 3);
+  ONNX_TEST_REQUIRE(
       strcmp(config.conditions[0].items[0].feature, "H") == 0);
-  CHECK(config.conditions[0].items[0].value == 1.0e-5);
-  CHECK(
+  ONNX_TEST_REQUIRE(config.conditions[0].items[0].value == 1.0e-5);
+  ONNX_TEST_REQUIRE(
       strcmp(config.conditions[0].items[2].feature, "unused_feature") == 0);
-  CHECK(config.conditions[0].items[2].value == 7.0);
+  ONNX_TEST_REQUIRE(config.conditions[0].items[2].value == 7.0);
   OnnxAlquimiaFreeConfig(&config);
-  CHECK(config.conditions == NULL);
-  CHECK(config.num_conditions == 0);
-  RemoveTemporaryConfig("M19");
+  ONNX_TEST_REQUIRE(config.conditions == NULL);
+  ONNX_TEST_REQUIRE(config.num_conditions == 0);
 
-  // Conditions is an object
-  ExpectConfigParseFailure(
-      "M20 conditions must be an object",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":[],\"inputs\":[],\"outputs\":[]}",
-      "conditions must be an object");
-
-  // Duplicate conditions
-  ExpectConfigParseFailure(
-      "M20 duplicate conditions property",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":{},\"conditions\":{},\"inputs\":[],\"outputs\":[]}",
-      "Duplicate property 'conditions'");
-
-  // Duplicate condition name
-  ExpectConfigParseFailure(
-      "M20 duplicate condition name",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":{\"initial\":{},\"initial\":{}},"
-      "\"inputs\":[],\"outputs\":[]}",
-      "Duplicate name 'initial'");
-
-  // Empty condition 
-  ExpectConfigParseFailure(
-      "M20 empty condition name",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":{\"\":{}},\"inputs\":[],\"outputs\":[]}",
-      "must be nonempty");
-
-  // Initial is an object
-  ExpectConfigParseFailure(
-      "M20 condition must be an object",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":{\"initial\":1},\"inputs\":[],\"outputs\":[]}",
-      "Condition 'initial' must be an object");
-
-  // Duplicate items
-  ExpectConfigParseFailure(
-      "M20 duplicate condition feature",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":{\"initial\":{\"f\":1,\"f\":2}},"
-      "\"inputs\":[],\"outputs\":[]}",
-      "Duplicate name 'f'");
-
-  // Empty items
-  ExpectConfigParseFailure(
-      "M20 empty condition feature",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":{\"initial\":{\"\":1}},"
-      "\"inputs\":[],\"outputs\":[]}",
-      "must be nonempty");
-
-  // Invalid value
-  ExpectConfigParseFailure(
-      "M20 condition feature must be numeric",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":{\"initial\":{\"f\":\"1\"}},"
-      "\"inputs\":[],\"outputs\":[]}",
-      "must be a finite number");
-
-  // Invalid value
-  ExpectConfigParseFailure(
-      "M20 condition feature must be finite",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":{\"initial\":{\"f\":1e999}},"
-      "\"inputs\":[],\"outputs\":[]}",
-      "must be a finite number");
-
-  // Missing features
-  ExpectConfigParseFailure(
-      "M21 condition must cover every input feature",
-      "{\"schema_version\":1,\"model\":\"model.onnx\","
-      "\"conditions\":{\"initial\":{\"H\":1e-5}},"
-      "\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1 "],"
-      "\"outputs\":[" VALID_OUTPUT "]}",
-      "Condition 'initial' is missing input feature 'Zn'");
+  OnnxRemoveTemporaryConfig("M01");
 }
 
-/* Expected: fail */
-static void ExpectSetupFailure(
-    AlquimiaInterface *interface,
-    AlquimiaEngineStatus *status,
-    const char *test_id,
-    const char *config,
-    const char *expected_message)
-{
-  AlquimiaEngineFunctionality functionality = {0};
-  AlquimiaSizes sizes = {0};
-  void *engine_state = NULL;
-
-  /* Write the contents: config to the temporary file */
-  /* config: JSON 
-  */
-  WriteTemporaryConfig(config);
-  /* Setup by the temporary JSON file */
-  interface->Setup(TEMP_CONFIG, false, &engine_state, &sizes,
-                   &functionality, status);
-  if (status->error == kAlquimiaNoError || engine_state != NULL ||
-    /* expected_message is the substring of the status->message */
-      strstr(status->message, expected_message) == NULL)
-  {
-    fprintf(stderr,
-            "%s returned error %d and message '%s' (expected '%s').\n",
-            test_id, status->error, status->message, expected_message);
-    exit(EXIT_FAILURE);
-  }
-  RemoveTemporaryConfig(test_id);
-}
-
-/* Test the whole lifecycle */
-static void TestAlsurfLifecycle(void)
-{
-  static const char *const features[] = {"H", "Zn"};
-  static const double inputs[] = {1.0e-5, 1.0e-7};
-  static const double outputs[] = {
-      1.2306658377131264e-4, 1.47994968124545e-7};
-  AlquimiaAuxiliaryData aux_data = {0};
-  AlquimiaEngineFunctionality functionality = {0};
-  AlquimiaEngineStatus status;
-  AlquimiaGeochemicalCondition condition;
-  AlquimiaInterface interface;
-  AlquimiaProblemMetaData meta_data;
-  AlquimiaProperties properties = {0};
-  AlquimiaSizes sizes = {0};
-  AlquimiaState state = {0};
-  void *engine_state = NULL;
-  int i;
-
-  printf("Running successful ALSURF ONNX lifecycle.\n");
-  AllocateAlquimiaEngineStatus(&status);
-  CreateOnnxInterface(&interface, &status);
- 
-  interface.Setup(ALSURF_NAMED_CONFIG, false, &engine_state, &sizes,
-                  &functionality, &status);
-  if (status.error != kAlquimiaNoError)
-  {
-    fprintf(stderr, "ALSURF setup failed: %s\n", status.message);
-  }
-  CHECK(status.error == kAlquimiaNoError);
-  CHECK(engine_state != NULL);
-  CHECK(sizes.num_primary == 2);
-  CHECK(sizes.num_sorbed == 2);
-  CHECK(sizes.num_minerals == 0);
-  CHECK(sizes.num_surface_sites == 0);
-  CHECK(sizes.num_ion_exchange_sites == 0);
-  CHECK(sizes.num_gases == 0);
-  CHECK(functionality.operator_splitting);
-  CHECK(!functionality.thread_safe);
-
-  AllocateAlquimiaProblemMetaData(&sizes, &meta_data);
-  interface.GetProblemMetaData(&engine_state, &meta_data, &status);
-  CHECK(status.error == kAlquimiaNoError);
-  for (i = 0; i < 2; ++i)
-  {
-    CHECK(strcmp(meta_data.primary_names.data[i], features[i]) == 0);
-  }
-
-  AllocateAlquimiaState(&sizes, &state);
-  AllocateAlquimiaGeochemicalCondition(8, 2, 0, &condition);
-  strcpy(condition.name, "initial");
-  for (i = 0; i < 2; ++i)
-  {
-    AllocateAlquimiaAqueousConstraint(&condition.aqueous_constraints.data[i]);
-    strcpy(condition.aqueous_constraints.data[i].primary_species_name,
-           features[i]);
-    strcpy(condition.aqueous_constraints.data[i].constraint_type, "total");
-    condition.aqueous_constraints.data[i].value = inputs[i];
-  }
-
-  interface.ProcessCondition(&engine_state, &condition, &properties, &state,
-                             &aux_data, &status);
-  CHECK(status.error == kAlquimiaNoError);
-  for (i = 0; i < 2; ++i)
-  {
-    CHECK(state.total_mobile.data[i] == inputs[i]);
-  }
-
-  interface.ReactionStepOperatorSplit(
-      &engine_state, 1.0, &properties, &state, &aux_data, 1, &status);
-  if (status.error != kAlquimiaNoError)
-  {
-    fprintf(stderr, "ALSURF inference failed: %s\n", status.message);
-  }
-  CHECK(status.error == kAlquimiaNoError);
-  for (i = 0; i < 2; ++i)
-  {
-    CHECK(isfinite(state.total_immobile.data[i]));
-    CHECK(
-        fabs(state.total_immobile.data[i] - outputs[i]) < 1.0e-15);
-  }
-
-  FreeAlquimiaGeochemicalCondition(&condition);
-  FreeAlquimiaState(&state);
-  FreeAlquimiaProblemMetaData(&meta_data);
-  interface.Shutdown(&engine_state, &status);
-  CHECK(status.error == kAlquimiaNoError);
-  CHECK(engine_state == NULL);
-  FreeAlquimiaEngineStatus(&status);
-}
-
-// | M14 | Feature names target different state categories | Correct problem-metadata vectors are populated |
-// | M17 | Model path is relative to the config | Correct path is resolved from the config directory |
-static void TestSuccessfulMappingCases(
-    AlquimiaInterface *interface,
-    AlquimiaEngineStatus *status)
+/**
+ * @brief Verifies mapping metadata names are published by state category.
+ *
+ * | M02 | Feature names target different state categories | Correct problem-metadata vectors are populated |
+ */
+static void TestM02SuccessfulMappingMetadata(void)
 {
   static const char category_config[] =
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":["
       "{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"aqueous_feature\",\"alquimia_state\":\"total_mobile\","
@@ -420,393 +131,487 @@ static void TestSuccessfulMappingCases(
       "\"feature\":\"output_gas_feature\","
       "\"alquimia_state\":\"gas_concentration\","
       "\"alquimia_state_index\":1}]}";
-  AlquimiaEngineFunctionality functionality = {0};
+
+  OnnxTestEngine engine;
   AlquimiaProblemMetaData meta_data;
-  AlquimiaSizes sizes = {0};
-  void *engine_state = NULL;
 
-  /* Write the contents: config to the temporary file */
-  /* config: JSON 
-  */
-  WriteTemporaryConfig(category_config);
-  interface->Setup(TEMP_CONFIG, false, &engine_state, &sizes,
-                   &functionality, status);
-  // Expected value:                  
-  CHECK(status->error == kAlquimiaNoError);
-  CHECK(engine_state != NULL);
-  CHECK(sizes.num_primary == 2);
-  CHECK(sizes.num_gases == 2);
-  AllocateAlquimiaProblemMetaData(&sizes, &meta_data);
-  interface->GetProblemMetaData(&engine_state, &meta_data, status);
-  CHECK(status->error == kAlquimiaNoError);
-  CHECK(strcmp(meta_data.primary_names.data[0],
-                         "aqueous_feature") == 0);
-  CHECK(strcmp(meta_data.primary_names.data[1],
-                         "output_feature") == 0);
-  CHECK(strcmp(meta_data.gas_names.data[0], "gas_feature") == 0);
-  CHECK(strcmp(meta_data.gas_names.data[1],
-                         "output_gas_feature") == 0);
-  FreeAlquimiaProblemMetaData(&meta_data);
-  interface->Shutdown(&engine_state, status);
-  CHECK(status->error == kAlquimiaNoError);
-  CHECK(engine_state == NULL);
-  RemoveTemporaryConfig("M14");
+  OnnxWriteTemporaryConfig(category_config);
 
-  // Test the ResolvePath in the onnx_alquimia_config.c 
-  interface->Setup(ALSURF_RELATIVE_CONFIG, false, &engine_state, &sizes,
-                   &functionality, status);
-  if (status->error != kAlquimiaNoError)
+  if (!OnnxSetupEngineAtPath(ONNX_TEST_TEMP_CONFIG, false, &engine))
   {
-    fprintf(stderr, "M17 setup failed: %s\n", status->message);
+    fprintf(stderr, "M02 setup failed: %s\n", engine.status.message);
   }
-  CHECK(status->error == kAlquimiaNoError);
-  CHECK(engine_state != NULL);
-  interface->Shutdown(&engine_state, status);
-  CHECK(status->error == kAlquimiaNoError);
-  CHECK(engine_state == NULL);
+
+  ONNX_TEST_REQUIRE(engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(engine.engine_state != NULL);
+  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 2);
+  ONNX_TEST_REQUIRE(engine.sizes.num_gases == 2);
+
+  AllocateAlquimiaProblemMetaData(&engine.sizes, &meta_data);
+  engine.interface.GetProblemMetaData(
+      &engine.engine_state, &meta_data, &engine.status);
+
+  ONNX_TEST_REQUIRE(engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(strcmp(meta_data.primary_names.data[0],
+                         "aqueous_feature") == 0);
+  ONNX_TEST_REQUIRE(strcmp(meta_data.primary_names.data[1],
+                         "output_feature") == 0);
+  ONNX_TEST_REQUIRE(strcmp(meta_data.gas_names.data[0], "gas_feature") == 0);
+  ONNX_TEST_REQUIRE(strcmp(meta_data.gas_names.data[1],
+                         "output_gas_feature") == 0);
+
+  FreeAlquimiaProblemMetaData(&meta_data);
+
+  ONNX_TEST_REQUIRE(OnnxShutdownEngine(&engine));
+
+  OnnxRemoveTemporaryConfig("M02");
 }
 
-/* Check the JSON mapping contract */
-static void TestConfigContract(void)
+/**
+ * @brief Verifies relative ONNX model paths resolve from the config directory.
+ *
+ * | M03 | Model path is relative to the config | Correct path is resolved from the config directory |
+ */
+static void TestM03RelativeModelPath(void)
 {
-  
+  OnnxTestEngine engine;
+
+  if (!OnnxSetupEngineAtPath(ONNX_TEST_ALSURF_RELATIVE_CONFIG, false, &engine))
+  {
+    fprintf(stderr, "M03 setup failed: %s\n", engine.status.message);
+  }
+
+  ONNX_TEST_REQUIRE(engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(engine.engine_state != NULL);
+  ONNX_TEST_REQUIRE(OnnxShutdownEngine(&engine));
+}
+
+/* ---------- Error Cases ---------- */
+
+/**
+ * @brief Verifies invalid condition config schemas fail during parsing.
+ *
+ * | E01 | Invalid condition schema | Parser rejects the configuration with a specific error message |
+ */
+static void TestE01ConditionConfigFailures(void)
+{
+  /* Conditions must be an object. */
+  OnnxExpectConfigParseFailure(
+      "E01 conditions must be an object",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":[],\"inputs\":[],\"outputs\":[]}",
+      "conditions must be an object");
+
+  /* Duplicate top-level conditions property. */
+  OnnxExpectConfigParseFailure(
+      "E01 duplicate conditions property",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{},\"conditions\":{},\"inputs\":[],\"outputs\":[]}",
+      "Duplicate property 'conditions'");
+
+  /* Duplicate condition name. */
+  OnnxExpectConfigParseFailure(
+      "E01 duplicate condition name",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{},\"initial\":{}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "Duplicate name 'initial'");
+
+  /* Empty condition name. */
+  OnnxExpectConfigParseFailure(
+      "E01 empty condition name",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"\":{}},\"inputs\":[],\"outputs\":[]}",
+      "must be nonempty");
+
+  /* Condition bodies must be objects. */
+  OnnxExpectConfigParseFailure(
+      "E01 condition must be an object",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":1},\"inputs\":[],\"outputs\":[]}",
+      "Condition 'initial' must be an object");
+
+  /* Duplicate condition feature. */
+  OnnxExpectConfigParseFailure(
+      "E01 duplicate condition feature",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"f\":1,\"f\":2}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "Duplicate name 'f'");
+
+  /* Empty condition feature. */
+  OnnxExpectConfigParseFailure(
+      "E01 empty condition feature",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"\":1}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "must be nonempty");
+
+  /* Condition values must be numeric. */
+  OnnxExpectConfigParseFailure(
+      "E01 condition feature must be numeric",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"f\":\"1\"}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "must be a finite number");
+
+  /* Condition values must be finite. */
+  OnnxExpectConfigParseFailure(
+      "E01 condition feature must be finite",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"f\":1e999}},"
+      "\"inputs\":[],\"outputs\":[]}",
+      "must be a finite number");
+
+  /* Conditions must cover every configured input feature. */
+  OnnxExpectConfigParseFailure(
+      "E01 condition must cover every input feature",
+      "{\"schema_version\":1,\"model\":\"model.onnx\","
+      "\"conditions\":{\"initial\":{\"H\":1e-5}},"
+      "\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1 "],"
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}",
+      "Condition 'initial' is missing input feature 'Zn'");
+}
+
+/**
+ * @brief Verifies strict ONNX JSON mapping-contract failures.
+ */
+static void TestE02ConfigContractFailures(void)
+{
   AlquimiaEngineStatus status;
   AlquimiaInterface interface;
 
   printf("Running strict ONNX config contract cases.\n");
-  AllocateAlquimiaEngineStatus(&status);
-  CreateOnnxInterface(&interface, &status);
+  ONNX_TEST_REQUIRE(OnnxCreateInterface(&interface, &status));
 
-  /* ALSURF_MODEL_PATH is the absolute path to the shared ALSURF NN model. */
-  /* | M01 | Schema version is missing, malformed, or unsupported | Setup error naming `schema_version` | */
-  ExpectSetupFailure(&interface, &status, "M01 missing schema version",
-    /* Mock JSON file */
-      "{\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[],\"outputs\":[]}", "schema_version");
-  ExpectSetupFailure(&interface, &status, "M01 malformed schema version",
-      // malformed schema_version: "1" (string)
-      "{\"schema_version\":\"1\",\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[],\"outputs\":[]}", "schema_version");
-  ExpectSetupFailure(&interface, &status, "M01 unsupported schema version",
-      // Unsupported schema version
-      "{\"schema_version\":2,\"model\":\"" ALSURF_MODEL_PATH
+  /* | E02 | Schema version is missing, malformed, or unsupported | Setup error naming `schema_version` | */
+  OnnxExpectConfigSetupFailure(&interface, &status, "E02 missing schema version",
+      "{\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[],\"outputs\":[]}", "schema_version");
 
-  // | M02 | Required top-level object or array is missing | Setup error naming the property |
-  ExpectSetupFailure(&interface, &status, "M02 missing model",
+  OnnxExpectConfigSetupFailure(&interface, &status, "E02 malformed schema version",
+      "{\"schema_version\":\"1\",\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[],\"outputs\":[]}", "schema_version");
+
+  OnnxExpectConfigSetupFailure(&interface, &status, "E02 unsupported schema version",
+      "{\"schema_version\":2,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[],\"outputs\":[]}", "schema_version");
+
+  /* | E03 | Required top-level object or array is missing | Setup error naming the property | */
+  OnnxExpectConfigSetupFailure(&interface, &status, "E03 missing model",
       "{\"schema_version\":1,\"inputs\":[],\"outputs\":[]}", "model");
-  ExpectSetupFailure(&interface, &status, "M02 missing inputs",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+
+  OnnxExpectConfigSetupFailure(&interface, &status, "E03 missing inputs",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"outputs\":[]}", "inputs and outputs");
-  ExpectSetupFailure(&interface, &status, "M02 missing outputs",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+
+  OnnxExpectConfigSetupFailure(&interface, &status, "E03 missing outputs",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[]}", "inputs and outputs");
 
-  // | M03 | Input mapping property is missing | Setup error naming the property |
-  ExpectSetupFailure(&interface, &status, "M03 missing input tensor",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+  /* | E04 | Input mapping property is missing | Setup error naming the property | */
+  OnnxExpectConfigSetupFailure(&interface, &status, "E04 missing input tensor",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor_element_index\":0,\"feature\":\"f\","
       "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "tensor");
-  ExpectSetupFailure(&interface, &status,
-      "M03 missing input tensor element index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "tensor");
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E04 missing input tensor element index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\","
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "tensor_element_index");
-  ExpectSetupFailure(&interface, &status, "M03 missing input feature",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "tensor_element_index");
+
+  OnnxExpectConfigSetupFailure(&interface, &status, "E04 missing input feature",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "feature");
-  ExpectSetupFailure(&interface, &status,
-      "M03 missing input Alquimia state variable",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "feature");
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E04 missing input Alquimia state variable",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"f\",\"alquimia_state_index\":0}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "alquimia_state");
-  ExpectSetupFailure(&interface, &status,
-      "M03 missing input Alquimia state index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "alquimia_state");
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E04 missing input Alquimia state index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\"}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "alquimia_state_index");
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "alquimia_state_index");
 
-  // | M04 | Output mapping property is missing | Setup error naming the property |
-  ExpectSetupFailure(&interface, &status, "M04 missing output tensor",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+  /* | E05 | Output mapping property is missing | Setup error naming the property | */
+  OnnxExpectConfigSetupFailure(&interface, &status, "E05 missing output tensor",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[{\"tensor_element_index\":0,\"feature\":\"H\","
       "\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0}]}", "tensor");
-  ExpectSetupFailure(&interface, &status,
-      "M04 missing output tensor element index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E05 missing output tensor element index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"sorbed_output_raw\","
       "\"feature\":\"H\",\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0}]}", "tensor_element_index");
-  ExpectSetupFailure(&interface, &status, "M04 missing output feature",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+
+  OnnxExpectConfigSetupFailure(&interface, &status, "E05 missing output feature",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"sorbed_output_raw\","
       "\"tensor_element_index\":0,\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0}]}", "feature");
-  ExpectSetupFailure(&interface, &status,
-      "M04 missing output Alquimia state variable",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E05 missing output Alquimia state variable",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"sorbed_output_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"H\",\"alquimia_state_index\":0}]}",
       "alquimia_state");
-  ExpectSetupFailure(&interface, &status,
-      "M04 missing output Alquimia state index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E05 missing output Alquimia state index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"sorbed_output_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"H\",\"alquimia_state\":\"total_mobile\"}]}",
       "alquimia_state_index");
 
-  // | M05 | Unknown or duplicate JSON property | Setup error |
-  ExpectSetupFailure(&interface, &status, "M05 unknown property",
-      // Unkown property "extra"
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+  /* | E06 | Unknown or duplicate JSON property | Setup error | */
+  OnnxExpectConfigSetupFailure(&interface, &status, "E06 unknown property",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[],\"outputs\":[],\"models\":\"extra\"}",
       "Unknown property 'models'");
-  ExpectSetupFailure(&interface, &status, "M05 duplicate property",
-      // Duplicate "schema_version"
+
+  OnnxExpectConfigSetupFailure(&interface, &status, "E06 duplicate property",
       "{\"schema_version\":1,\"schema_version\":1,\"model\":\""
-      ALSURF_MODEL_PATH "\",\"inputs\":[],\"outputs\":[]}",
+      ONNX_TEST_ALSURF_MODEL_PATH "\",\"inputs\":[],\"outputs\":[]}",
       "Duplicate property 'schema_version'");
-  ExpectSetupFailure(&interface, &status, "M05 unknown input property",
-      // Unknown "unit"
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+
+  OnnxExpectConfigSetupFailure(&interface, &status, "E06 unknown input property",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0,"
-      "\"unit\":\"molar\"}],\"outputs\":[" VALID_OUTPUT "]}",
+      "\"unit\":\"molar\"}],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}",
       "Unknown property 'unit'");
-  ExpectSetupFailure(&interface, &status, "M05 duplicate output property",
-      // Duplicate alquimia_state_index
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+
+  OnnxExpectConfigSetupFailure(&interface, &status, "E06 duplicate output property",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"sorbed_output_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"H\",\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0,\"alquimia_state_index\":0}]}",
       "Duplicate property 'alquimia_state_index'");
 
-  // | M06 | `alquimia_state` is unsupported | Setup error |
-  ExpectSetupFailure(&interface, &status,
-      "M06 unsupported Alquimia state variable",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+  /* | E07 | `alquimia_state` is unsupported | Setup error | */
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E07 unsupported Alquimia state variable",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
-      // Unsupported "total_mobiles"
       "\"feature\":\"H\",\"alquimia_state\":\"total_mobiles\","
-      "\"alquimia_state_index\":0}," VALID_INPUT_1 "],\"outputs\":[" VALID_OUTPUT "]}",
+      "\"alquimia_state_index\":0}," ONNX_TEST_VALID_INPUT_1 "],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}",
       "Unsupported AlquimiaState variable 'total_mobiles'");
 
-  // | M07 | `alquimia_state_index` or `tensor_element_index` is invalid | Setup error |
-  ExpectSetupFailure(&interface, &status,
-      "M07 negative tensor element index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      // tensor_element_index < 0
+  /* | E08 | `alquimia_state_index` or `tensor_element_index` is invalid | Setup error | */
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E08 negative tensor element index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":-1,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "tensor_element_index");
-  ExpectSetupFailure(&interface, &status,
-      "M07 fractional Alquimia state index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "tensor_element_index");
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E08 fractional Alquimia state index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
-      // alquimia_state_index = 0.5
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0.5}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "alquimia_state_index");
-  ExpectSetupFailure(&interface, &status,
-      "M07 negative Alquimia state index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "alquimia_state_index");
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E08 negative Alquimia state index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
-      // alquimia_state_index < 0
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":-1}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "alquimia_state_index");
-  ExpectSetupFailure(&interface, &status,
-      "M07 fractional tensor element index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      // tensor_element_index = 0.5
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "alquimia_state_index");
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E08 fractional tensor element index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0.5,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "tensor_element_index");
-  ExpectSetupFailure(&interface, &status,
-      "M07 tensor element index exceeds C int range",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "tensor_element_index");
+
+  /* tensor_element_index = 2147483648 > INT_MAX, in the onnx_alquimia_config.c */
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E08 tensor element index exceeds C int range",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\","
-      // tensor_element_index = 2147483648 > INT_MAX, in the onnx_alquimia_config.c
       "\"tensor_element_index\":2147483648,\"feature\":\"f\","
       "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0}],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "tensor_element_index");
-  ExpectSetupFailure(&interface, &status,
-      "M07 Alquimia state index exceeds C int range",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "tensor_element_index");
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E08 Alquimia state index exceeds C int range",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\","
-      // alquimia_state_index = 2147383648 > INT_MAX, in the onnx_alquimia_config.c
-      "\"alquimia_state_index\":2147483648}],\"outputs\":[" VALID_OUTPUT
+      "\"alquimia_state_index\":2147483648}],\"outputs\":[" ONNX_TEST_VALID_OUTPUT
       "]}", "alquimia_state_index");
 
-  // | M08 | Scalar mapping uses a nonzero `alquimia_state_index` | Setup error |
-  ExpectSetupFailure(&interface, &status,
-      "M08 scalar has nonzero Alquimia state index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+  /* | E09 | Scalar mapping uses a nonzero `alquimia_state_index` | Setup error | */
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E09 scalar has nonzero Alquimia state index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
-      // temperature is a scalar in AlquimiaState, the index should = 0 
       "\"feature\":\"temperature\",\"alquimia_state\":\"temperature\","
-      "\"alquimia_state_index\":1}," VALID_INPUT_1 "],\"outputs\":[" VALID_OUTPUT "]}",
+      "\"alquimia_state_index\":1}," ONNX_TEST_VALID_INPUT_1 "],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}",
       "incompatible with variable 'temperature'");
 
-  // | M09 | Tensor name is unknown | Setup error naming the tensor |
-  ExpectSetupFailure(&interface, &status, "M09 unknown tensor",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      // Invalid tensor name; the valid name is chemical_input_raw.
+  /* | E10 | Tensor name is unknown | Setup error naming the tensor | */
+  OnnxExpectConfigSetupFailure(&interface, &status, "E10 unknown tensor",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"invalid_input\",\"tensor_element_index\":0,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0},"
-      VALID_INPUT_1 "],\"outputs\":[" VALID_OUTPUT "]}",
+      ONNX_TEST_VALID_INPUT_1 "],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}",
       "unknown tensor 'invalid_input'");
-      
-  // | M10 | `tensor_element_index` exceeds its flattened extent | Setup error |
-  ExpectSetupFailure(&interface, &status,
-      "M10 tensor element index exceeds tensor extent",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      // This model only has 2 input, index = 2 means there are 3 inputs
+
+  /* | E11 | `tensor_element_index` exceeds its flattened extent | Setup error | */
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E11 tensor element index exceeds tensor extent",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":2,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0},"
-      VALID_INPUT_1 "],\"outputs\":[" VALID_OUTPUT "]}", "out of range");
-      
-  // | M11 | A tensor element index is mapped more than once | Setup error |
-  ExpectSetupFailure(&interface, &status, "M10 output exceeds tensor extent",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
-      // This model has two outputs, so index 2 is out of range.
+      ONNX_TEST_VALID_INPUT_1 "],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "out of range");
+
+  OnnxExpectConfigSetupFailure(&interface, &status, "E11 output exceeds tensor extent",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"sorbed_output_raw\",\"tensor_element_index\":2,"
       "\"feature\":\"H\",\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0}]}", "out of range");
-  ExpectSetupFailure(&interface, &status,
-      "M11 duplicate tensor element index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      // Duplicate input tensor
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_0
-      "],\"outputs\":[" VALID_OUTPUT "]}", "Duplicate ONNX input mapping");
-  ExpectSetupFailure(&interface, &status,
-      "M11 duplicate output tensor element index",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
-      // Duplicate output tensor
-      "],\"outputs\":[" VALID_OUTPUT "," VALID_OUTPUT "]}",
+
+  /* | E12 | A tensor element index is mapped more than once | Setup error | */
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E12 duplicate tensor element index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_0
+      "],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "Duplicate ONNX input mapping");
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E12 duplicate output tensor element index",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
+      "],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "," ONNX_TEST_VALID_OUTPUT "]}",
       "Duplicate ONNX output mapping");
 
-  // | M12 | A required model tensor element index is unmapped | Setup error |
-  ExpectSetupFailure(&interface, &status,
-      "M12 tensor element index is unmapped",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      // This model expect two input, here it only accepts 1
-      "\",\"inputs\":[" VALID_INPUT_0 "],\"outputs\":[" VALID_OUTPUT "]}",
+  /* | E13 | A required model tensor element index is unmapped | Setup error | */
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E13 tensor element index is unmapped",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}",
       "does not map every input tensor element");
-  ExpectSetupFailure(&interface, &status,
-      "M12 output tensor element index is unmapped",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
-      // outputs is empty
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E13 output tensor element index is unmapped",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[]}", "does not map every output tensor element");
 
-  // | M13 | Mappings derive unsafe or overflowing Alquimia sizes | Setup error |
-  ExpectSetupFailure(&interface, &status, "M13 derived size overflows int",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+  /* | E14 | Mappings derive unsafe or overflowing Alquimia sizes | Setup error | */
+  OnnxExpectConfigSetupFailure(&interface, &status, "E14 derived size overflows int",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\","
-      // Line 350 in onnx_alquimia_interface.c 
-      // AlquimiaSize = index + 1
-      "\"alquimia_state_index\":2147483647}," VALID_INPUT_1 "],"
-      "\"outputs\":[" VALID_OUTPUT "]}", "incompatible with variable");
+      "\"alquimia_state_index\":2147483647}," ONNX_TEST_VALID_INPUT_1 "],"
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}", "incompatible with variable");
 
-  // | M14 | Feature names target different state categories | Correct problem-metadata vectors are populated |
-  // | M17 | Model path is relative to the config | Correct path is resolved from the config directory |
-  TestSuccessfulMappingCases(&interface, &status);
-
-  // | M15 | Two names target the same metadata destination | Setup rejects the ambiguity |
-  ExpectSetupFailure(&interface, &status, "M15 conflicting feature names",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      // Test the case:
-      // tensor, tensor element index are the same
-      // But the feature name is different
+  /* | E15 | Two names target the same metadata destination | Setup rejects the ambiguity | */
+  OnnxExpectConfigSetupFailure(&interface, &status, "E15 conflicting feature names",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"first_name\",\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0},{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":1,"
       "\"feature\":\"second_name\",\"alquimia_state\":\"total_mobile\","
-      "\"alquimia_state_index\":0}],\"outputs\":[" VALID_OUTPUT "]}",
+      "\"alquimia_state_index\":0}],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}",
       "Conflicting ONNX feature names");
-  ExpectSetupFailure(&interface, &status,
-      "M15 conflicting input and output feature names",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E15 conflicting input and output feature names",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"sorbed_output_raw\","
       "\"tensor_element_index\":0,\"feature\":\"different_name\","
       "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0},"
-      VALID_OUTPUT_1 "]}",
+      ONNX_TEST_VALID_OUTPUT_1 "]}",
       "Conflicting ONNX feature names");
-  ExpectSetupFailure(&interface, &status,
-      "M15 conflicting mobile and immobile feature names",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      "\",\"inputs\":[" VALID_INPUT_0 "," VALID_INPUT_1
+
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E15 conflicting mobile and immobile feature names",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
+      "\",\"inputs\":[" ONNX_TEST_VALID_INPUT_0 "," ONNX_TEST_VALID_INPUT_1
       "],\"outputs\":[{\"tensor\":\"sorbed_output_raw\","
       "\"tensor_element_index\":0,\"feature\":\"different_name\","
       "\"alquimia_state\":\"total_immobile\",\"alquimia_state_index\":0},"
-      VALID_OUTPUT_1 "]}",
+      ONNX_TEST_VALID_OUTPUT_1 "]}",
       "Conflicting ONNX feature names");
 
-  // | M16 | Similar but invalid property has trailing text | Property is rejected rather than partially matched |
-  ExpectSetupFailure(&interface, &status, "M16 property trailing text",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
+  /* | E16 | Similar but invalid property has trailing text | Property is rejected rather than partially matched | */
+  OnnxExpectConfigSetupFailure(&interface, &status, "E16 property trailing text",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"f\",\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":0,"
-      // Extra "alquimia_state_index_extra"
-      "\"alquimia_state_index_extra\":0}],\"outputs\":[" VALID_OUTPUT "]}",
+      "\"alquimia_state_index_extra\":0}],\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}",
       "Unknown property 'alquimia_state_index_extra'");
 
-  // | M18 | Two input mappings use the same feature name | Setup rejects the duplicate lookup key |
-  ExpectSetupFailure(&interface, &status,
-      "M18 duplicate input feature name",
-      "{\"schema_version\":1,\"model\":\"" ALSURF_MODEL_PATH
-      // Duplicate input feature
+  /* | E17 | Two input mappings use the same feature name | Setup rejects the duplicate lookup key | */
+  OnnxExpectConfigSetupFailure(&interface, &status,
+      "E17 duplicate input feature name",
+      "{\"schema_version\":1,\"model\":\"" ONNX_TEST_ALSURF_MODEL_PATH
       "\",\"inputs\":[{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"
       "\"feature\":\"duplicate_feature\",\"alquimia_state\":\"total_mobile\","
       "\"alquimia_state_index\":0},{\"tensor\":\"chemical_input_raw\","
       "\"tensor_element_index\":1,\"feature\":\"duplicate_feature\","
       "\"alquimia_state\":\"total_mobile\",\"alquimia_state_index\":1}],"
-      "\"outputs\":[" VALID_OUTPUT "]}",
+      "\"outputs\":[" ONNX_TEST_VALID_OUTPUT "]}",
       "Duplicate ONNX input feature name 'duplicate_feature'.");
 
   FreeAlquimiaEngineStatus(&status);
 }
 
+/* ---------- Runners ---------- */
+
+/**
+ * @brief Runs ONNX mapping/config cases.
+ */
+static void RunMappingTests(void)
+{
+  TestM01ConditionConfigSuccess();
+  TestM02SuccessfulMappingMetadata();
+  TestM03RelativeModelPath();
+  TestE01ConditionConfigFailures();
+  TestE02ConfigContractFailures();
+}
+
 #endif
 
+/**
+ * @brief Runs ONNX mapping/config tests.
+ */
 int main(int argc, char **argv)
 {
-  /* The test file couples with the error message in the related c file 
-  ** Change the error message string could potentially fail the test
-  */
 #if ALQUIMIA_HAVE_ONNX
-  /* Disable buffering for stdout and stderr to flush logs immediately */
+  (void)argc;
+  (void)argv;
+
   setvbuf(stdout, NULL, _IONBF, 0);
   setvbuf(stderr, NULL, _IONBF, 0);
 
-  if (argc == 2 && strcmp(argv[1], "config") == 0)
-  {
-    // Enter: ./test_alquimia_onnx config to test the JSON parser, otherwise test the lifecycle
-    TestConfigContract();
-    // Check 19-21
-    TestConditionConfigCases();
-  }
-  else
-  {
-    TestAlsurfLifecycle();
-  }
+  RunMappingTests();
 #else
   (void)argc;
   (void)argv;
