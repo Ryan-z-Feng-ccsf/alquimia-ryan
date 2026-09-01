@@ -36,7 +36,7 @@ Neural-network ALSURF models for H/Zn sorption.
 | `zn_h_regressor_integrated_batch1.json` | `zn_h_regressor_integrated_batch1.onnx` | Batch = 1 version of the H/Zn total-mobile to total-immobile mapping. |
 | `zn_h_regressor_integrated_dyn_batch.json` | `zn_h_regressor_integrated_dyn_batch.onnx` | Dynamic-batch version of the H/Zn total-mobile to total-immobile mapping. |
 
-Each config includes an `initial` condition with H = `1e-5` and Zn = `1e-7`.
+Each config includes an `initial` condition with H = `9.999999999999999e-06` and Zn = `1e-7`.
 The inference results should be H(immobile) = `-1.230666e-04`, Zn(immobile) = `-1.479950e-07`.
 
 ## `alsurf_rf/`
