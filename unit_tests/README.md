@@ -7,24 +7,13 @@ This directory contains CTest unit tests for Alquimia core utilities and ONNX en
 | File | Purpose |
 |---|---|
 | `test_alquimia_c_utils.c` | Tests generic C utility behavior. |
-| `test_alquimia_onnx_mapping.c` | Tests ONNX JSON config (`onnx_alquimia_config.c`) parsing, mapping validation, metadata (`GetProblemMetadata`), and relative model paths. |
-| `test_alquimia_onnx_failures.c` | Tests ONNX (`onnx_alquimia_interface.c`) setup failures (`Setup`), condition-processing guards (`ProcessCondition`), and lifecycle cleanup (`Shutdown`). |
+| `test_alquimia_onnx_mapping.c` | Tests ONNX JSON config (**[`onnx_alquimia_config.c`](../alquimia/onnx_alquimia_config.c)**) parsing, mapping validation, metadata (`GetProblemMetadata`), and relative model paths. |
+| `test_alquimia_onnx_failures.c` | Tests ONNX (**[`onnx_alquimia_interface.c`](../alquimia/onnx_alquimia_interface.c)**) setup failures (`Setup`), condition-processing guards (`ProcessCondition`), and lifecycle cleanup (`Shutdown`). |
 | `test_alquimia_onnx_inference_routing.c` | Tests ONNX (`ReactionStepOperatorSplit`) input/output routing, model-family compatibility, runtime errors, and ALSURF integration. |
 | `onnx_test_utils.c` / `onnx_test_utils.h` | Shared ONNX test helpers for setup, shutdown, paths, state allocation, condition setup, inference, diagnostics, and temporary config files. |
-| `onnx_test_cases/` | Test JSON configs and small ONNX artifacts used by the ONNX unit tests. |
+| `onnx_test_cases/` | Test JSON configs and small ONNX artifacts used by the ONNX unit tests. For detailed specifications, please refer to **[onnx_test_cases/README.md](onnx_test_cases/README.md).**|
 
 ONNX test IDs are file-local. For example, `E01` in the mapping test is a different issue from `E01` in the routing test.
-
-## `onnx_test_cases/`
-
-This folder contains the ONNX unit-test inputs. Tests load these files through `onnx_test_utils.c`, so each test can focus on the behavior being checked instead of path setup. The ONNX model inside are mock models used for testing purpose.
-
-| Folder | Purpose |
-|---|---|
-| `configs/` | Configs for path-resolution and shared fixture cases (`ALSURF NN JSON config`). |
-| `deterministic/` | Small deterministic models and configs for routing, condition, and runtime behavior. |
-| `invalid_models/` | Broken configs or model artifacts used to verify setup failure diagnostics and cleanup. |
-| `model_families/` | Representative model families used to verify ONNX Runtime compatibility. |
 
 ## ID Prefixes
 

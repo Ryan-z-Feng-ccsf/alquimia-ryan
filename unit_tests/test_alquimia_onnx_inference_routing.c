@@ -489,6 +489,7 @@ static void TestF01LinearAffine(void)
   OnnxRequireSetupEngine("model_families/linear_affine.json", false, &engine);
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 3.0;
+  /* (input) 3.0 * 4 (opset) + (-2) (bias opset) */
   OnnxRunInference(&engine, &state);
 
   ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], 10.0, 1.0e-12));
