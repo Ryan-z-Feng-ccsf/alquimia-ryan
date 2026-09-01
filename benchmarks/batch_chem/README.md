@@ -103,7 +103,7 @@ These values are pre-scaled values expected by the LSURF ONNX models. In the ins
 
 ## Benchmark Cases
 
-This section lists the batch chemistry execution scripts (`.cfg`). For detailed information regarding the internal tensor mappings (Inputs/Outputs) of each model, please refer to the ALSURF/LSURF model documentation.
+This section lists the batch chemistry execution scripts (`.cfg`). For detailed information regarding the internal tensor mappings (Inputs/Outputs) of each model, please refer to the ALSURF/LSURF [model documentation](../../models/READMD.md).
 
 ### ALSURF Neural-Network Benchmarks
 | Benchmark Config (`.cfg`) | Description | Model Config (`.json`) | Steps | Output Log |
