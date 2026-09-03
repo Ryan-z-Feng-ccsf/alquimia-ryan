@@ -106,25 +106,25 @@ These values are pre-scaled values expected by the LSURF ONNX models. In the ins
 This section lists the batch chemistry execution scripts (`.cfg`). For detailed information regarding the internal tensor mappings (Inputs/Outputs) of each model, please refer to the ALSURF/LSURF [model documentation](../../models/READMD.md).
 
 ### ALSURF Neural-Network Benchmarks
-| Benchmark Config (`.cfg`) | Description | Model Config (`.json`) | Steps | Output Log |
+| Benchmark Config | Description | Model Config | Steps | Output Log |
 |---|---|---|---|---|
-| `alsurf-nn-integrated-1d` | NN feature-vector inference | `../../models/alsurf_nn/zn_h_regressor_integrated_1D.json` | 100 | `*.out` |
-| `alsurf-nn-integrated-batch1` | NN fixed-batch inference | `../../models/alsurf_nn/zn_h_regressor_integrated_batch1.json` | 100 | `*.out` |
-| `alsurf-nn-integrated-dyn-batch`| NN dynamic-batch inference | `../../models/alsurf_nn/zn_h_regressor_integrated_dyn_batch.json` | 1 | `*.out` |
+| `alsurf-nn-integrated-1d.cfg` | NN feature-vector inference | `../../models/alsurf_nn/zn_h_regressor_integrated_1D.json` | 100 | `*.out` |
+| `alsurf-nn-integrated-batch1.cfg` | NN fixed-batch inference | `../../models/alsurf_nn/zn_h_regressor_integrated_batch1.json` | 100 | `*.out` |
+| `alsurf-nn-integrated-dyn-batch.cfg`| NN dynamic-batch inference | `../../models/alsurf_nn/zn_h_regressor_integrated_dyn_batch.json` | 1 | `*.out` |
 
 ### ALSURF Random-Forest Benchmarks
-| Benchmark Config (`.cfg`) | Description | Model Config (`.json`) | Steps | Output Log |
+| Benchmark Config | Description | Model Config | Steps | Output Log |
 |---|---|---|---|---|
-| `alsurf-rf-6` | 6-feature RF inference | `../../models/alsurf_rf/alsurf_6.json` | 1 | `*.out` |
-| `alsurf-rf-9-batch1` | 9-feature RF fixed-batch | `../../models/alsurf_rfalsurf_9_batch1.json` | 1 | `*.out` |
-| `alsurf-rf-9-dynamic-batch` | 9-feature RF dynamic-batch | `../../models/alsurf_rf/alsurf_9_dynamic_batch.json` | 1 | `*.out` |
-| `alsurf-rf-9-feature-vector` | 9-feature RF feature-vector | `../../models/alsurf_rf/alsurf_9_feature_vector.json` | 1 | `*.out` |
-| `alsurf-rf-9-scalar` | 9-feature RF scalar inference | `../../models/alsurf_rf/alsurf_9_scalar.json` | 1 | `*.out` |
+| `alsurf-rf-6.cfg` | 6-feature RF inference | `../../models/alsurf_rf/alsurf_6.json` | 1 | `*.out` |
+| `alsurf-rf-9-batch1.cfg` | 9-feature RF fixed-batch | `../../models/alsurf_rfalsurf_9_batch1.json` | 1 | `*.out` |
+| `alsurf-rf-9-dynamic-batch.cfg` | 9-feature RF dynamic-batch | `../../models/alsurf_rf/alsurf_9_dynamic_batch.json` | 1 | `*.out` |
+| `alsurf-rf-9-feature-vector.cfg` | 9-feature RF feature-vector | `../../models/alsurf_rf/alsurf_9_feature_vector.json` | 1 | `*.out` |
+| `alsurf-rf-9-scalar.cfg` | 9-feature RF scalar inference | `../../models/alsurf_rf/alsurf_9_scalar.json` | 1 | `*.out` |
 
 ### LSURF Isotherm Benchmarks
-| Benchmark Config (`.cfg`) | Description | Model Config (`.json`) | Steps | Output Log |
+| Benchmark Config | Description | Model Config | Steps | Output Log |
 |---|---|---|---|---|
-| `isotherms-onnx-1` | 1-feature RF inference | `../../models/lsurf_model_1_float_64.json` | 50 | `*.out` |
-| `isotherms-onnx-2` | 2-feature RF inference | `../../models/lsurf_model_2_float_64.json` | 50 | `*.out` |
-| `isotherms-onnx-5` | 5-feature RF inference | `../../models/lsurf_model_5_float_64.json` | 50 | `*.out` |
-| `isotherms-onnx-6` | 6-feature RF inference | `../../models/lsurf_model_6_float_64.json` | 50 | `*.out` |
+| `isotherms-onnx-1.cfg` | 1-feature RF inference | `../../models/lsurf_model_1_float_64.json` | 50 | `*.out` |
+| `isotherms-onnx-2.cfg` | 2-feature RF inference | `../../models/lsurf_model_2_float_64.json` | 50 | `*.out` |
+| `isotherms-onnx-5.cfg` | 5-feature RF inference | `../../models/lsurf_model_5_float_64.json` | 50 | `*.out` |
+| `isotherms-onnx-6.cfg` | 6-feature RF inference | `../../models/lsurf_model_6_float_64.json` | 50 | `*.out` |
