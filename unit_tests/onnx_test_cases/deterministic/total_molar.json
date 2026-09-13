@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "model": "add_two_inputs.onnx",
+  "inputs": [
+    {"tensor": "left", "tensor_element_index": 0, "feature": "H", "alquimia_state": "total_molar", "alquimia_state_index": 0},
+    {"tensor": "right", "tensor_element_index": 0, "feature": "Zn", "alquimia_state": "total_molar", "alquimia_state_index": 2}
+  ],
+  "outputs": [
+    {"tensor": "sum", "tensor_element_index": 0, "feature": "H", "alquimia_state": "total_immobile", "alquimia_state_index": 0}
+  ],
+  "conditions": {"initial": {
+    "H": {"total_mobile": 0.01, "total_immobile": 1.0},
+    "Zn": {"total_mobile": 0.02, "total_immobile": 2.0}
+  }}
+}

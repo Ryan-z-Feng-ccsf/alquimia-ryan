@@ -27,7 +27,7 @@ Each JSON file maps ONNX tensor elements to `AlquimiaState` fields. The adapter 
 | `runtime_failure.onnx` | `input: double[2]` | `output: double[1]` | Invalid gather at runtime. | Controlled ONNX Runtime inference failure. |
 | `single_input_multiple_outputs.onnx` | `input: double[2]` | `copy: double[2]`, `shifted: double[2]` | Copies input and emits shifted values. | Multiple outputs and mobile/immobile conservation. |
 
-`named_condition.json` uses the shared ALSURF neural-network model from [**`../../models/alsurf_nn/`**](../../models/alsurf_nn/) and adds a named `initial` condition for condition-routing tests.
+`named_condition.json` uses the shared EX8 neural-network model from [**`../../models/ex8_nn/`**](../../models/ex8_nn/) and adds a named `initial` condition for condition-routing tests.
 
 ## Invalid Models
 

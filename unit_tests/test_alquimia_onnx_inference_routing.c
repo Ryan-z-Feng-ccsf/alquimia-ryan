@@ -41,7 +41,7 @@
 **      R01, R02, ...: standard routing/inference behavior.
 **      E01, E02, ...: routing/runtime error handling.
 **      F01, F02, ...: supported ONNX model-family compatibility.
-**      I01: full ALSURF lifecycle integration coverage.
+**      I01: full EX8 lifecycle integration coverage.
 **  * Example: R01 is the first routing case; F01 is the first
 **    model-family compatibility case.
 **  * Special routing cases, such as repeated calls and independent engine
@@ -53,6 +53,7 @@
 ** ****************************************************************************
 */
 
+#include <float.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,6 +65,8 @@
 
 #if ALQUIMIA_HAVE_ONNX
 
+static int num_failures = 0;
+
 /* ---------- Standard Cases ---------- */
 
 /**
@@ -73,22 +76,25 @@
  */
 static void TestR01SingleInputSingleOutput(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
   /* Set up ONNX engine */
-  OnnxRequireSetupEngine("deterministic/identity_double.json", false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/identity_double.json", false, &engine));
 
-  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 1);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 1);
 
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 4.25;
 
-  OnnxRunInference(&engine, &state);
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], 4.25, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], 4.25, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -98,11 +104,12 @@ static void TestR01SingleInputSingleOutput(void)
  */
 static void TestR02MultipleInputsSingleOutput(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("deterministic/add_two_inputs.json", false, &engine);
-  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 3);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/add_two_inputs.json", false, &engine));
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 3);
 
   /* Set up input tensor */
   OnnxAllocateState(&engine, &state);
@@ -110,14 +117,16 @@ static void TestR02MultipleInputsSingleOutput(void)
   state.total_mobile.data[1] = -1.0;
   state.total_mobile.data[2] = 99.0;
 
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], 2.5, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[1], -1.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[2], 1.5, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], 2.5, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[1], -1.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[2], 1.5, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -127,27 +136,30 @@ static void TestR02MultipleInputsSingleOutput(void)
  */
 static void TestR03SingleInputMultipleOutputs(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("deterministic/single_input_multiple_outputs.json",
-                         false, &engine);
-  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 4);
-  ONNX_TEST_REQUIRE(engine.sizes.num_sorbed == 2);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/single_input_multiple_outputs.json",
+                         false, &engine));
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 4);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_sorbed == 2);
 
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 3.0;
   state.total_mobile.data[1] = -5.0;
 
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[2], 3.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[3], -5.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_immobile.data[0], 13.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_immobile.data[1], 15.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[2], 3.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[3], -5.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[0], 13000, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[1], 15000, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -157,24 +169,27 @@ static void TestR03SingleInputMultipleOutputs(void)
  */
 static void TestR04MultipleInputsMultipleOutputs(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("deterministic/multiple_inputs_outputs.json", false,
-                         &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/multiple_inputs_outputs.json", false,
+                         &engine));
   OnnxAllocateState(&engine, &state);
 
   state.porosity = 2.0;
   state.total_mobile.data[0] = 5.0;
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.temperature, 7.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.gas_concentration.data[0], 19.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.porosity, 2.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], 5.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.temperature, 7.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.gas_concentration.data[0], 19.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.porosity, 2.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], 5.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -184,31 +199,36 @@ static void TestR04MultipleInputsMultipleOutputs(void)
  */
 static void TestR05MixedScalarVectorMappings(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("deterministic/mixed_scalar_vector.json", false,
-                         &engine);
-  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 2);
-  ONNX_TEST_REQUIRE(engine.sizes.num_minerals == 2);
-  ONNX_TEST_REQUIRE(engine.sizes.num_surface_sites == 1);
-  ONNX_TEST_REQUIRE(engine.sizes.num_gases == 1);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/mixed_scalar_vector.json", false,
+                         &engine));
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 2);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_minerals == 2);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_surface_sites == 1);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_gases == 1);
 
   OnnxAllocateState(&engine, &state);
   state.porosity = 0.35;
   state.total_mobile.data[1] = 8.0;
   state.gas_concentration.data[0] = -2.0;
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.temperature, 0.35, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.mineral_volume_fraction.data[1], 8.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.surface_site_density.data[0], -2.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.porosity, 0.35, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[1], 8.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.gas_concentration.data[0], -2.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.temperature, 0.35, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.mineral_volume_fraction.data[1], 8.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.surface_site_density.data[0], -2.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.porosity, 0.35, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[1], 8.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.gas_concentration.data[0], -2.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -218,19 +238,20 @@ static void TestR05MixedScalarVectorMappings(void)
  */
 static void TestR06AllStateCategories(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("deterministic/all_state_categories.json", false,
-                         &engine);
-  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 1);
-  ONNX_TEST_REQUIRE(engine.sizes.num_sorbed == 2);
-  ONNX_TEST_REQUIRE(engine.sizes.num_minerals == 2);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/all_state_categories.json", false,
+                         &engine));
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 1);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_sorbed == 2);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_minerals == 2);
 
   OnnxAllocateState(&engine, &state);
 
   state.water_density = 101.0;
-  state.porosity = 102.0;
+  state.porosity = 0.4;
   state.temperature = 103.0;
   state.aqueous_pressure = 104.0;
   state.total_mobile.data[0] = 105.0;
@@ -244,25 +265,34 @@ static void TestR06AllStateCategories(void)
   state.cation_exchange_capacity.data[0] = 110.0;
   state.gas_concentration.data[0] = 111.0;
 
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.water_density, 101.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.porosity, 102.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.temperature, 103.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.aqueous_pressure, 104.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], 105.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_immobile.data[0], -1.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_immobile.data[1], 106.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.mineral_volume_fraction.data[0], 107.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.mineral_volume_fraction.data[1], -2.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.mineral_specific_surface_area.data[0], -3.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.mineral_specific_surface_area.data[1], 108.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.surface_site_density.data[0], 109.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.cation_exchange_capacity.data[0], 110.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.gas_concentration.data[0], 111.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.water_density, 101.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.porosity, 0.4, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.temperature, 103.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.aqueous_pressure, 104.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], 105.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[0], -1.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[1], 106.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.mineral_volume_fraction.data[0], 107.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.mineral_volume_fraction.data[1], -2.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.mineral_specific_surface_area.data[0], -3.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.mineral_specific_surface_area.data[1], 108.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.surface_site_density.data[0], 109.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.cation_exchange_capacity.data[0], 110.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.gas_concentration.data[0], 111.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -272,27 +302,30 @@ static void TestR06AllStateCategories(void)
  */
 static void TestR07MultipleScalarInputsOutputs(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("deterministic/multiple_scalar_inputs_outputs.json",
-                         false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/multiple_scalar_inputs_outputs.json",
+                         false, &engine));
 
-  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 1);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 1);
 
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 2.5;
   state.porosity = -1.0;
 
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.water_density, 1.5, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.aqueous_pressure, 3.5, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], 2.5, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.porosity, -1.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.water_density, 1.5, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.aqueous_pressure, 3.5, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], 2.5, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.porosity, -1.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -302,14 +335,16 @@ static void TestR07MultipleScalarInputsOutputs(void)
  */
 static void TestR08MobileImmobileConservation(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
+  AlquimiaProperties properties = {0};
 
-  OnnxRequireSetupEngine("deterministic/mobile_immobile_conservation.json",
-                         false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/mobile_immobile_conservation.json",
+                         false, &engine));
 
-  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 2);
-  ONNX_TEST_REQUIRE(engine.sizes.num_sorbed == 2);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 2);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_sorbed == 2);
 
   OnnxAllocateState(&engine, &state);
 
@@ -317,24 +352,178 @@ static void TestR08MobileImmobileConservation(void)
   state.total_mobile.data[1] = 4.0;
   state.total_immobile.data[0] = 17.0;
   state.total_immobile.data[1] = 6.0;
+  state.porosity = 0.25;
+  properties.saturation = 0.4;
 
-  OnnxRunInference(&engine, &state);
+  engine.interface.ReactionStepOperatorSplit(
+      &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
 
   /* shifted[0] changes mobile component 0 from 3 to 13. Its paired
-  ** immobile value must decrease by 10 to preserve the total of 20. */
-  ONNX_TEST_REQUIRE(
+  ** immobile inventory decreases by 1000 to preserve 317 mol/m^3 bulk. */
+  ONNX_TEST_REQUIRE(&num_failures,
       OnnxCloseEnough(state.total_mobile.data[0], 13.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(
-      OnnxCloseEnough(state.total_immobile.data[0], 7.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(state.total_immobile.data[0], -983.0, 1.0e-12));
   /* copy[1] and shifted[1] explicitly output both phases of component 1,
   ** so both model values remain authoritative without conservation. */
-  ONNX_TEST_REQUIRE(
+  ONNX_TEST_REQUIRE(&num_failures,
       OnnxCloseEnough(state.total_mobile.data[1], 4.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(
+  ONNX_TEST_REQUIRE(&num_failures,
       OnnxCloseEnough(state.total_immobile.data[1], 24.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
+}
+
+/**
+ * @brief R11: Converts both phase inventories and preserves a fixed total driver.
+ */
+static void TestR11TotalMolar(void)
+{
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
+  AlquimiaProperties properties = {0};
+  AlquimiaProblemMetaData metadata = {0};
+  int step;
+  double delta_t = 1.0;
+
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/total_molar.json", false, &engine));
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 3);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_sorbed == 3);
+  AllocateAlquimiaProblemMetaData(&engine.sizes, &metadata);
+  engine.interface.GetProblemMetaData(&engine.engine_state, &metadata, &engine.status);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures, strcmp(metadata.primary_names.data[0], "H") == 0);
+  ONNX_TEST_REQUIRE(&num_failures, strcmp(metadata.primary_names.data[2], "Zn") == 0);
+
+  OnnxAllocateState(&engine, &state);
+  state.porosity = 0.25;
+  properties.saturation = 0.4;
+  state.total_mobile.data[0] = 0.01;
+  state.total_immobile.data[0] = 1.0;
+  state.total_mobile.data[2] = 0.02;
+  state.total_immobile.data[2] = 2.0;
+
+  for (step = 0; step < 10; ++step)
+  {
+    engine.interface.ReactionStepOperatorSplit(
+        &engine.engine_state, delta_t, &properties, &state, NULL, 0,
+        &engine.status);
+    ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
+    /* Inputs are 0.02 and 0.04 mol/L water; the graph adds them. */
+    ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[0], 6, 1.0e-12));
+    ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], -0.04, 1.0e-12));
+    ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(
+        100.0 * state.total_mobile.data[0] + state.total_immobile.data[0],
+        2.0, 1.0e-12));
+    ONNX_TEST_REQUIRE(&num_failures, state.total_mobile.data[2] == 0.02);
+    ONNX_TEST_REQUIRE(&num_failures, state.total_immobile.data[2] == 2.0);
+    delta_t *= 10.0;
+  }
+
+  /* Negative totals and negative predictions are valid. */
+  state.total_mobile.data[0] = -1.0;
+  state.total_immobile.data[0] = 0.0;
+  state.total_mobile.data[2] = 0.25;
+  state.total_immobile.data[2] = 0.0;
+  engine.interface.ReactionStepOperatorSplit(
+      &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[0], -75, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], -0.25, 1.0e-12));
+
+cleanup:
+  FreeAlquimiaProblemMetaData(&metadata);
+  FreeAlquimiaState(&state);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
+}
+
+/**
+ * @brief R12: Initializes explicit phases without changing an omitted phase.
+ */
+static void TestR12TotalCondition(void)
+{
+  const char *names[] = {"mobile_only", "immobile_only", "both"};
+  const double mobile[] = {0.001, 99.0, 0.001};
+  const double immobile[] = {1.0, -0.2, 0.2};
+  for (int i = 0; i < 3; ++i)
+  {
+    OnnxTestEngine engine = {0};
+    AlquimiaState state = {0};
+    AlquimiaProperties properties = {0};
+    AlquimiaGeochemicalCondition condition = {0};
+
+    ONNX_TEST_REQUIRE(&num_failures,
+        OnnxRequireSetupEngine("deterministic/total_condition.json", true, &engine));
+    OnnxAllocateState(&engine, &state);
+    properties.saturation = 0.4;
+    state.porosity = 0.0;
+    state.total_mobile.data[0] = 99.0;
+    state.total_immobile.data[0] = 1.0;
+    AllocateAlquimiaGeochemicalCondition((int)strlen(names[i]), 0, 0, &condition);
+    strcpy(condition.name, names[i]);
+
+    engine.interface.ProcessCondition(
+        &engine.engine_state, &condition, NULL, &state, NULL, &engine.status);
+    ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
+    ONNX_TEST_REQUIRE(&num_failures, state.porosity == 0.25);
+    ONNX_TEST_REQUIRE(&num_failures, state.total_mobile.data[0] == mobile[i]);
+    ONNX_TEST_REQUIRE(&num_failures, state.total_immobile.data[0] == immobile[i]);
+
+    /* Initialization uses native units; only inference converts the total. */
+    double total = mobile[i] + immobile[i] / 100.0; /* [molarity] */
+    engine.interface.ReactionStepOperatorSplit(
+        &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+    ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
+    ONNX_TEST_REQUIRE(&num_failures,
+        OnnxCloseEnough(state.total_immobile.data[0], (total + 0.25) * 100, 1.0e-12));
+    ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(
+        state.total_mobile.data[0] + state.total_immobile.data[0] / 100.0,
+        total, 1.0e-12));
+
+cleanup:
+    FreeAlquimiaGeochemicalCondition(&condition);
+    FreeAlquimiaState(&state);
+    ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+        OnnxShutdownEngine(&engine), NULL);
+  }
+}
+
+/**
+ * @brief R13: Uses final porosity even when it follows the concentration output.
+ */
+static void TestR13PorosityOutputConservation(void)
+{
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
+  AlquimiaProperties properties = {0};
+
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/total_porosity_output.json", false, &engine));
+  OnnxAllocateState(&engine, &state);
+  state.porosity = 0.25;
+  properties.saturation = 0.4;
+  state.temperature = -19.5;
+  state.total_mobile.data[0] = 0.01;
+  state.total_immobile.data[0] = 1.0;
+  engine.interface.ReactionStepOperatorSplit(
+      &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures, state.porosity == 0.5);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[0], 4, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], -0.01, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(
+      200.0 * state.total_mobile.data[0] + state.total_immobile.data[0],
+      2.0, 1.0e-12));
+cleanup:
+  FreeAlquimiaState(&state);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /* ---------- Special Cases ---------- */
@@ -346,28 +535,31 @@ static void TestR08MobileImmobileConservation(void)
  */
 static void TestR09RepeatedInference(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("deterministic/affine_double.json", false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/affine_double.json", false, &engine));
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 1.0;
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], 5.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], 5.0, 1.0e-12));
 
   state.total_mobile.data[0] = 4.0;
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], 11.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], 11.0, 1.0e-12));
 
   state.total_mobile.data[0] = -3.0;
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], -3.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], -3.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -377,34 +569,41 @@ static void TestR09RepeatedInference(void)
  */
 static void TestR10IndependentInstances(void)
 {
-  OnnxTestEngine first;
-  OnnxTestEngine second;
-  AlquimiaState first_state;
-  AlquimiaState second_state;
+  OnnxTestEngine first = {0};
+  OnnxTestEngine second = {0};
+  AlquimiaState first_state = {0};
+  AlquimiaState second_state = {0};
 
-  OnnxRequireSetupEngine("deterministic/affine_double.json", false, &first);
-  OnnxRequireSetupEngine("deterministic/affine_double.json", false, &second);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/affine_double.json", false, &first));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/affine_double.json", false, &second));
   OnnxAllocateState(&first, &first_state);
   OnnxAllocateState(&second, &second_state);
   first_state.total_mobile.data[0] = 2.0;
   second_state.total_mobile.data[0] = 10.0;
-  OnnxRunInference(&first, &first_state);
-  OnnxRunInference(&second, &second_state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&first, &first_state));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&second, &second_state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(first_state.total_mobile.data[0], 7.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(second_state.total_mobile.data[0], 23.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(first_state.total_mobile.data[0], 7.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(second_state.total_mobile.data[0], 23.0, 1.0e-12));
 
   first_state.total_mobile.data[0] = -1.0;
 
-  OnnxRunInference(&first, &first_state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&first, &first_state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(first_state.total_mobile.data[0], 1.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(second_state.total_mobile.data[0], 23.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(first_state.total_mobile.data[0], 1.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxCloseEnough(second_state.total_mobile.data[0], 23.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&first_state);
   FreeAlquimiaState(&second_state);
-  OnnxRequireShutdownEngine(&first);
-  OnnxRequireShutdownEngine(&second);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&first), NULL);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&second), NULL);
 }
 
 /* ---------- Error Cases ---------- */
@@ -416,10 +615,11 @@ static void TestR10IndependentInstances(void)
  */
 static void TestE01UndersizedOutputVector(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("deterministic/add_two_inputs.json", false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/add_two_inputs.json", false, &engine));
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 4.0;
   state.total_mobile.data[1] = 6.0;
@@ -435,14 +635,16 @@ static void TestE01UndersizedOutputVector(void)
         &engine.status);
   }
 
-  ONNX_TEST_REQUIRE(engine.status.error == kAlquimiaErrorEngineIntegrity);
-  ONNX_TEST_REQUIRE(strstr(engine.status.message,
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaErrorEngineIntegrity);
+  ONNX_TEST_REQUIRE(&num_failures, strstr(engine.status.message,
                          "Out-of-bounds total_mobile write") != NULL);
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[2], 12345.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[2], 12345.0, 1.0e-12));
 
   state.total_mobile.size = 3;
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -452,12 +654,13 @@ static void TestE01UndersizedOutputVector(void)
  */
 static void TestE02RuntimeInferenceFailure(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
   AlquimiaProperties properties = {0};
   AlquimiaAuxiliaryData auxiliary_data = {0};
 
-  OnnxRequireSetupEngine("deterministic/runtime_failure.json", false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/runtime_failure.json", false, &engine));
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 1.0;
   state.total_mobile.data[1] = 2.0;
@@ -466,12 +669,114 @@ static void TestE02RuntimeInferenceFailure(void)
       &engine.engine_state, 1.0, &properties, &state, &auxiliary_data, 0,
       &engine.status);
 
-  ONNX_TEST_REQUIRE(engine.status.error == kAlquimiaErrorEngineIntegrity);
-  ONNX_TEST_REQUIRE(strstr(engine.status.message, "ONNX Runtime Error") != NULL);
-  ONNX_TEST_REQUIRE(engine.engine_state != NULL);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaErrorEngineIntegrity);
+  ONNX_TEST_REQUIRE(&num_failures, strstr(engine.status.message, "ONNX Runtime Error") != NULL);
+  ONNX_TEST_REQUIRE(&num_failures, engine.engine_state != NULL);
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
+}
+
+/**
+ * @brief E03: Rejects invalid total-concentration conversions before inference.
+ */
+static void TestE03TotalConversionErrors(void)
+{
+  static const double invalid[] = {0.0, -1.0, 1.1, NAN, INFINITY};
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
+  AlquimiaProperties properties = {0};
+  size_t i;
+  int field;
+  double *immobile;
+
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/total_molar.json", false, &engine));
+  OnnxAllocateState(&engine, &state);
+  state.total_mobile.data[0] = 0.01;
+  state.total_immobile.data[0] = 1.0;
+  for (field = 0; field < 2; ++field)
+  {
+    for (i = 0; i < sizeof(invalid) / sizeof(invalid[0]); ++i)
+    {
+      state.porosity = field == 0 ? invalid[i] : 0.25;
+      properties.saturation = field == 1 ? invalid[i] : 0.4;
+      engine.interface.ReactionStepOperatorSplit(
+          &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+      ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+      ONNX_TEST_REQUIRE(&num_failures,
+          strstr(engine.status.message, "concentration conversion") != NULL);
+      ONNX_TEST_REQUIRE(&num_failures, state.total_mobile.data[0] == 0.01);
+      ONNX_TEST_REQUIRE(&num_failures, state.total_immobile.data[0] == 1.0);
+    }
+  }
+  state.porosity = 0.25;
+  properties.saturation = 0.4;
+  engine.interface.ReactionStepOperatorSplit(
+      &engine.engine_state, 1.0, NULL, &state, NULL, 0, &engine.status);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures, strstr(engine.status.message, "requires properties") != NULL);
+
+  immobile = state.total_immobile.data;
+  state.total_immobile.data = NULL;
+  engine.interface.ReactionStepOperatorSplit(
+      &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+  state.total_immobile.data = immobile;
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures,
+      strstr(engine.status.message, "Out-of-bounds total_immobile") != NULL);
+  state.total_immobile.size = 2;
+  engine.interface.ReactionStepOperatorSplit(
+      &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures,
+      strstr(engine.status.message, "Out-of-bounds total_immobile") != NULL);
+  state.total_immobile.size = 3;
+
+  state.total_mobile.data[0] = INFINITY;
+  engine.interface.ReactionStepOperatorSplit(
+      &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures,
+      strstr(engine.status.message, "Non-finite ONNX total_molar") != NULL);
+  ONNX_TEST_REQUIRE(&num_failures, state.total_immobile.data[0] == 1.0);
+
+cleanup:
+  FreeAlquimiaState(&state);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
+}
+
+/**
+ * @brief E04: Rejects non-finite predictions before writing any model output.
+ */
+static void TestE04NonFiniteOutputs(void)
+{
+  static const double invalid[] = {NAN, INFINITY, DBL_MAX};
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
+  size_t i;
+
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("deterministic/affine_double.json", false, &engine));
+  OnnxAllocateState(&engine, &state);
+  for (i = 0; i < sizeof(invalid) / sizeof(invalid[0]); ++i)
+  {
+    state.total_mobile.data[0] = invalid[i];
+    engine.interface.ReactionStepOperatorSplit(
+        &engine.engine_state, 1.0, NULL, &state, NULL, 0, &engine.status);
+    ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+    ONNX_TEST_REQUIRE(&num_failures,
+        strstr(engine.status.message, "Non-finite ONNX output") != NULL);
+    ONNX_TEST_REQUIRE(&num_failures, isnan(invalid[i]) ? isnan(state.total_mobile.data[0]) :
+                      state.total_mobile.data[0] == invalid[i]);
+  }
+cleanup:
+  FreeAlquimiaState(&state);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /* ---------- Model Family Cases ---------- */
@@ -483,19 +788,22 @@ static void TestE02RuntimeInferenceFailure(void)
  */
 static void TestF01LinearAffine(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("model_families/linear_affine.json", false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("model_families/linear_affine.json", false, &engine));
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 3.0;
   /* (input) 3.0 * 4 (opset) + (-2) (bias opset) */
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[0], 10.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], 10.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -505,18 +813,21 @@ static void TestF01LinearAffine(void)
  */
 static void TestF02Svr(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("model_families/svr_linear.json", false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("model_families/svr_linear.json", false, &engine));
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 3.0;
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(isfinite(state.total_mobile.data[0]));
+  ONNX_TEST_REQUIRE(&num_failures, isfinite(state.total_mobile.data[0]));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -526,24 +837,27 @@ static void TestF02Svr(void)
  */
 static void TestF03SmallNeuralNetwork(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("model_families/small_neural_network.json", false,
-                         &engine);
-  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 3);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("model_families/small_neural_network.json", false,
+                         &engine));
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 3);
 
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 3.0;
   state.total_mobile.data[1] = 4.0;
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
   /* output = ReLU(input * weights + bias), with input [3, 4],
   ** weights [2, -1], and bias 1. */
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_mobile.data[2], 3.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[2], 3.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -553,20 +867,23 @@ static void TestF03SmallNeuralNetwork(void)
  */
 static void TestF04TreeEnsemble(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("model_families/tree_ensemble.json", false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("model_families/tree_ensemble.json", false, &engine));
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = -100.0;
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-  ONNX_TEST_REQUIRE(
+  ONNX_TEST_REQUIRE(&num_failures,
       OnnxCloseEnough(state.total_mobile.data[1], 7.0, 1.0e-12));
 
   /* It has only one node, and that node is a leaf with value 7.0. */
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
@@ -576,127 +893,134 @@ static void TestF04TreeEnsemble(void)
  */
 static void TestF05MultiTarget(void)
 {
-  OnnxTestEngine engine;
-  AlquimiaState state;
+  OnnxTestEngine engine = {0};
+  AlquimiaState state = {0};
 
-  OnnxRequireSetupEngine("model_families/multi_target.json", false, &engine);
+  ONNX_TEST_REQUIRE(&num_failures,
+      OnnxRequireSetupEngine("model_families/multi_target.json", false, &engine));
   OnnxAllocateState(&engine, &state);
   state.total_mobile.data[0] = 2.0;
   state.total_mobile.data[1] = 3.0;
-  OnnxRunInference(&engine, &state);
+  ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
   /* For input [2, 3], target_sum is 5 and target_affine is 6. */
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.total_immobile.data[0], 5.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(OnnxCloseEnough(state.gas_concentration.data[0], 6.0, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[0], 5000, 1.0e-12));
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.gas_concentration.data[0], 6.0, 1.0e-12));
 
+cleanup:
   FreeAlquimiaState(&state);
-  OnnxRequireShutdownEngine(&engine);
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /**
- * @brief Verifies shared ALSURF model shapes preserve H/Zn output routing.
+ * @brief Verifies shared EX8 model shapes preserve H/Zn output routing.
  *
- * | F06 | Shared ALSURF models | Every supported tensor shape preserves H/Zn output routing and lifecycle |
+ * | F06 | Shared EX8 models | Every supported tensor shape preserves H/Zn output routing and lifecycle |
  */
-static void TestF06AlsurfModels(void)
+static void TestF06Ex8Models(void)
 {
-  static const double nn_h = 1.2306658377131264e-4;
-  static const double nn_zn = 1.47994968124545e-7;
-  static const double rf_h = 1.271885656770001e-4;
-  static const double rf_zn = 3.9111416932674e-10;
-  static const OnnxAlsurfModelCase cases[] = {
-      {"F06-NN-1D", "alsurf_nn/zn_h_regressor_integrated_1D.json",
+  static const double nn_h = 1.2306658377131264e-4 * 1000;
+  static const double nn_zn = 1.47994968124545e-7 * 1000;
+  static const double rf_h = 1.271885656770001e-4 * 1000;
+  static const double rf_zn = 3.9111416932674e-10 * 1000;
+  static const OnnxEx8ModelCase cases[] = {
+      {"F06-NN-1D", "ex8_nn/ex8_nn_1d.json",
        nn_h, nn_zn},
       {"F06-NN-batch1",
-       "alsurf_nn/zn_h_regressor_integrated_batch1.json", nn_h, nn_zn},
+       "ex8_nn/ex8_nn_batch1.json", nn_h, nn_zn},
       {"F06-NN-dynamic",
-       "alsurf_nn/zn_h_regressor_integrated_dyn_batch.json", nn_h, nn_zn},
-      {"F06-RF-batch1", "alsurf_rf/alsurf_9_batch1.json", rf_h, rf_zn},
-      {"F06-RF-dynamic", "alsurf_rf/alsurf_9_dynamic_batch.json", rf_h,
+       "ex8_nn/ex8_nn_dynamic_batch.json", nn_h, nn_zn},
+      {"F06-RF-batch1", "ex8_rf/ex8_rf_9_batch1.json", rf_h, rf_zn},
+      {"F06-RF-dynamic", "ex8_rf/ex8_rf_9_dynamic_batch.json", rf_h,
        rf_zn},
-      {"F06-RF-vector", "alsurf_rf/alsurf_9_feature_vector.json", rf_h,
+      {"F06-RF-vector", "ex8_rf/ex8_rf_9_1d.json", rf_h,
        rf_zn},
-      {"F06-RF-6", "alsurf_rf/alsurf_6.json", rf_h, rf_zn},
-      {"F06-RF-scalar", "alsurf_rf/alsurf_9_scalar.json", rf_h, rf_zn},
-      {"F06-RF-mixed-input-ranks", "alsurf_rf/alsurf_9_mixed_inputs.json",
+      {"F06-RF-6", "ex8_rf/ex8_rf_6_dynamic_batch.json", rf_h, rf_zn},
+      {"F06-RF-scalar", "ex8_rf/ex8_rf_9_scalar.json", rf_h, rf_zn},
+      {"F06-RF-mixed-input-ranks", "ex8_rf/ex8_rf_9_mixed_inputs.json",
        rf_h, rf_zn},
   };
   size_t i;
 
   for (i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i)
   {
-    const OnnxAlsurfModelCase *test_case = &cases[i];
-    OnnxTestEngine engine;
-    AlquimiaState state;
+    const OnnxEx8ModelCase *test_case = &cases[i];
+    OnnxTestEngine engine = {0};
+    AlquimiaState state = {0};
 
-    printf("Running shared ALSURF model case %s.\n", test_case->test_id);
+    printf("Running shared EX8 model case %s.\n", test_case->test_id);
 
-    OnnxRequireSharedModelEngine(test_case->config_path, true, &engine);
-    ONNX_TEST_REQUIRE(engine.sizes.num_primary >= 2);
-    ONNX_TEST_REQUIRE(engine.sizes.num_sorbed == 2);
+    ONNX_TEST_REQUIRE(&num_failures,
+        OnnxRequireSharedModelEngine(test_case->config_path, true, &engine));
+    ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary >= 2);
+    ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_sorbed == 2);
 
     OnnxAllocateState(&engine, &state);
-    OnnxApplyNamedCondition(&engine, "initial", &state);
-    OnnxRunInference(&engine, &state);
+    ONNX_TEST_REQUIRE(&num_failures, OnnxApplyNamedCondition(&engine, "initial", &state));
+    ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
 
-    OnnxCheckAlsurfPrediction(test_case->test_id, "H(immobile)",
+    ONNX_TEST_REQUIRE(&num_failures, OnnxCheckEx8Prediction(test_case->test_id, "H(immobile)",
                               state.total_immobile.data[0],
-                              test_case->expected_h);
-    OnnxCheckAlsurfPrediction(test_case->test_id, "Zn(immobile)",
+                              test_case->expected_h));
+    ONNX_TEST_REQUIRE(&num_failures, OnnxCheckEx8Prediction(test_case->test_id, "Zn(immobile)",
                               state.total_immobile.data[1],
-                              test_case->expected_zn);
+                              test_case->expected_zn));
 
+cleanup:
     FreeAlquimiaState(&state);
-    OnnxRequireShutdownEngine(&engine);
+    ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+        OnnxShutdownEngine(&engine), NULL);
   }
 }
 
 /* ---------- Integration Cases ---------- */
 
 /**
- * @brief Verifies the full ALSURF setup, metadata, condition, inference, and shutdown lifecycle.
+ * @brief Verifies the full EX8 setup, metadata, condition, inference, and shutdown lifecycle.
  *
- * | I01 | Full ALSURF lifecycle | Setup, metadata, condition, inference, and shutdown all succeed |
+ * | I01 | Full EX8 lifecycle | Setup, metadata, condition, inference, and shutdown all succeed |
  */
-static void TestI01AlsurfLifecycle(void)
+static void TestI01Ex8Lifecycle(void)
 {
   static const char *const features[] = {"H", "Zn"};
   static const double inputs[] = {1.0e-5, 1.0e-7};
   static const double outputs[] = {
       1.2306658377131264e-4, 1.47994968124545e-7};
   AlquimiaAuxiliaryData aux_data = {0};
-  AlquimiaGeochemicalCondition condition;
-  OnnxTestEngine engine;
-  AlquimiaProblemMetaData meta_data;
+  AlquimiaGeochemicalCondition condition = {0};
+  OnnxTestEngine engine = {0};
+  AlquimiaProblemMetaData meta_data = {0};
   AlquimiaProperties properties = {0};
   AlquimiaState state = {0};
   int i;
+  properties.saturation = 1.0;
 
-  printf("Running successful ALSURF ONNX lifecycle.\n");
-  if (!OnnxSetupEngineAtPath(ONNX_TEST_ALSURF_NAMED_CONFIG, false, &engine))
+  printf("Running successful EX8 ONNX lifecycle.\n");
+  if (!OnnxSetupEngineAtPath(ONNX_TEST_EX8_NAMED_CONFIG, false, &engine))
   {
     fprintf(stderr, "I01 setup failed: %s\n", engine.status.message);
   }
 
-  ONNX_TEST_REQUIRE(engine.status.error == kAlquimiaNoError);
-  ONNX_TEST_REQUIRE(engine.engine_state != NULL);
-  ONNX_TEST_REQUIRE(engine.sizes.num_primary == 2);
-  ONNX_TEST_REQUIRE(engine.sizes.num_sorbed == 2);
-  ONNX_TEST_REQUIRE(engine.sizes.num_minerals == 0);
-  ONNX_TEST_REQUIRE(engine.sizes.num_surface_sites == 0);
-  ONNX_TEST_REQUIRE(engine.sizes.num_ion_exchange_sites == 0);
-  ONNX_TEST_REQUIRE(engine.sizes.num_gases == 0);
-  ONNX_TEST_REQUIRE(engine.functionality.operator_splitting);
-  ONNX_TEST_REQUIRE(!engine.functionality.thread_safe);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures, engine.engine_state != NULL);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_primary == 2);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_sorbed == 2);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_minerals == 0);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_surface_sites == 0);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_ion_exchange_sites == 0);
+  ONNX_TEST_REQUIRE(&num_failures, engine.sizes.num_gases == 0);
+  ONNX_TEST_REQUIRE(&num_failures, engine.functionality.operator_splitting);
+  ONNX_TEST_REQUIRE(&num_failures, !engine.functionality.thread_safe);
 
   AllocateAlquimiaProblemMetaData(&engine.sizes, &meta_data);
   engine.interface.GetProblemMetaData(
       &engine.engine_state, &meta_data, &engine.status);
 
-  ONNX_TEST_REQUIRE(engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
   for (i = 0; i < 2; ++i)
   {
-    ONNX_TEST_REQUIRE(strcmp(meta_data.primary_names.data[i], features[i]) == 0);
+    ONNX_TEST_REQUIRE(&num_failures, strcmp(meta_data.primary_names.data[i], features[i]) == 0);
   }
 
   OnnxAllocateState(&engine, &state);
@@ -711,10 +1035,10 @@ static void TestI01AlsurfLifecycle(void)
       &engine.engine_state, &condition, &properties, &state, &aux_data,
       &engine.status);
 
-  ONNX_TEST_REQUIRE(engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
   for (i = 0; i < 2; ++i)
   {
-    ONNX_TEST_REQUIRE(state.total_mobile.data[i] == inputs[i]);
+    ONNX_TEST_REQUIRE(&num_failures, state.total_mobile.data[i] == inputs[i]);
   }
 
   engine.interface.ReactionStepOperatorSplit(
@@ -725,18 +1049,20 @@ static void TestI01AlsurfLifecycle(void)
     fprintf(stderr, "I01 inference failed: %s\n", engine.status.message);
   }
 
-  ONNX_TEST_REQUIRE(engine.status.error == kAlquimiaNoError);
+  ONNX_TEST_REQUIRE(&num_failures, engine.status.error == kAlquimiaNoError);
   for (i = 0; i < 2; ++i)
   {
-    ONNX_TEST_REQUIRE(isfinite(state.total_immobile.data[i]));
-    ONNX_TEST_REQUIRE(
-        OnnxCloseEnough(state.total_immobile.data[i], outputs[i], 1.0e-15));
+    ONNX_TEST_REQUIRE(&num_failures, isfinite(state.total_immobile.data[i]));
+    ONNX_TEST_REQUIRE(&num_failures,
+        OnnxCloseEnough(state.total_immobile.data[i], outputs[i] * 1000, 1.0e-15));
   }
 
+cleanup:
   FreeAlquimiaGeochemicalCondition(&condition);
   FreeAlquimiaState(&state);
   FreeAlquimiaProblemMetaData(&meta_data);
-  ONNX_TEST_REQUIRE(OnnxShutdownEngine(&engine));
+  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+      OnnxShutdownEngine(&engine), NULL);
 }
 
 /* ---------- Runners ---------- */
@@ -748,7 +1074,7 @@ static void RunRoutingErrorTests(void)
 {
   TestE01UndersizedOutputVector();
   TestE02RuntimeInferenceFailure();
-  printf("ONNX routing error cases E01-E02 passed.\n");
+  printf("ONNX routing error cases E01-E02 completed.\n");
 }
 
 /**
@@ -767,7 +1093,12 @@ static void RunRoutingTests(void)
   RunRoutingErrorTests();
   TestR09RepeatedInference();
   TestR10IndependentInstances();
-  printf("ONNX routing cases R01-R10 passed.\n");
+  TestR11TotalMolar();
+  TestR12TotalCondition();
+  TestR13PorosityOutputConservation();
+  TestE03TotalConversionErrors();
+  TestE04NonFiniteOutputs();
+  printf("ONNX routing cases R01-R13 completed.\n");
 }
 
 /*
@@ -778,8 +1109,8 @@ static void RunRoutingTests(void)
 ** | F03 | Small neural network | Standard dense activation graph compatibility |
 ** | F04 | Tree ensemble | `ai.onnx.ml` tree operator compatibility |
 ** | F05 | Multi-target model | Compatibility with multiple outputs |
-** | F06 | Shared ALSURF models | H/Zn output routing across all supported tensor shapes |
-** | I01 | ALSURF lifecycle | Setup, metadata, condition, inference, and shutdown |
+** | F06 | Shared EX8 models | H/Zn output routing across all supported tensor shapes |
+** | I01 | EX8 lifecycle | Setup, metadata, condition, inference, and shutdown |
 */
 /**
  * @brief Runs ONNX model-family compatibility cases.
@@ -791,9 +1122,9 @@ static void RunModelFamilyTests(void)
   TestF03SmallNeuralNetwork();
   TestF04TreeEnsemble();
   TestF05MultiTarget();
-  TestF06AlsurfModels();
-  TestI01AlsurfLifecycle();
-  printf("ONNX model-family cases F01-F06 and I01 passed.\n");
+  TestF06Ex8Models();
+  TestI01Ex8Lifecycle();
+  printf("ONNX model-family cases F01-F06 and I01 completed.\n");
 }
 
 #endif
@@ -822,6 +1153,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "Usage: %s [routing|model-family]\n", argv[0]);
     return EXIT_FAILURE;
   }
+  return num_failures == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 #else
   (void)argc;
   (void)argv;

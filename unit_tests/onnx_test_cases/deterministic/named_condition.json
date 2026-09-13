@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "model": "../../../models/alsurf_nn/zn_h_regressor_integrated_1D.onnx",
+  "model": "../../../models/ex8_nn/ex8_nn_1d.onnx",
   "conditions": {
     "initial": {
       "H": 9.999999999999999e-06,

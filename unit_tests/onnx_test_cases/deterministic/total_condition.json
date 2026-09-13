@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "model": "add_two_inputs.onnx",
+  "inputs": [
+    {"tensor": "left", "tensor_element_index": 0, "feature": "H", "alquimia_state": "total_molar", "alquimia_state_index": 0},
+    {"tensor": "right", "tensor_element_index": 0, "feature": "porosity", "alquimia_state": "porosity", "alquimia_state_index": 0}
+  ],
+  "outputs": [
+    {"tensor": "sum", "tensor_element_index": 0, "feature": "H", "alquimia_state": "total_immobile", "alquimia_state_index": 0}
+  ],
+  "conditions": {
+    "mobile_only": {"H": {"total_mobile": 0.001}, "porosity": 0.25},
+    "immobile_only": {"H": {"total_immobile": -0.2}, "porosity": 0.25},
+    "both": {"H": {"total_immobile": 0.2, "total_mobile": 0.001}, "porosity": 0.25}
+  }
+}

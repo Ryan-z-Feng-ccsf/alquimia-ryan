@@ -9,7 +9,7 @@ This directory contains CTest unit tests for Alquimia core utilities and ONNX en
 | `test_alquimia_c_utils.c` | Tests generic C utility behavior. |
 | `test_alquimia_onnx_mapping.c` | Tests ONNX JSON config (**[`onnx_alquimia_config.c`](../alquimia/onnx_alquimia_config.c)**) parsing, mapping validation, metadata (`GetProblemMetadata`), and relative model paths. |
 | `test_alquimia_onnx_failures.c` | Tests ONNX (**[`onnx_alquimia_interface.c`](../alquimia/onnx_alquimia_interface.c)**) setup failures (`Setup`), condition-processing guards (`ProcessCondition`), and lifecycle cleanup (`Shutdown`). |
-| `test_alquimia_onnx_inference_routing.c` | Tests ONNX (`ReactionStepOperatorSplit`) input/output routing, model-family compatibility, runtime errors, and ALSURF integration. |
+| `test_alquimia_onnx_inference_routing.c` | Tests ONNX (`ReactionStepOperatorSplit`) input/output routing, model-family compatibility, runtime errors, and EX8 integration. |
 | `onnx_test_utils.c` / `onnx_test_utils.h` | Shared ONNX test helpers for setup, shutdown, paths, state allocation, condition setup, inference, diagnostics, and temporary config files. |
 | `onnx_test_cases/` | Test JSON configs and small ONNX artifacts used by the ONNX unit tests. For detailed specifications, please refer to **[onnx_test_cases/README.md](onnx_test_cases/README.md).**|
 
@@ -34,13 +34,15 @@ ONNX test IDs are file-local. For example, `E01` in the mapping test is a differ
 | `M01` | Named JSON conditions parse successfully, cover required input features, and may include unused extra features. |
 | `M02` | Input/output feature names populate the correct `AlquimiaProblemMetaData` vectors by state category. |
 | `M03` | Relative ONNX model paths resolve (`ResolveModelPath` at `onnx_alquimia_config.c`) from the config file directory. |
+| `M04` | Mobile/immobile/total input pairs and mineral input pairs share metadata names, route distinct values, preserve omitted fields, and reject ambiguous generic driver constraints. |
+| `M05` | Nested conditions allocate and initialize paired fields absent from the model signature, including mobile metadata for immobile-only inputs; unrelated features are ignored. |
 | `E01` | Invalid `conditions` JSON schemas are rejected. |
 | `E02` | Missing, malformed, or unsupported `schema_version` is rejected. |
 | `E03` | Missing required top-level `model`, `inputs`, or `outputs` is rejected. |
 | `E04` | Missing input mapping properties are rejected. |
 | `E05` | Missing output mapping properties are rejected. |
 | `E06` | Unknown or duplicate JSON properties are rejected. |
-| `E07` | Unsupported `alquimia_state` names are rejected. |
+| `E07` | Unsupported `alquimia_state` names and output mappings to input-only `total_molar` are rejected. |
 | `E08` | Invalid mapping indices are rejected, including negative, fractional, and out-of-range integer values. |
 | `E09` | Scalar state mappings reject nonzero `alquimia_state_index`. |
 | `E10` | Unknown ONNX tensor names are rejected. |
@@ -50,7 +52,8 @@ ONNX test IDs are file-local. For example, `E01` in the mapping test is a differ
 | `E14` | Mapping indices that would derive unsafe or overflowing Alquimia sizes are rejected. |
 | `E15` | Two/more conflicting feature names for the same metadata destination are rejected. |
 | `E16` | Similar but invalid property names with trailing text are rejected. |
-| `E17` | Duplicate input feature names are rejected. |
+| `E17` | Reusing an input feature name across distinct indices is rejected. |
+| `E18` | Unknown/incompatible condition fields, explicit total assignments, ambiguous scalar conditions, and invalid shared-name input mappings are rejected. |
 
 ## `test_alquimia_onnx_failures.c`
 
@@ -94,15 +97,20 @@ ONNX test IDs are file-local. For example, `E01` in the mapping test is a differ
 | `R05` | Mixed scalar and vector `AlquimiaState` mappings route correctly. |
 | `R06` | Outputs across all supported state categories avoid cross-overwrites. |
 | `R07` | Rank-0 scalar tensor inputs/outputs are preserved. |
-| `R08` | Mobile/immobile paired outputs conserve totals only when one phase is output. |
+| `R08` | One-sided phase outputs conserve bulk inventory using porosity and saturation; explicit paired outputs remain authoritative. |
 | `R09` | Repeated inference calls do not reuse stale buffer values. |
 | `R10` | Independent ONNX engine instances do not share runtime state or buffers. |
+| `R11` | Total-concentration inputs convert both phases to mol/L water, allocate/name both vectors, preserve bulk inventory, allow negatives, and remain stable across repeated inference. |
+| `R12` | Total-driven models accept mobile-only, immobile-only, and both-phase JSON conditions in native units; omitted phases are preserved and inference reads the converted total. |
+| `R13` | Paired conservation uses final predicted porosity even when its output follows the phase output. |
 | `E01` | Undersized output vectors fail before out-of-bounds writes. |
 | `E02` | ONNX Runtime inference failures become Alquimia engine integrity errors. |
+| `E03` | Total conversion rejects missing properties, invalid porosity/saturation, missing or undersized immobile vectors, and non-finite totals. |
+| `E04` | Non-finite model outputs, including overflow from a finite input, fail without writing the output. |
 | `F01` | Linear or identity ONNX graphs run through the adapter. |
 | `F02` | `ai.onnx.ml` SVR regression models are supported. |
 | `F03` | Small neural-network graphs with dense activations are supported. |
 | `F04` | `ai.onnx.ml` tree ensemble models are supported. |
 | `F05` | Multi-target model outputs route to multiple Alquimia destinations. |
-| `F06` | Shared ALSURF neural-network and random-forest model shapes preserve H/Zn routing. |
-| `I01` | Full ALSURF lifecycle succeeds: setup, metadata, condition, inference, and shutdown. |
+| `F06` | Shared EX8 neural-network and random-forest model shapes preserve H/Zn routing. |
+| `I01` | Full EX8 lifecycle succeeds: setup, metadata, condition, inference, and shutdown. |

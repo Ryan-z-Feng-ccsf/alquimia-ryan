@@ -533,13 +533,13 @@ static bool ValidateUniqueInputFeature(
   {
     if (input_seen[i] && strcmp(input_mappings[i].feature, feature) == 0)
     {
-      int category = MetadataNameCategory(mapping->alquimia_state);
+      int meta_name = MetadataNameCategory(mapping->alquimia_state);
 
       /* 0: mobile, immobile, total_molar
       ** 1: mineral_volume_fraction, mineral_specific_surface_area
       */
-      if ((category == 0 || category == 1) &&
-          category == MetadataNameCategory(input_mappings[i].alquimia_state) &&
+      if ((meta_name == 0 || meta_name == 1) &&
+          meta_name == MetadataNameCategory(input_mappings[i].alquimia_state) &&
           mapping->alquimia_state_index == input_mappings[i].alquimia_state_index &&
           mapping->alquimia_state != input_mappings[i].alquimia_state)
       {
@@ -662,14 +662,14 @@ static bool ResolveConditionMapping(
    * they are not mixing up physical phases (e.g., trying to write a mineral volume 
    * fraction into an aqueous concentration slot).
    * 
-   * We allow flexibility (the requested state doesn't have to perfectly match the 
+   * Allow flexibility (the requested state doesn't have to perfectly match the 
    * model's expected state) ONLY IF both states belong to the exact same physical 
-   * family/category (e.g., Category 0 = aqueous phase, Category 1 = solid/mineral phase).
+   * metadata (e.g., meta_name 0 = aqueous phase, meta_name 1 = solid/mineral phase).
    */
-  int category = MetadataNameCategory(matched_input->alquimia_state);
+  int matched_meta_name = MetadataNameCategory(matched_input->alquimia_state);
   if (mapping->alquimia_state != matched_input->alquimia_state &&
-      !((category == 0 || category == 1) &&
-        category == MetadataNameCategory(mapping->alquimia_state)))
+      !((matched_meta_name == 0 || matched_meta_name == 1) &&
+        matched_meta_name == MetadataNameCategory(mapping->alquimia_state)))
   {
     status->error = kAlquimiaErrorEngineIntegrity;
     snprintf(status->message, kAlquimiaMaxStringLength,
@@ -1438,6 +1438,7 @@ static void SetAlquimiaModelOutput(
   if (mapping.alquimia_state == ALQUIMIA_STRUCT_TOTAL_MOBILE)
   {
     /* paired_mapping is immobile 
+    ** mapping is mobile [molarity]
     ** Old total mobile + immobile = new mobile + immobile
     ** The inference is for mobile [molarity]
     ** We need to balance the total mobile [molarity] and immobile [moles/m^3 bulk]
@@ -1450,6 +1451,7 @@ static void SetAlquimiaModelOutput(
   else
   {
     /* paired_mapping is mobile
+    ** mapping is immobile [moles/m^3 bulk]
     ** Old total mobile + immobile = new mobile + immobile
     ** The inference is for immobile [molarity]
     ** We need to balance the total mobile [molarity] and immobile [moles/m^3 bulk]
@@ -1457,6 +1459,7 @@ static void SetAlquimiaModelOutput(
     */
     ncomp = old_water_volume * paired_value + mapped_value;
     /* Unit: [molarity] */
+    value *= new_water_volume;  /* mol/L water -> mol/m^3 bulk */
     paired_value = (ncomp - value) / new_water_volume;
   }
   if (!isfinite(ncomp) || !isfinite(paired_value))

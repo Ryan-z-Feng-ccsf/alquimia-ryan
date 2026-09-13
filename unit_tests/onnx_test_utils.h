@@ -72,7 +72,7 @@
 
 #define ONNX_TEST_EX8_MODEL_PATH                                      \
   CMAKE_CURRENT_SOURCE_DIR                                               \
-  "/../models/ex8_nn/zn_h_regressor_integrated_1D.onnx"
+  "/../models/ex8_nn/ex8_nn_1d.onnx"
 #define ONNX_TEST_EX8_NAMED_CONFIG                                    \
   CMAKE_CURRENT_SOURCE_DIR                                               \
   "/onnx_test_cases/deterministic/named_condition.json"
@@ -129,20 +129,19 @@
   } while (0)
 
 /**
- * @brief For fatal test failures. Exits the program immediately upon failure.
- * @note onnx_require_failures is an unused placeholder to satisfy the 
- *       OnnxRecordTestFailure function signature.
- */ 
-#define ONNX_TEST_REQUIRE(condition)                                      \
+ * @brief Records a failed prerequisite and jumps to the caller's cleanup label.
+ * @note Initialize owned resources before any requirement. Cleanup must use
+ *       ONNX_TEST_EXPECT for checks so failures cannot jump back into cleanup.
+ */
+#define ONNX_TEST_REQUIRE(failure_count, condition)                        \
   do                                                                      \
   {                                                                       \
     if (!(condition))                                                     \
     {                                                                     \
-      int onnx_require_failures = 0;                                      \
       OnnxRecordTestFailure(                                              \
-          &onnx_require_failures, __func__, "Required condition failed",  \
-          #condition, NULL, __FILE__, __LINE__);                          \
-      exit(EXIT_FAILURE);                                                 \
+          failure_count, __func__, "Required condition failed",            \
+          #condition, NULL, __FILE__, __LINE__);                            \
+      goto cleanup;                                                       \
     }                                                                     \
   } while (0)
 
@@ -179,6 +178,9 @@ typedef struct
 
 /* ---------- Test Helper Function ---------- */
 
+/* Fallible helpers return success. Callers record failures and clean up owned
+ * resources, including engine status after failed setup. */
+
 bool OnnxTestCasePath(const char *relative_path, char *path, size_t size);
 
 bool OnnxModelPath(const char *relative_path, char *path, size_t size);
@@ -204,17 +206,15 @@ bool OnnxSetupSharedModelEngine(
 
 bool OnnxShutdownEngine(OnnxTestEngine *engine);
 
-void OnnxRequireSetupEngine(
+bool OnnxRequireSetupEngine(
     const char *relative_path,
     bool hands_off,
     OnnxTestEngine *engine);
 
-void OnnxRequireSharedModelEngine(
+bool OnnxRequireSharedModelEngine(
     const char *relative_path,
     bool hands_off,
     OnnxTestEngine *engine);
-
-void OnnxRequireShutdownEngine(OnnxTestEngine *engine);
 
 void OnnxAllocateState(const OnnxTestEngine *engine, AlquimiaState *state);
 
@@ -224,9 +224,9 @@ void OnnxInitializeConstraint(
     const char *name,
     double value);
 
-void OnnxRunInference(OnnxTestEngine *engine, AlquimiaState *state);
+bool OnnxRunInference(OnnxTestEngine *engine, AlquimiaState *state);
 
-void OnnxApplyNamedCondition(
+bool OnnxApplyNamedCondition(
     OnnxTestEngine *engine,
     const char *condition_name,
     AlquimiaState *state);
@@ -248,22 +248,22 @@ void OnnxCheckSetupFailureAt(
     const char *file,
     int line);
 
-void OnnxCheckEx8Prediction(
+bool OnnxCheckEx8Prediction(
     const char *test_id,
     const char *feature,
     double actual,
     double expected);
 
-void OnnxWriteTemporaryConfig(const char *contents);
+bool OnnxWriteTemporaryConfig(const char *contents);
 
-void OnnxRemoveTemporaryConfig(const char *test_id);
+bool OnnxRemoveTemporaryConfig(const char *test_id);
 
-void OnnxExpectConfigParseFailure(
+bool OnnxExpectConfigParseFailure(
     const char *test_id,
     const char *config_contents,
     const char *expected_message);
 
-void OnnxExpectConfigSetupFailure(
+bool OnnxExpectConfigSetupFailure(
     AlquimiaInterface *interface,
     AlquimiaEngineStatus *status,
     const char *test_id,

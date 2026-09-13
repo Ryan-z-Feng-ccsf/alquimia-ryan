@@ -159,9 +159,9 @@ void OnnxCheckSetupFailureAt(
 }
 
 /**
- * @brief Checks an ALSURF prediction against its expected reference value.
+ * @brief Checks an EX8 prediction against its expected reference value.
  */
-void OnnxCheckAlsurfPrediction(
+bool OnnxCheckEx8Prediction(
     const char *test_id,
     const char *feature,
     double actual,
@@ -175,8 +175,9 @@ void OnnxCheckAlsurfPrediction(
             "%s: %s prediction was %.17g; expected %.17g "
             "within %.17g.\n",
             test_id, feature, actual, expected, tolerance);
-    exit(EXIT_FAILURE);
+    return false;
   }
+  return true;
 }
 
 /**
@@ -280,11 +281,15 @@ bool OnnxSetupSharedModelEngine(
  */
 bool OnnxShutdownEngine(OnnxTestEngine *engine)
 {
-  bool success;
+  bool success = engine->engine_state == NULL;
 
-  engine->interface.Shutdown(&engine->engine_state, &engine->status);
-  success = engine->status.error == kAlquimiaNoError &&
-      engine->engine_state == NULL;
+  /* Failed setup may leave only status storage to release. */
+  if (engine->engine_state != NULL && engine->interface.Shutdown != NULL)
+  {
+    engine->interface.Shutdown(&engine->engine_state, &engine->status);
+    success = engine->status.error == kAlquimiaNoError &&
+        engine->engine_state == NULL;
+  }
   if (!success)
   {
     fprintf(stderr, "Shutdown failed: %s\n",
@@ -295,9 +300,9 @@ bool OnnxShutdownEngine(OnnxTestEngine *engine)
 }
 
 /**
- * @brief Returns setup from a unit-test config path or exits the test.
+ * @brief Returns setup from a unit-test config path and reports success.
  */
-void OnnxRequireSetupEngine(
+bool OnnxRequireSetupEngine(
     const char *relative_path,
     bool hands_off,
     OnnxTestEngine *engine)
@@ -306,15 +311,15 @@ void OnnxRequireSetupEngine(
   {
     fprintf(stderr, "Unable to set up ONNX engine '%s': %s\n", relative_path,
             engine->status.message != NULL ? engine->status.message : "");
-    FreeAlquimiaEngineStatus(&engine->status);
-    exit(EXIT_FAILURE);
+    return false;
   }
+  return true;
 }
 
 /**
- * @brief Returns setup from a shared-model config path or exits the test.
+ * @brief Returns setup from a shared-model config path and reports success.
  */
-void OnnxRequireSharedModelEngine(
+bool OnnxRequireSharedModelEngine(
     const char *relative_path,
     bool hands_off,
     OnnxTestEngine *engine)
@@ -323,20 +328,9 @@ void OnnxRequireSharedModelEngine(
   {
     fprintf(stderr, "Unable to set up ONNX model '%s': %s\n", relative_path,
             engine->status.message != NULL ? engine->status.message : "");
-    FreeAlquimiaEngineStatus(&engine->status);
-    exit(EXIT_FAILURE);
+    return false;
   }
-}
-
-/**
- * @brief Returns successful shutdown or exits the test.
- */
-void OnnxRequireShutdownEngine(OnnxTestEngine *engine)
-{
-  if (!OnnxShutdownEngine(engine))
-  {
-    exit(EXIT_FAILURE);
-  }
+  return true;
 }
 
 /**
@@ -346,6 +340,7 @@ void OnnxAllocateState(const OnnxTestEngine *engine, AlquimiaState *state)
 {
   memset(state, 0, sizeof(*state));
   AllocateAlquimiaState(&engine->sizes, state);
+  state->porosity = 1.0;
 }
 
 /**
@@ -367,12 +362,13 @@ void OnnxInitializeConstraint(
 }
 
 /**
- * @brief Runs one operator-split ONNX inference step or exits the test.
+ * @brief Runs one operator-split ONNX inference step and reports success.
  */
-void OnnxRunInference(OnnxTestEngine *engine, AlquimiaState *state)
+bool OnnxRunInference(OnnxTestEngine *engine, AlquimiaState *state)
 {
   AlquimiaAuxiliaryData aux_data = {0};
   AlquimiaProperties properties = {0};
+  properties.saturation = 1.0;
 
   engine->interface.ReactionStepOperatorSplit(
       &engine->engine_state, 1.0, &properties, state, &aux_data, 0,
@@ -381,14 +377,15 @@ void OnnxRunInference(OnnxTestEngine *engine, AlquimiaState *state)
   {
     fprintf(stderr, "ONNX inference failed: %s\n",
             engine->status.message != NULL ? engine->status.message : "");
-    exit(EXIT_FAILURE);
+    return false;
   }
+  return true;
 }
 
 /**
- * @brief Applies one named JSON condition to an ONNX state or exits the test.
+ * @brief Applies one named JSON condition to an ONNX state and reports success.
  */
-void OnnxApplyNamedCondition(
+bool OnnxApplyNamedCondition(
     OnnxTestEngine *engine,
     const char *condition_name,
     AlquimiaState *state)
@@ -396,6 +393,7 @@ void OnnxApplyNamedCondition(
   AlquimiaAuxiliaryData auxiliary_data = {0};
   AlquimiaGeochemicalCondition condition = {0};
   AlquimiaProperties properties = {0};
+  properties.saturation = 1.0;
 
   AllocateAlquimiaGeochemicalCondition(
       (int)strlen(condition_name), 0, 0, &condition);
@@ -409,9 +407,10 @@ void OnnxApplyNamedCondition(
             condition_name,
             engine->status.message != NULL ? engine->status.message : "");
     FreeAlquimiaGeochemicalCondition(&condition);
-    exit(EXIT_FAILURE);
+    return false;
   }
   FreeAlquimiaGeochemicalCondition(&condition);
+  return true;
 }
 
 /**
@@ -419,13 +418,21 @@ void OnnxApplyNamedCondition(
  */
 bool OnnxCloseEnough(double actual, double expected, double tolerance)
 {
-  return fabs(actual - expected) < tolerance;
+  if (!isfinite(actual) || fabs(actual - expected) > tolerance)
+  {
+    fprintf(stderr,
+            "Actual prediction was %.17g; expected %.17g "
+            "within %.17g.\n",
+            actual, expected, tolerance);
+    return false;
+  }
+  return true;
 }
 
 /**
  * @brief Writes a temporary ONNX JSON config used by parser/setup tests.
  */
-void OnnxWriteTemporaryConfig(const char *contents)
+bool OnnxWriteTemporaryConfig(const char *contents)
 {
   FILE *file = fopen(ONNX_TEST_TEMP_CONFIG, "wb");
   size_t length = strlen(contents);
@@ -434,107 +441,133 @@ void OnnxWriteTemporaryConfig(const char *contents)
   {
     fprintf(stderr, "Unable to open temporary config '%s'.\n",
             ONNX_TEST_TEMP_CONFIG);
-    exit(EXIT_FAILURE);
+    return false;
   }
   if (fwrite(contents, 1, length, file) != length)
   {
     fprintf(stderr, "Unable to write temporary config '%s'.\n",
             ONNX_TEST_TEMP_CONFIG);
     fclose(file);
-    exit(EXIT_FAILURE);
+    OnnxRemoveTemporaryConfig(__func__);
+    return false;
   }
   if (fclose(file) != 0)
   {
     fprintf(stderr, "Unable to close temporary config '%s'.\n",
             ONNX_TEST_TEMP_CONFIG);
-    exit(EXIT_FAILURE);
+    OnnxRemoveTemporaryConfig(__func__);
+    return false;
   }
+  return true;
 }
 
 /**
  * @brief Removes the temporary ONNX JSON config used by parser/setup tests.
  */
-void OnnxRemoveTemporaryConfig(const char *test_id)
+bool OnnxRemoveTemporaryConfig(const char *test_id)
 {
   if (remove(ONNX_TEST_TEMP_CONFIG) != 0)
   {
     fprintf(stderr, "%s could not remove temporary config '%s'.\n",
             test_id, ONNX_TEST_TEMP_CONFIG);
-    exit(EXIT_FAILURE);
+    return false;
   }
+  return true;
 }
 
 /**
  * @brief Requires config parsing to fail with the expected diagnostic text.
  */
-void OnnxExpectConfigParseFailure(
+bool OnnxExpectConfigParseFailure(
     const char *test_id,
-    const char *config_contents,
+    const char *json,
     const char *expected_message)
 {
   OnnxAlquimiaConfig config = {0};
   char error_message[ONNX_TEST_ERROR_MESSAGE_SIZE] = {0};
+  bool success = false;
 
-  OnnxWriteTemporaryConfig(config_contents);
+  if (!OnnxWriteTemporaryConfig(json))
+  {
+    return false;
+  }
   if (OnnxAlquimiaLoadConfig(
       ONNX_TEST_TEMP_CONFIG, &config, error_message, sizeof(error_message)))
   {
     fprintf(stderr, "%s unexpectedly parsed.\n", test_id);
-    OnnxAlquimiaFreeConfig(&config);
-    OnnxRemoveTemporaryConfig(test_id);
-    exit(EXIT_FAILURE);
+    goto cleanup;
   }
-  /* Expect to fail */
   if (strstr(error_message, expected_message) == NULL)
   {
     fprintf(stderr, "%s error was '%s'; expected '%s'.\n", test_id,
             error_message, expected_message);
-    OnnxRemoveTemporaryConfig(test_id);
-    exit(EXIT_FAILURE);
+    goto cleanup;
   }
-  OnnxRemoveTemporaryConfig(test_id);
+  success = true;
+
+cleanup:
+  OnnxAlquimiaFreeConfig(&config);
+  if (!OnnxRemoveTemporaryConfig(test_id))
+  {
+    success = false;
+  }
+  return success;
 }
 
 /**
- * @brief Requires interface setup to fail with the expected diagnostic text.
+ * @brief Checks setup failure diagnostics and releases temporary resources.
  */
-void OnnxExpectConfigSetupFailure(
+bool OnnxExpectConfigSetupFailure(
     AlquimiaInterface *interface,
     AlquimiaEngineStatus *status,
     const char *test_id,
-    const char *config_contents,
+    const char *json,
     const char *expected_message)
 {
   AlquimiaEngineFunctionality functionality = {0};
   AlquimiaSizes sizes = {0};
   void *onnx_engine_state = NULL;
+  bool success = false;
 
-  OnnxWriteTemporaryConfig(config_contents);
+  if (!OnnxWriteTemporaryConfig(json))
+  {
+    return false;
+  }
   interface->Setup(ONNX_TEST_TEMP_CONFIG, false, &onnx_engine_state, &sizes,
                    &functionality, status);
   if (status->error == kAlquimiaNoError)
   {
     fprintf(stderr, "%s unexpectedly set up.\n", test_id);
-    interface->Shutdown(&onnx_engine_state, status);
-    OnnxRemoveTemporaryConfig(test_id);
-    exit(EXIT_FAILURE);
+    goto cleanup;
   }
   if (status->message == NULL ||
       strstr(status->message, expected_message) == NULL)
   {
     fprintf(stderr, "%s error was '%s'; expected '%s'.\n", test_id,
             status->message != NULL ? status->message : "", expected_message);
-    OnnxRemoveTemporaryConfig(test_id);
-    exit(EXIT_FAILURE);
+    goto cleanup;
   }
   if (onnx_engine_state != NULL)
   {
     fprintf(stderr, "%s published a non-NULL engine state.\n", test_id);
-    interface->Shutdown(&onnx_engine_state, status);
-    OnnxRemoveTemporaryConfig(test_id);
-    exit(EXIT_FAILURE);
+    goto cleanup;
   }
-  OnnxRemoveTemporaryConfig(test_id);
+  success = true;
+
+cleanup:
+  if (onnx_engine_state != NULL)
+  {
+    interface->Shutdown(&onnx_engine_state, status);
+    if (status->error != kAlquimiaNoError || onnx_engine_state != NULL)
+    {
+      success = false;
+    }
+  }
+  if (!OnnxRemoveTemporaryConfig(test_id))
+  {
+    success = false;
+  }
+  return success;
 }
 
 #endif
