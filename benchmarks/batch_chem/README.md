@@ -1,6 +1,6 @@
 # Batch Chemistry ONNX Benchmarks
 
-This directory contains batch chemistry input files that exercise the ONNX chemistry engine with LSURF isotherm models and EX8 neural-network and random-forest models. Each case uses `hands_off = true`, the ONNX engine, the `initial` condition from the referenced model config JSON file, verbose gnuplot output, and these shared state/material settings:
+This directory contains batch chemistry input files that exercise the ONNX chemistry engine with LSURF models and EX8 neural-network and random-forest models. Each case uses `hands_off = true`, the ONNX engine, the `initial` condition from the referenced model config JSON file, verbose gnuplot output, and these shared state/material settings:
 
 - `timestep = 864000`
 - `density = 997.16`
@@ -48,7 +48,7 @@ Used by:
 
 ### EX8 Six-Feature Random-Forest Baseline
 
-Used by `ex8-rf-6.cfg`.
+Used by `ex8-rf-6-dynamic-batch.cfg`.
 
 | Feature | Baseline value |
 | --- | ---: |
@@ -63,9 +63,9 @@ Used by `ex8-rf-6.cfg`.
 
 Used by:
 
+- `ex8-rf-9-1d.cfg`
 - `ex8-rf-9-batch1.cfg`
 - `ex8-rf-9-dynamic-batch.cfg`
-- `ex8-rf-9-1d.cfg`
 - `ex8-rf-9-scalar.cfg`
 
 | Feature | Baseline value |
@@ -80,14 +80,14 @@ Used by:
 | `Fe++` | `2.9324029589485202e-12` |
 | `O2(aq)` | `0.0002464700291695` |
 
-### LSURF Isotherm Baseline
+### LSURF Baseline
 
 Used by:
 
-- `isotherms-onnx-1.cfg`
-- `isotherms-onnx-2.cfg`
-- `isotherms-onnx-5.cfg`
-- `isotherms-onnx-6.cfg`
+- `lsurf-1-dynamic-batch.cfg`
+- `lsurf-2-dynamic-batch.cfg`
+- `lsurf-5-dynamic-batch.cfg`
+- `lsurf-6-dynamic-batch.cfg`
 
 These values are pre-scaled values expected by the LSURF ONNX models. In the inspected configs, the adapter copies the values into ONNX input tensors without applying an additional log or inverse-log transform.
 
@@ -119,14 +119,17 @@ All benchmarks output logs to `*.out`. For internal tensor mappings, refer to th
 |---|---|---|---|
 | `ex8-rf-6-dynamic-batch.cfg` | 6-feature RF inference | `../../models/ex8_rf/ex8_rf_6_dynamic_batch.json` | 2 |
 | `ex8-rf-9-1d.cfg` | 9-feature RF feature-vector | `../../models/ex8_rf/ex8_rf_9_1d.json` | 4 |
-| `ex8-rf-9-batch1.cfg` | 9-feature RF fixed-batch | `../../models/ex8_rfex8_rf_9_batch1.json` | 6 |
+| `ex8-rf-9-batch1.cfg` | 9-feature RF fixed-batch | `../../models/ex8_rf/ex8_rf_9_batch1.json` | 6 |
 | `ex8-rf-9-dynamic-batch.cfg` | 9-feature RF dynamic-batch | `../../models/ex8_rf/ex8_rf_9_dynamic_batch.json` | 10 |
 | `ex8-rf-9-scalar.cfg` | 9-feature RF scalar inference | `../../models/ex8_rf/ex8_rf_9_scalar.json` | 50 |
 
-### LSURF Isotherm Benchmarks
+### LSURF Benchmarks
+
+The LSURF config and ONNX model files are optional for CTest benchmarks. If either file for a case is missing at test time, CTest reports that case as `Skipped` and continues without failing the suite. Use `ctest -V -R lsurf` to see which file is missing. Files can be added and tests rerun without reconfiguring. A model that is present but fails to load or run still fails the test. CTest 3.16 or newer is needed to display the skipped status.
+
 | Config | Description | Model | Steps |
 |---|---|---|---|
-| `isotherms-onnx-1.cfg` | 1-feature RF inference | `../../models/lsurf_model_1_float_64.json` | 50 |
-| `isotherms-onnx-2.cfg` | 2-feature RF inference | `../../models/lsurf_model_2_float_64.json` | 50 |
-| `isotherms-onnx-5.cfg` | 5-feature RF inference | `../../models/lsurf_model_5_float_64.json` | 50 |
-| `isotherms-onnx-6.cfg` | 6-feature RF inference | `../../models/lsurf_model_6_float_64.json` | 50 |
+| `lsurf-1-dynamic-batch.cfg` | 1-feature RF inference | `../../models/lsurf/lsurf_model_1_float_64.json` | 50 |
+| `lsurf-2-dynamic-batch.cfg` | 2-feature RF inference | `../../models/lsurf/lsurf_model_2_float_64.json` | 50 |
+| `lsurf-5-dynamic-batch.cfg` | 5-feature RF inference | `../../models/lsurf/lsurf_model_5_float_64.json` | 50 |
+| `lsurf-6-dynamic-batch.cfg` | 6-feature RF inference | `../../models/lsurf/lsurf_model_6_float_64.json` | 50 |

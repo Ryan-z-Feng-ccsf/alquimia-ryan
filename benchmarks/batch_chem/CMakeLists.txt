@@ -47,9 +47,11 @@ if (ALQUIMIA_HAVE_ONNX)
   add_alquimia_batch_chem_benchmark(ex8_rf_9_dynamic_batch ex8-rf-9-dynamic-batch.cfg)
   add_alquimia_batch_chem_benchmark(ex8_rf_9_1d ex8-rf-9-1d.cfg)
   add_alquimia_batch_chem_benchmark(ex8_rf_9_scalar ex8-rf-9-scalar.cfg)
-  add_alquimia_batch_chem_benchmark(isotherms_onnx_1 isotherms-onnx-1.cfg)
-  add_alquimia_batch_chem_benchmark(isotherms_onnx_2 isotherms-onnx-2.cfg)
-  add_alquimia_batch_chem_benchmark(isotherms_onnx_5 isotherms-onnx-5.cfg)
-  add_alquimia_batch_chem_benchmark(isotherms_onnx_6 isotherms-onnx-6.cfg)
+  foreach(features 1 2 5 6)
+    add_alquimia_batch_chem_benchmark(lsurf_${features}_dynamic_batch
+      lsurf-${features}-dynamic-batch.cfg
+      ../../models/lsurf/lsurf_model_${features}_float_64.json
+      ../../models/lsurf/lsurf_model_${features}_float_64.onnx)
+  endforeach()
 
 endif()
