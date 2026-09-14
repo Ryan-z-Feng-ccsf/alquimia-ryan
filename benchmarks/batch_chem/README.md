@@ -19,6 +19,8 @@ cd [project_root]/benchmarks/batch_chem
 
 ## Baseline Input Conditions
 
+> **Note on Units:** The values defined in the JSON `conditions` block follow **Alquimia's standard unit conventions**. However, during mobile and immobile model inference, the actual input and output tensors use **[molarity]**. The Alquimia interface handles the necessary conversions between the Alquimia state and the model tensors.
+
 The baseline values below come from the `conditions` block in each referenced model config JSON file:
 
 ```json
@@ -110,16 +112,16 @@ All benchmarks output logs to `*.out`. For internal tensor mappings, refer to th
 |---|---|---|---|
 | `ex8-nn-1d.cfg` | NN feature-vector inference | `../../models/ex8_nn/ex8_nn_1d.json` | 100 |
 | `ex8-nn-batch1.cfg` | NN fixed-batch inference | `../../models/ex8_nn/ex8_nn_batch1.json` | 100 |
-| `ex8-nn-dynamic-batch.cfg`| NN dynamic-batch inference | `../../models/ex8_nn/ex8_nn_dynamic_batch.json` | 1 |
+| `ex8-nn-dynamic-batch.cfg`| NN dynamic-batch inference | `../../models/ex8_nn/ex8_nn_dynamic_batch.json` | 1000 |
 
 ### EX8 Random-Forest Benchmarks
 | Config | Description | Model | Steps |
 |---|---|---|---|
-| `ex8-rf-6.cfg` | 6-feature RF inference | `../../models/ex8_rf/ex8_rf_6_dynamic_batch.json` | 1 |
-| `ex8-rf-9-batch1.cfg` | 9-feature RF fixed-batch | `../../models/ex8_rfex8_rf_9_batch1.json` | 1 |
-| `ex8-rf-9-dynamic-batch.cfg` | 9-feature RF dynamic-batch | `../../models/ex8_rf/ex8_rf_9_dynamic_batch.json` | 1 |
-| `ex8-rf-9-1d.cfg` | 9-feature RF feature-vector | `../../models/ex8_rf/ex8_rf_9_1d.json` | 1 |
-| `ex8-rf-9-scalar.cfg` | 9-feature RF scalar inference | `../../models/ex8_rf/ex8_rf_9_scalar.json` | 1 |
+| `ex8-rf-6-dynamic-batch.cfg` | 6-feature RF inference | `../../models/ex8_rf/ex8_rf_6_dynamic_batch.json` | 2 |
+| `ex8-rf-9-1d.cfg` | 9-feature RF feature-vector | `../../models/ex8_rf/ex8_rf_9_1d.json` | 4 |
+| `ex8-rf-9-batch1.cfg` | 9-feature RF fixed-batch | `../../models/ex8_rfex8_rf_9_batch1.json` | 6 |
+| `ex8-rf-9-dynamic-batch.cfg` | 9-feature RF dynamic-batch | `../../models/ex8_rf/ex8_rf_9_dynamic_batch.json` | 10 |
+| `ex8-rf-9-scalar.cfg` | 9-feature RF scalar inference | `../../models/ex8_rf/ex8_rf_9_scalar.json` | 50 |
 
 ### LSURF Isotherm Benchmarks
 | Config | Description | Model | Steps |

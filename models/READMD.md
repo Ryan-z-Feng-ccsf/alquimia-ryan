@@ -6,8 +6,8 @@ The JSON files are Alquimia ONNX configs. The `.onnx` files are the actual ONNX 
 
 ## `ex8_nn/`
 
-Neural-network EX8 models for H/Zn sorption.
-Input features: **H (total)**, **Zn (total)**
+Neural-network EX8 models for H/Zn [molarity] sorption.
+Input features: **H (total)**, **Zn (total)** 
 Output features: **H (immobile)**, **Zn (immobile)**
 
 ### Neural-Network ONNX Files
@@ -31,7 +31,7 @@ The inference results should be H(immobile) = `-1.230666e-04`, Zn(immobile) = `-
 
 ## `ex8_rf/`
 
-Random-forest EX8 models for H/Zn sorption.
+Random-forest EX8 models for H/Zn [molarity] sorption.
 
 The ONNX exports preserve double-precision (`float64`) inputs and outputs for Alquimia, but internally cast to single-precision (`float32`) during `Scaler` and `TreeEnsemble` opset specifically to truncate floating-point differences.
 
@@ -61,7 +61,7 @@ The nine-feature configs use: `Zn(OH)2(aq)`, `Zn(OH)3-`, `Zn(OH)4--`, `ZnOH+`, `
 
 All random-forest configs include an `initial` condition for the mapped aqueous species and write model outputs to:
 
-| Output | Alquimia Destination |
-|---|---|
-| H sorbed amount | `total_immobile[0]` |
-| Zn sorbed amount | `total_immobile[1]` |
+| Output | Alquimia Destination | Unit |
+|---|---|---|
+| H sorbed amount | `total_immobile[0]` | moles/m^3 bulk|
+| Zn sorbed amount | `total_immobile[1]` | moles/m^3 bulk|
