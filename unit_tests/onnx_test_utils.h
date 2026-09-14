@@ -82,11 +82,11 @@
 
 #define ONNX_TEST_VALID_INPUT_0                                          \
   "{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":0,"       \
-  "\"feature\":\"H\",\"alquimia_state\":\"total_mobile\","              \
+  "\"feature\":\"H\",\"alquimia_state\":\"total_molar\","              \
   "\"alquimia_state_index\":0}"
 #define ONNX_TEST_VALID_INPUT_1                                          \
   "{\"tensor\":\"chemical_input_raw\",\"tensor_element_index\":1,"       \
-  "\"feature\":\"Zn\",\"alquimia_state\":\"total_mobile\","             \
+  "\"feature\":\"Zn\",\"alquimia_state\":\"total_molar\","             \
   "\"alquimia_state_index\":1}"
 #define ONNX_TEST_VALID_OUTPUT_0                                         \
   "{\"tensor\":\"sorbed_output_raw\",\"tensor_element_index\":0,"        \

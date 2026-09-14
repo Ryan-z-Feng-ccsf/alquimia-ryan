@@ -3,8 +3,12 @@
   "model": "ex8_nn_batch1.onnx",
   "conditions": {
     "initial": {
-      "H": 9.999999999999999e-06,
-      "Zn": 1e-07
+      "H": {
+        "total_mobile": 9.999999999999999e-06
+      },
+      "Zn": {
+        "total_mobile": 1e-07
+      }
     }
   },
   "inputs": [
@@ -12,14 +16,14 @@
       "tensor": "chemical_input_raw",
       "tensor_element_index": 0,
       "feature": "H",
-      "alquimia_state": "total_mobile",
+      "alquimia_state": "total_molar",
       "alquimia_state_index": 0
     },
     {
       "tensor": "chemical_input_raw",
       "tensor_element_index": 1,
       "feature": "Zn",
-      "alquimia_state": "total_mobile",
+      "alquimia_state": "total_molar",
       "alquimia_state_index": 1
     }
   ],
