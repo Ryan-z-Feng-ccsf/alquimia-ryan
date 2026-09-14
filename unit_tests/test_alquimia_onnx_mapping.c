@@ -211,9 +211,9 @@ cleanup:
  * @brief Verifies behavior of paired input fields sharing metadata names.
  *
  * | Inputs                       | Expected sum |
- * | Mobile + immobile             | 0.201        |
+ * | Mobile + immobile             | 0.0012       |
  * | Total molar + mobile          | 0.0022       |
- * | Total molar + immobile        | 0.2012       |
+ * | Total molar + immobile        | 0.0014       |
  * | Mineral fraction + area      | 100.05       |
  *
  * Each case also checks metadata, partial initialization, and rejection of
@@ -232,11 +232,11 @@ static void TestM04PairedInputFields(void)
 
   const PairedInputCase cases[] = {
       {"M04 mobile + immobile", "Zn",
-       "total_mobile", "total_immobile", false, 0.201},
+       "total_mobile", "total_immobile", false, 0.0012},
       {"M04 total molar + mobile", "Zn",
        "total_molar", "total_mobile", false, 0.0022},
       {"M04 total molar + immobile", "Zn",
-       "total_molar", "total_immobile", false, 0.2012},
+       "total_molar", "total_immobile", false, 0.0014},
       {"M04 mineral fraction + area", "Calcite",
        "mineral_volume_fraction", "mineral_specific_surface_area", true, 100.05}
   };
@@ -345,7 +345,8 @@ static void TestM04PairedInputFields(void)
     }
 
     /* The add graph exposes exactly what the two model inputs received.
-     * With porosity = saturation = 1, total molar = 0.001 + 0.2 / 1000. */
+     * With porosity = saturation = 1, immobile input is 0.2 / 1000 mol/L
+     * water and total input is 0.001 + 0.2 / 1000 mol/L water. */
     ONNX_TEST_REQUIRE(&num_failures, OnnxRunInference(&engine, &state));
     ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(
         state.temperature, test_case->expected_sum, 1.0e-12));

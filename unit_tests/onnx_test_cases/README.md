@@ -63,8 +63,10 @@ Every config has:
 |---|---|
 | `schema_version` | Config schema version expected by the adapter. |
 | `model` | Relative or absolute path to the ONNX graph. |
-| `conditions` | Optional named input values for `ProcessCondition`. |
+| `conditions` | Optional named native-unit state values for `ProcessCondition`. |
 | `inputs` | ONNX tensor elements read from `AlquimiaState`. |
 | `outputs` | ONNX tensor elements written back to `AlquimiaState`. |
+
+Mobile and immobile tensor values use mol/L liquid water. JSON condition values use native Alquimia units: mobile is mol/L water and immobile is mol/m^3 bulk. The adapter divides immobile inputs by `1000 * porosity * saturation` and multiplies immobile outputs by that factor using final porosity. Other mapped fields retain native units. 
 
 The mock models should stay small and deterministic. Larger trained models under [**`../../models/`**](../../models/), not here.

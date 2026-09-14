@@ -95,9 +95,9 @@ ONNX test IDs are file-local. For example, `E01` in the mapping test is a differ
 | `R03` | One input tensor value can populate multiple output mappings. |
 | `R04` | Multiple input/output tensors keep tensor boundaries distinct. |
 | `R05` | Mixed scalar and vector `AlquimiaState` mappings route correctly. |
-| `R06` | Outputs across all supported state categories avoid cross-overwrites. |
+| `R06` | All state categories avoid cross-overwrites; an immobile slot without mobile storage round-trips a negative concentration through mol/L-water tensor units. |
 | `R07` | Rank-0 scalar tensor inputs/outputs are preserved. |
-| `R08` | One-sided phase outputs conserve bulk inventory using porosity and saturation; explicit paired outputs remain authoritative. |
+| `R08` | One-sided phase outputs conserve bulk inventory using porosity and saturation; explicit paired outputs remain authoritative after immobile unit conversion. |
 | `R09` | Repeated inference calls do not reuse stale buffer values. |
 | `R10` | Independent ONNX engine instances do not share runtime state or buffers. |
 | `R11` | Total-concentration inputs convert both phases to mol/L water, allocate/name both vectors, preserve bulk inventory, allow negatives, and remain stable across repeated inference. |
@@ -105,8 +105,8 @@ ONNX test IDs are file-local. For example, `E01` in the mapping test is a differ
 | `R13` | Paired conservation uses final predicted porosity even when its output follows the phase output. |
 | `E01` | Undersized output vectors fail before out-of-bounds writes. |
 | `E02` | ONNX Runtime inference failures become Alquimia engine integrity errors. |
-| `E03` | Total conversion rejects missing properties, invalid porosity/saturation, missing or undersized immobile vectors, and non-finite totals. |
-| `E04` | Non-finite model outputs, including overflow from a finite input, fail without writing the output. |
+| `E03` | Total and direct immobile inputs reject missing properties, invalid porosity/saturation, missing or undersized immobile vectors, and non-finite concentrations. |
+| `E04` | Non-finite inputs/outputs, and overflow when converting a finite immobile prediction to bulk units fail before output assignment. |
 | `F01` | Linear or identity ONNX graphs run through the adapter. |
 | `F02` | `ai.onnx.ml` SVR regression models are supported. |
 | `F03` | Small neural-network graphs with dense activations are supported. |

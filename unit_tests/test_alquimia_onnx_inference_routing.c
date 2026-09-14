@@ -256,7 +256,7 @@ static void TestR06AllStateCategories(void)
   state.aqueous_pressure = 104.0;
   state.total_mobile.data[0] = 105.0;
   state.total_immobile.data[0] = -1.0;
-  state.total_immobile.data[1] = 106.0;
+  state.total_immobile.data[1] = -106.0;
   state.mineral_volume_fraction.data[0] = 107.0;
   state.mineral_volume_fraction.data[1] = -2.0;
   state.mineral_specific_surface_area.data[0] = -3.0;
@@ -273,7 +273,9 @@ static void TestR06AllStateCategories(void)
   ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.aqueous_pressure, 104.0, 1.0e-12));
   ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_mobile.data[0], 105.0, 1.0e-12));
   ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[0], -1.0, 1.0e-12));
-  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[1], 106.0, 1.0e-12));
+  /* This immobile slot has no mobile counterpart; its negative value still
+   * makes a mol/m^3 bulk -> mol/L water -> mol/m^3 bulk round trip. */
+  ONNX_TEST_REQUIRE(&num_failures, OnnxCloseEnough(state.total_immobile.data[1], -106.0, 1.0e-12));
   ONNX_TEST_REQUIRE(&num_failures,
       OnnxCloseEnough(state.mineral_volume_fraction.data[0], 107.0, 1.0e-12));
   ONNX_TEST_REQUIRE(&num_failures,
@@ -366,11 +368,12 @@ static void TestR08MobileImmobileConservation(void)
   ONNX_TEST_REQUIRE(&num_failures,
       OnnxCloseEnough(state.total_immobile.data[0], -983.0, 1.0e-12));
   /* copy[1] and shifted[1] explicitly output both phases of component 1,
-  ** so both model values remain authoritative without conservation. */
+  ** so both model values remain authoritative without conservation.
+  ** The immobile prediction is 24 mol/L water, or 2400 mol/m^3 bulk. */
   ONNX_TEST_REQUIRE(&num_failures,
       OnnxCloseEnough(state.total_mobile.data[1], 4.0, 1.0e-12));
   ONNX_TEST_REQUIRE(&num_failures,
-      OnnxCloseEnough(state.total_immobile.data[1], 24.0, 1.0e-12));
+      OnnxCloseEnough(state.total_immobile.data[1], 2400.0, 1.0e-12));
 
 cleanup:
   FreeAlquimiaState(&state);
@@ -475,7 +478,8 @@ static void TestR12TotalCondition(void)
     ONNX_TEST_REQUIRE(&num_failures, state.total_mobile.data[0] == mobile[i]);
     ONNX_TEST_REQUIRE(&num_failures, state.total_immobile.data[0] == immobile[i]);
 
-    /* Initialization uses native units; only inference converts the total. */
+    /* JSON initializes native units without properties; inference converts
+     * the total input and the immobile output using 100 L water/m^3 bulk. */
     double total = mobile[i] + immobile[i] / 100.0; /* [molarity] */
     engine.interface.ReactionStepOperatorSplit(
         &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
@@ -680,103 +684,142 @@ cleanup:
 }
 
 /**
- * @brief E03: Rejects invalid total-concentration conversions before inference.
+ * @brief E03: Rejects invalid total and immobile input conversions.
  */
 static void TestE03TotalConversionErrors(void)
 {
   static const double invalid[] = {0.0, -1.0, 1.1, NAN, INFINITY};
-  OnnxTestEngine engine = {0};
-  AlquimiaState state = {0};
-  AlquimiaProperties properties = {0};
-  size_t i;
-  int field;
-  double *immobile;
-
-  ONNX_TEST_REQUIRE(&num_failures,
-      OnnxRequireSetupEngine("deterministic/total_molar.json", false, &engine));
-  OnnxAllocateState(&engine, &state);
-  state.total_mobile.data[0] = 0.01;
-  state.total_immobile.data[0] = 1.0;
-  for (field = 0; field < 2; ++field)
+  static const char *const configs[] = {
+      "deterministic/total_molar.json",
+      "deterministic/all_state_categories.json"};
+  for (size_t config_index = 0; config_index < sizeof(configs) / sizeof(configs[0]);
+       ++config_index)
   {
-    for (i = 0; i < sizeof(invalid) / sizeof(invalid[0]); ++i)
+    OnnxTestEngine engine = {0};
+    AlquimiaState state = {0};
+    AlquimiaProperties properties = {0};
+    size_t i;
+    int field;
+    double *immobile;
+
+    ONNX_TEST_REQUIRE(&num_failures,
+        OnnxRequireSetupEngine(configs[config_index], false, &engine));
+    OnnxAllocateState(&engine, &state);
+    state.total_mobile.data[0] = 0.01;
+    state.total_immobile.data[0] = 1.0;
+    for (field = 0; field < 2; ++field)
     {
-      state.porosity = field == 0 ? invalid[i] : 0.25;
-      properties.saturation = field == 1 ? invalid[i] : 0.4;
-      engine.interface.ReactionStepOperatorSplit(
-          &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
-      ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
-      ONNX_TEST_REQUIRE(&num_failures,
-          strstr(engine.status.message, "concentration conversion") != NULL);
-      ONNX_TEST_REQUIRE(&num_failures, state.total_mobile.data[0] == 0.01);
-      ONNX_TEST_REQUIRE(&num_failures, state.total_immobile.data[0] == 1.0);
+      for (i = 0; i < sizeof(invalid) / sizeof(invalid[0]); ++i)
+      {
+        state.porosity = field == 0 ? invalid[i] : 0.25;
+        properties.saturation = field == 1 ? invalid[i] : 0.4;
+        engine.interface.ReactionStepOperatorSplit(
+            &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+        ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+        /* The all-state graph reads porosity itself before the immobile input. */
+        ONNX_TEST_REQUIRE(&num_failures,
+            strstr(engine.status.message,
+                config_index == 1 && field == 0 && !isfinite(invalid[i])
+                    ? "Non-finite ONNX input" : "concentration conversion") != NULL);
+        ONNX_TEST_REQUIRE(&num_failures, state.total_mobile.data[0] == 0.01);
+        ONNX_TEST_REQUIRE(&num_failures, state.total_immobile.data[0] == 1.0);
+      }
     }
-  }
-  state.porosity = 0.25;
-  properties.saturation = 0.4;
-  engine.interface.ReactionStepOperatorSplit(
-      &engine.engine_state, 1.0, NULL, &state, NULL, 0, &engine.status);
-  ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
-  ONNX_TEST_REQUIRE(&num_failures, strstr(engine.status.message, "requires properties") != NULL);
+    state.porosity = 0.25;
+    properties.saturation = 0.4;
+    engine.interface.ReactionStepOperatorSplit(
+        &engine.engine_state, 1.0, NULL, &state, NULL, 0, &engine.status);
+    ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+    ONNX_TEST_REQUIRE(&num_failures, strstr(engine.status.message, "requires properties") != NULL);
 
-  immobile = state.total_immobile.data;
-  state.total_immobile.data = NULL;
-  engine.interface.ReactionStepOperatorSplit(
-      &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
-  state.total_immobile.data = immobile;
-  ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
-  ONNX_TEST_REQUIRE(&num_failures,
-      strstr(engine.status.message, "Out-of-bounds total_immobile") != NULL);
-  state.total_immobile.size = 2;
-  engine.interface.ReactionStepOperatorSplit(
-      &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
-  ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
-  ONNX_TEST_REQUIRE(&num_failures,
-      strstr(engine.status.message, "Out-of-bounds total_immobile") != NULL);
-  state.total_immobile.size = 3;
+    immobile = state.total_immobile.data;
+    state.total_immobile.data = NULL;
+    engine.interface.ReactionStepOperatorSplit(
+        &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+    state.total_immobile.data = immobile;
+    ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+    ONNX_TEST_REQUIRE(&num_failures,
+        strstr(engine.status.message, "Out-of-bounds total_immobile") != NULL);
+    state.total_immobile.size = engine.sizes.num_sorbed - 1;
+    engine.interface.ReactionStepOperatorSplit(
+        &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+    ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+    ONNX_TEST_REQUIRE(&num_failures,
+        strstr(engine.status.message, "Out-of-bounds total_immobile") != NULL);
+    state.total_immobile.size = engine.sizes.num_sorbed;
 
-  state.total_mobile.data[0] = INFINITY;
-  engine.interface.ReactionStepOperatorSplit(
-      &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
-  ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
-  ONNX_TEST_REQUIRE(&num_failures,
-      strstr(engine.status.message, "Non-finite ONNX total_molar") != NULL);
-  ONNX_TEST_REQUIRE(&num_failures, state.total_immobile.data[0] == 1.0);
+    state.total_mobile.data[0] = INFINITY;
+    engine.interface.ReactionStepOperatorSplit(
+        &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+    ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+    ONNX_TEST_REQUIRE(&num_failures,
+        strstr(engine.status.message, "Non-finite ONNX") != NULL);
+    ONNX_TEST_REQUIRE(&num_failures, state.total_immobile.data[0] == 1.0);
+
+    state.total_mobile.data[0] = 0.01;
+    state.total_immobile.data[engine.sizes.num_sorbed - 1] = INFINITY;
+    engine.interface.ReactionStepOperatorSplit(
+        &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+    ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+    ONNX_TEST_REQUIRE(&num_failures,
+        strstr(engine.status.message, "Non-finite ONNX") != NULL);
 
 cleanup:
-  FreeAlquimiaState(&state);
-  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
-      OnnxShutdownEngine(&engine), NULL);
+    FreeAlquimiaState(&state);
+    ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+        OnnxShutdownEngine(&engine), NULL);
+  }
 }
 
 /**
- * @brief E04: Rejects non-finite predictions before writing any model output.
+ * @brief E04: Rejects non-finite inputs, predictions, and converted outputs.
  */
 static void TestE04NonFiniteOutputs(void)
 {
   static const double invalid[] = {NAN, INFINITY, DBL_MAX};
-  OnnxTestEngine engine = {0};
-  AlquimiaState state = {0};
-  size_t i;
-
-  ONNX_TEST_REQUIRE(&num_failures,
-      OnnxRequireSetupEngine("deterministic/affine_double.json", false, &engine));
-  OnnxAllocateState(&engine, &state);
-  for (i = 0; i < sizeof(invalid) / sizeof(invalid[0]); ++i)
+  static const char *const configs[] = {
+      "deterministic/affine_double.json",
+      "model_families/multi_target.json"};
+  for (size_t config_index = 0; config_index < sizeof(configs) / sizeof(configs[0]);
+       ++config_index)
   {
-    state.total_mobile.data[0] = invalid[i];
-    engine.interface.ReactionStepOperatorSplit(
-        &engine.engine_state, 1.0, NULL, &state, NULL, 0, &engine.status);
-    ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+    OnnxTestEngine engine = {0};
+    AlquimiaState state = {0};
+    AlquimiaProperties properties = {0};
+    size_t i;
+    properties.saturation = 1.0;
+
     ONNX_TEST_REQUIRE(&num_failures,
-        strstr(engine.status.message, "Non-finite ONNX output") != NULL);
-    ONNX_TEST_REQUIRE(&num_failures, isnan(invalid[i]) ? isnan(state.total_mobile.data[0]) :
-                      state.total_mobile.data[0] == invalid[i]);
-  }
+        OnnxRequireSetupEngine(configs[config_index], false, &engine));
+    OnnxAllocateState(&engine, &state);
+    for (i = 0; i < sizeof(invalid) / sizeof(invalid[0]); ++i)
+    {
+      double input = invalid[i];
+      if (config_index == 1 && isfinite(input))
+      {
+        /* The graph output is finite, but converting to mol/m^3 bulk overflows. */
+        input /= 1024.0;
+      }
+      state.total_mobile.data[0] = input;
+      if (config_index == 1)
+      {
+        state.total_mobile.data[1] = input;
+      }
+      engine.interface.ReactionStepOperatorSplit(
+          &engine.engine_state, 1.0, &properties, &state, NULL, 0, &engine.status);
+      ONNX_TEST_REQUIRE(&num_failures, engine.status.error != kAlquimiaNoError);
+      ONNX_TEST_REQUIRE(&num_failures,
+          strstr(engine.status.message, !isfinite(input) ? "Non-finite ONNX input" :
+                config_index == 0 ? "Non-finite ONNX output" :
+                "Non-finite ONNX immobile output conversion") != NULL);
+      ONNX_TEST_REQUIRE(&num_failures, isnan(input) ? isnan(state.total_mobile.data[0]) :
+                        state.total_mobile.data[0] == input);
+    }
 cleanup:
-  FreeAlquimiaState(&state);
-  ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
-      OnnxShutdownEngine(&engine), NULL);
+    FreeAlquimiaState(&state);
+    ONNX_TEST_EXPECT(&num_failures, __func__, "Shutdown failed",
+        OnnxShutdownEngine(&engine), NULL);
+  }
 }
 
 /* ---------- Model Family Cases ---------- */

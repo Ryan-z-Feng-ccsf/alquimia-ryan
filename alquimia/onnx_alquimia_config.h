@@ -10,7 +10,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-/* Maps one ONNX tensor element to an AlquimiaState field element. */
+/* Maps one ONNX tensor element to an AlquimiaState field element.
+ * Mobile, immobile, and total_molar tensor values are mol/L liquid water.
+ * Other tensor values use the mapped field's native Alquimia units. */
 typedef struct {
   /* Tensor names the model input or output tensor. */
   char *tensor;
@@ -28,6 +30,8 @@ typedef struct {
   char *feature;
   /* NULL for scalar shorthand, otherwise the explicit state field. */
   char *alquimia_state;
+  /* Native Alquimia units, also for scalar shorthand: total_mobile is mol/L
+   * water and total_immobile is mol/m^3 bulk. Conditions do not use tensor units. */
   double value;
 } OnnxAlquimiaConditionItem;
 

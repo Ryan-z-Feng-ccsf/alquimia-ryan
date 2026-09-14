@@ -1030,7 +1030,7 @@ static double WaterVolumePerBulk(
 }
 
 /**
- * @brief Reads one mapped scalar, vector element, or derived concentration.
+ * @brief Reads native state units, or derived total concentration in mol/L water.
  * @param[in] state State containing the model input value.
  * @param[in] properties Supplies saturation for total concentration conversion.
  * @param[in] mapping Validated destination field and zero-based vector index.
@@ -1159,10 +1159,49 @@ static double GetAlquimiaValue(
 }
 
 /**
- * @brief Writes one model output to a mapped AlquimiaState destination.
- * @param[in,out] state State that receives the model output value.
+ * @brief Reads a model input, converting immobile inventory to mol/L water.
+ * @param[in] state State containing the model input value.
+ * @param[in] properties Supplies saturation for water volume conversion.
  * @param[in] mapping Validated destination field and zero-based vector index.
- * @param[in] value Model output to assign.
+ * @param[out] status Returns an engine integrity error for a non-finite model input, 
+ *        or propagates errors from value extraction and volume calculation.
+ * @return The standardized input value on success, or 0.0 after recording an error.
+ */
+static double GetAlquimiaModelInput(
+    const AlquimiaState *state,
+    const AlquimiaProperties *properties,
+    FeatureMapping mapping,
+    AlquimiaEngineStatus *status)
+{
+  double value = GetAlquimiaValue(state, properties, mapping, status);
+  if (status->error != kAlquimiaNoError)
+  {
+    return 0.0;
+  }
+  if (mapping.alquimia_state == ALQUIMIA_STRUCT_TOTAL_IMMOBILE)
+  {
+    double water_volume = WaterVolumePerBulk(state->porosity, properties, status);
+    if (status->error != kAlquimiaNoError)
+    {
+      return 0.0;
+    }
+    value /= water_volume;  /* [moles/m^3 bulk] -> [molarity] */
+  }
+  if (!isfinite(value))
+  {
+    status->error = kAlquimiaErrorEngineIntegrity;
+    snprintf(status->message, kAlquimiaMaxStringLength,
+             "Non-finite ONNX input for feature '%s'.", mapping.feature);
+    return 0.0;
+  }
+  return value;
+}
+
+/**
+ * @brief Writes a native-unit value to a mapped AlquimiaState destination.
+ * @param[in,out] state State that receives the native-unit value.
+ * @param[in] mapping Validated destination field and zero-based vector index.
+ * @param[in] value Value in the destination field's native units.
  * @param[out] status Returns an engine integrity error for an unknown field, NULL
  *        vector storage, or an out-of-bounds vector index.
  */
@@ -1348,7 +1387,7 @@ static bool BuildPairedOutputLookup(
  * @param[in] new_porosity Final porosity after all mapped outputs.
  * @param[in] mapping Validated model-output destination.
  * @param[in] has_paired_mapping Whether the paired phase is an explicit output.
- * @param[in] value Model output to assign.
+ * @param[in] value Model output; mobile and immobile values are mol/L water.
  * @param[out] status Returns mapped-state access errors.
  *
  * When a model outputs only one of total_mobile[i] or total_immobile[i], the
@@ -1375,6 +1414,25 @@ static void SetAlquimiaModelOutput(
   double paired_value;
   double old_water_volume;
   double new_water_volume;
+
+  /* Normalize every immobile output before assignment or conservation,
+   * including explicit paired outputs and fields without a mobile counterpart. */
+  if (mapping.alquimia_state == ALQUIMIA_STRUCT_TOTAL_IMMOBILE)
+  {
+    new_water_volume = WaterVolumePerBulk(new_porosity, properties, status);
+    if (status->error != kAlquimiaNoError)
+    {
+      return;
+    }
+    value *= new_water_volume;
+    if (!isfinite(value))
+    {
+      status->error = kAlquimiaErrorEngineIntegrity;
+      snprintf(status->message, kAlquimiaMaxStringLength,
+               "Non-finite ONNX immobile output conversion at index %d.", index);
+      return;
+    }
+  }
 
   paired_mapping = mapping;
 
@@ -1419,10 +1477,13 @@ static void SetAlquimiaModelOutput(
   {
     return;
   }
-  new_water_volume = WaterVolumePerBulk(new_porosity, properties, status);
-  if (status->error != kAlquimiaNoError)
+  if (mapping.alquimia_state == ALQUIMIA_STRUCT_TOTAL_MOBILE)
   {
-    return;
+    new_water_volume = WaterVolumePerBulk(new_porosity, properties, status);
+    if (status->error != kAlquimiaNoError)
+    {
+      return;
+    }
   }
   mapped_value = GetAlquimiaValue(state, properties, mapping, status);
   if (status->error != kAlquimiaNoError)
@@ -1453,13 +1514,12 @@ static void SetAlquimiaModelOutput(
     /* paired_mapping is mobile
     ** mapping is immobile [moles/m^3 bulk]
     ** Old total mobile + immobile = new mobile + immobile
-    ** The inference is for immobile [molarity]
+    ** The immobile output has already been converted to [moles/m^3 bulk].
     ** We need to balance the total mobile [molarity] and immobile [moles/m^3 bulk]
     ** ncomp [moles/m^3 bulk]
     */
     ncomp = old_water_volume * paired_value + mapped_value;
     /* Unit: [molarity] */
-    value *= new_water_volume;  /* mol/L water -> mol/m^3 bulk */
     paired_value = (ncomp - value) / new_water_volume;
   }
   if (!isfinite(ncomp) || !isfinite(paired_value))
@@ -2519,7 +2579,7 @@ void onnx_alquimia_reactionstepoperatorsplit(
       size_t k;
       for (k = 0; k < onnx_state->input_tensors.total_size[i]; ++k)
       {
-        onnx_state->input_tensors.data[i][k] = GetAlquimiaValue(
+        onnx_state->input_tensors.data[i][k] = GetAlquimiaModelInput(
             state, properties, onnx_state->input_mappings[flat_index], status);
         if (status->error != kAlquimiaNoError)
         {
