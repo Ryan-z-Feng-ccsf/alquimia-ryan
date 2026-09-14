@@ -89,9 +89,9 @@ Used by:
 - `lsurf-5-dynamic-batch.cfg`
 - `lsurf-6-dynamic-batch.cfg`
 
-These values are pre-scaled values expected by the LSURF ONNX models. In the inspected configs, the adapter copies the values into ONNX input tensors without applying an additional log or inverse-log transform.
+These legacy config values remain placeholders for the LSURF inputs while PHREEQC/PhreeqcRM coupling and physical input-unit conversions are deferred. The forest expects log10 values for `uranium_total` and `Site_Density`, and log10 activities for `U_species*`. The ONNX graphs do not transform inputs.
 
-`uranium_total`, `site_density`, `U_aqueous(output)` are `log10` value
+Each LSURF ONNX graph applies `10 ** prediction` to the forest's log10 aqueous uranium prediction. The public `U_Aqueous` output is therefore linear aqueous concentration (mol/L), with the existing output tensor name and float64 type.
 
 | Feature | Baseline value |
 | --- | ---: |
