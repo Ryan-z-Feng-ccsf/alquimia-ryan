@@ -53,6 +53,7 @@ def main():
     command = [args.cc, "-std=c99", "-Wall", "-Wextra", "-Werror", "-O2",
                f"-I{prefix / 'include'}",
                str(root / "mcp_alquimia/engine_process/alquimia_engine_process.c"),
+               str(root / "mcp_alquimia/engine_process/alquimia_engine_process_helpers.c"),
                f"-L{prefix / 'lib'}", f"-Wl,-rpath,{prefix / 'lib'}",
                "-lalquimia", "-lcjson", *petsc_flags, "-lm", "-o", str(output)]
     subprocess.run(command, check=True)
