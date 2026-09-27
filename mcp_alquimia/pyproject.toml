@@ -1,0 +1,33 @@
+[project]
+name = "mcp-alquimia"
+version = "0.1.0"
+description = "Alquimia subprocess runtime for a future MCP server"
+readme = "README.md"
+authors = [
+    { name = "Ryan-z-Feng-ccsf", email = "zfeng57@mail.ccsf.edu" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=2.2.0",
+]
+
+[project.scripts]
+mcp-alquimia = "mcp_alquimia:main"
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers"
+markers = [
+    "native: requires the precompiled engine process and installed Alquimia chemistry runtime",
+]
+
+[dependency-groups]
+test = [
+    "pytest>=8",
+]
