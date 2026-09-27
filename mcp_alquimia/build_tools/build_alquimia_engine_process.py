@@ -45,7 +45,7 @@ def main():
     # ~/alquimia-ryan/build/install/lib$ pkg-config --cflags --libs PETSc
     # -I/home/zfeng3/alquimia-ryan/build/install/include -L/home/zfeng3/alquimia-ryan/build/install/lib -lpetsc
     petsc_flags = shlex.split(subprocess.check_output(
-        ["pkg-config", "--cflags", "--libs", "PETSc"], env=env, text=True))
+        ["pkg-config", "--cflags", "--libs", "PETSc"], env=env, text=True)) # str not bytes if text=True
     
     output = args.output.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)

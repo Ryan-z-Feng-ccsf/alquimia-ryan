@@ -202,7 +202,7 @@ static cJSON* Snapshot(SimulationEngineSession* simulation_session, const char* 
     simulation_session->failed = true;
     return Error(operation, -1, "Engine returned non-finite output");
   }
-  cJSON_AddNumberToObject(result, "time_seconds", simulation_session->time);
+  cJSON_AddNumberToObject(result, "time", simulation_session->time);
   cJSON_AddNumberToObject(result, "max_steps", simulation_session->max_steps);
   cJSON_AddNumberToObject(result, "pH", output->pH);
   cJSON_AddNumberToObject(result, "temperature_celsius", state->temperature);

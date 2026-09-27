@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 
   bool closing = false;
 
-  // Parse the JSON request from Python Process
+  // Parse the JSON request from Python Process （16KB)
   char line[16384];
 
   if (!Send(response, Success(cJSON_CreateString("ready")))) 
