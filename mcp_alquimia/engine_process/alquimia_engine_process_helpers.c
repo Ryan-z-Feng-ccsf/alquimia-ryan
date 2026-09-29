@@ -232,7 +232,7 @@ static cJSON* Setup(SimulationEngineSession* simulation_session, const cJSON* re
     return Error("setup", -1, "Already set up");
 
   if (!chem_engine || !chem_input_file || !cond_name || strlen(cond_name) > 255 ||
-      !JsonToNumber(request, "water_density", &state->water_density) ||
+      !JsonToNumber(request, "density", &state->water_density) ||
       !JsonToNumber(request, "temperature", &state->temperature) ||
       !JsonToNumber(request, "pressure", &state->aqueous_pressure) ||
       !JsonToNumber(request, "porosity", &simulation_session->porosity) ||
@@ -301,7 +301,7 @@ static cJSON* Setup(SimulationEngineSession* simulation_session, const cJSON* re
   cJSON_AddStringToObject(units, "total_immobile", "mol/m^3 bulk");
   cJSON_AddStringToObject(units, "mineral_volume_fraction", "m^3 mineral/m^3 bulk");
   cJSON_AddStringToObject(units, "pH", "dimensionless");
-  cJSON_AddStringToObject(units, "time_seconds", "s");
+  cJSON_AddStringToObject(units, "time", "s");
   cJSON_AddStringToObject(units, "temperature_celsius", "degC");
   cJSON_AddStringToObject(units, "porosity", "dimensionless");
   return Success(result);

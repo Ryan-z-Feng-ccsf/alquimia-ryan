@@ -41,10 +41,10 @@ def prepare_case(repository: str | Path, run_dir: str | Path):
         "engine": "PFloTran", 
         "input_file": files[0],
         "initial_condition": "initial", 
-        "water_density": 997.16,
+        "density": 997.16,
+        "porosity": 0.5,
         "temperature": 25.0, 
         "pressure": 101325.0, 
-        "porosity": 0.5,
         "volume": 1.0, 
         "saturation": 1.0,
     }
