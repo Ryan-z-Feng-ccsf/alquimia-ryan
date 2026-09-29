@@ -104,17 +104,17 @@ def run_calcite(repository: str | Path, executable: str | Path, run_dir: str | P
             history = [engine_process.request("initialize")]
             for _ in range(max_steps):
                 history.append(engine_process.request("react", timestep=dt))
-            result = engine_process.request("get_results")
-        final_result = {
+            final = engine_process.request("get_results")
+        result = {
             "case": request["case"], 
             "metadata": metadata,
             "history": history, 
-            "final": result
+            "final": final
         }
         (run_dir / "simulation_results.json").write_text(
-            json.dumps(final_result, indent=2, allow_nan=False) + "\n"
+            json.dumps(result, indent=2, allow_nan=False) + "\n"
             )
-        return final_result
+        return result
     except Exception as error:
         (run_dir / "simulation_failure.json").write_text(
             json.dumps({"error": str(error)}, indent=2) + "\n")
