@@ -49,7 +49,6 @@ def failing_engine_process_executable(tmp_path: Path, mode: str):
     executable.write_text(
         #Shebang: Tell the OS to run this text file using the current Python interpreter
         f"#!{sys.executable}\n"
-        f"#!{sys.executable}\n"
         "import os, sys, time\n"
         # Extract the file descriptor (FD) passed by the parent process via command line args
         "fd = int(sys.argv[2])\n"
