@@ -6,19 +6,22 @@ from pathlib import Path
 import pytest
 
 from mcp_alquimia.run_pflotran_calcite import run_calcite
+from mcp_alquimia import run_crunchflow_calcite, run_onnx_ex8
 from mcp_alquimia.subprocess_client import AlquimiaEngineProcess, EngineProcessError
 
 
+@pytest.mark.parametrize("run", [run_calcite, run_crunchflow_calcite.run_calcite,
+                                  run_onnx_ex8.run_ex8])
 @pytest.mark.parametrize("options", [
     pytest.param({"max_steps": -1}, id="negative-step-count"),
     pytest.param({"dt": float("nan")}, id="nonfinite-timestep"),
     pytest.param({"timeout": 0}, id="zero-timeout"),
 ])
-def test_invalid_parameters_do_not_create_run_directory(repository_root, tmp_path, options):
+def test_invalid_parameters_do_not_create_run_directory(repository_root, tmp_path, options, run):
     """Reject invalid arguments before staging files or launching a process."""
     run_dir = tmp_path / "invalid"
     with pytest.raises(ValueError):
-        run_calcite(repository_root, tmp_path / "unused_engine_process", run_dir, **options)
+        run(repository_root, tmp_path / "unused_engine_process", run_dir, **options)
     assert not run_dir.exists()
 
 
@@ -30,6 +33,21 @@ def test_existing_run_directory_is_preserved(repository_root, staged_calcite_cas
     with pytest.raises(FileExistsError):
         run_calcite(repository_root, sys.executable, run_dir)
     assert {path.name: path.read_bytes() for path in run_dir.iterdir()} == before
+
+
+@pytest.mark.parametrize("module, asset_dir, first_file", [
+    (run_crunchflow_calcite, "benchmarks/batch_chem", "calcite-short-crunch.in"),
+    (run_onnx_ex8, "models/ex8_nn", "ex8_nn_batch1.json"),
+])
+def test_missing_companion_asset_does_not_stage(tmp_path, module, asset_dir, first_file):
+    """Require the database/model before creating a partially staged run."""
+    source = tmp_path / "repository" / asset_dir
+    source.mkdir(parents=True)
+    (source / first_file).write_text("placeholder")
+    run_dir = tmp_path / "run"
+    with pytest.raises(FileNotFoundError):
+        module.prepare_case(tmp_path / "repository", run_dir)
+    assert not run_dir.exists()
 
 
 @pytest.fixture
