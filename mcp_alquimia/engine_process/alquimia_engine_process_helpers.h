@@ -62,6 +62,9 @@ typedef struct {
   // Error
   bool failed;
 
+  // ONNX inference has neither auxiliary pH nor iterative convergence.
+  bool is_onnx;
+
   /* --- Simulation Physics & Tracking --- */
   double porosity;
   double time;

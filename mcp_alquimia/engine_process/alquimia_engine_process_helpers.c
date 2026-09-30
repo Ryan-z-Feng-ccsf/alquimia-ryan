@@ -35,6 +35,8 @@
 #include <unistd.h>
 
 #include "alquimia/alquimia_memory.h"
+#include "alquimia/alquimia_constants.h"
+#include "alquimia/alquimia_util.h"
 
 /**
  * @brief Constructs a structured JSON error response object for engine failures.
@@ -193,7 +195,8 @@ static cJSON* Snapshot(SimulationEngineSession* simulation_session, const char* 
   AlquimiaState* state = &simulation_session->data.state;
   AlquimiaAuxiliaryOutputData* output = &simulation_session->data.aux_output;
   cJSON* result = cJSON_CreateObject();
-  if (!isfinite(output->pH) || !isfinite(state->temperature) ||
+  if ((!simulation_session->is_onnx && !isfinite(output->pH)) ||
+      !isfinite(state->temperature) ||
       !AlquimiaVectorDoubleToJson(result, "total_mobile", &state->total_mobile) ||
       !AlquimiaVectorDoubleToJson(result, "total_immobile", &state->total_immobile) ||
       !AlquimiaVectorDoubleToJson(result, "mineral_volume_fraction", &state->mineral_volume_fraction))
@@ -204,7 +207,10 @@ static cJSON* Snapshot(SimulationEngineSession* simulation_session, const char* 
   }
   cJSON_AddNumberToObject(result, "time", simulation_session->time);
   cJSON_AddNumberToObject(result, "max_steps", simulation_session->max_steps);
-  cJSON_AddNumberToObject(result, "pH", output->pH);
+  if (!simulation_session->is_onnx)
+    cJSON_AddNumberToObject(result, "pH", output->pH);
+  else
+    cJSON_AddNullToObject(result, "pH");
   cJSON_AddNumberToObject(result, "temperature_celsius", state->temperature);
   cJSON_AddNumberToObject(result, "porosity", state->porosity);
   return Success(result);
@@ -257,6 +263,8 @@ static cJSON* Setup(SimulationEngineSession* simulation_session, const cJSON* re
   CreateAlquimiaInterface(chem_engine, &simulation_session->interface, &simulation_session->status);
   if (simulation_session->status.error)
     return EngineError(simulation_session, "setup");
+  simulation_session->is_onnx = AlquimiaCaseInsensitiveStringCompare(
+      chem_engine, kAlquimiaStringOnnx);
   simulation_session->interface.Setup(chem_input_file, true, &simulation_session->data.engine_state,
                            &simulation_session->data.sizes, &simulation_session->data.functionality,
                            &simulation_session->status);
@@ -292,10 +300,10 @@ static cJSON* Setup(SimulationEngineSession* simulation_session, const cJSON* re
   AlquimiaProblemMetaData* meta = &simulation_session->data.meta_data;
   cJSON_AddItemToObject(result, "primary_species", cJSON_CreateStringArray(
       (const char* const*)meta->primary_names.data, meta->primary_names.size));
-  cJSON_AddItemToObject(result, "minerals", cJSON_CreateStringArray(
-      (const char* const*)meta->mineral_names.data, meta->mineral_names.size));
-  if (meta->mineral_names.size == 0)
-    cJSON_AddItemToObject(result, "minerals", cJSON_CreateArray());
+  cJSON_AddItemToObject(result, "minerals", meta->mineral_names.size ?
+      cJSON_CreateStringArray((const char* const*)meta->mineral_names.data,
+                              meta->mineral_names.size) : cJSON_CreateArray());
+  cJSON_AddBoolToObject(result, "has_pH", !simulation_session->is_onnx);
   cJSON* units = cJSON_AddObjectToObject(result, "units");
   cJSON_AddStringToObject(units, "total_mobile", "mol/L water");
   cJSON_AddStringToObject(units, "total_immobile", "mol/m^3 bulk");
@@ -366,7 +374,9 @@ cJSON* Execute(SimulationEngineSession* simulation_session, const cJSON* request
         &simulation_session->data.aux_data, -999, &simulation_session->status);
     if (simulation_session->status.error)
       return EngineError(simulation_session, operation);
-    if (!simulation_session->status.converged) 
+    // ONNX reports inference failures through status.error and has no solver
+    // convergence flag. Chemistry solvers must still explicitly converge.
+    if (!simulation_session->is_onnx && !simulation_session->status.converged)
     {
       simulation_session->failed = true;
       return Error(operation, -1, "Reaction step did not converge; simulation_session cannot be continued");
@@ -386,7 +396,7 @@ cJSON* Execute(SimulationEngineSession* simulation_session, const cJSON* request
   }
 
   // Fetch auxiliary data
-  // Preserve the fixed-porosity convention of the calcite batch benchmark.
+  // Preserve the fixed-porosity convention of the supported batch benchmarks.
   simulation_session->data.state.porosity = simulation_session->porosity;
   simulation_session->interface.GetAuxiliaryOutput(&simulation_session->data.engine_state,
       &simulation_session->data.properties, &simulation_session->data.state, &simulation_session->data.aux_data,
@@ -423,4 +433,3 @@ int Cleanup(SimulationEngineSession* simulation_session)
   }
   return error;
 }
-
