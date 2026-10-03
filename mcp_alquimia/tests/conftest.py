@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from mcp_alquimia.run_pflotran_calcite import prepare_case
+from subprocess_test_utils import ENGINE_CASES
 
 
 def pytest_addoption(parser: pytest.Parser):
@@ -80,16 +80,23 @@ def batch_chem_executable(pytestconfig: pytest.Config, repository_root: Path):
                               "Select an existing installation with --alquimia-prefix.")
 
 
+@pytest.fixture(params=ENGINE_CASES, ids=lambda case: case.name)
+def engine_case(request):
+    """Select each supported benchmark for shared native and client tests."""
+    return request.param
+
+
 @pytest.fixture
-def staged_calcite_case(repository_root: Path, tmp_path: Path):
-    """Stage an independent copy of the known PFLOTRAN case.
+def staged_engine_case(engine_case, repository_root: Path, tmp_path: Path):
+    """Stage an independent copy of the selected benchmark.
 
     Args:
+        engine_case (EngineCase): Benchmark selected by parametrization.
         repository_root (Path): Checkout supplying benchmark assets.
         tmp_path (Path): Isolated, pytest-managed directory for this test.
 
     Returns:
         tuple[Path, dict]: Run directory and native setup arguments.
     """
-    run_dir = tmp_path / "calcite_case"
-    return run_dir, prepare_case(repository_root, run_dir)
+    run_dir = tmp_path / "engine_case"
+    return run_dir, engine_case.prepare(repository_root, run_dir)
