@@ -65,7 +65,7 @@ def run_original_driver(engine_case, repository, executable, run_dir):
     config = configparser.ConfigParser()
     config.read(repository / "benchmarks/batch_chem" / engine_case.config_name)
     config["chemistry"]["input_file"] = setup["input_file"]
-    config["output"] = {"type": "python", "filename": "reference.py"}
+    config["output"] = {"type": "python", "filename": "batch_chem_output.py"}
     # Write the config file
     with (run_dir / "batch_chem.cfg").open("w") as stream:
         config.write(stream)
