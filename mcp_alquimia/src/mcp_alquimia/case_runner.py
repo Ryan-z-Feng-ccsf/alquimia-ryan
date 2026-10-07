@@ -127,8 +127,14 @@ def run_case_cli(
     parser.add_argument("--timeout", type=float, default=60.0, help="Seconds per engine process call")
     args = parser.parse_args()
     try:
-        result = run(args.repository, args.executable, args.run_dir,
-                     args.max_steps, args.dt, args.timeout)
+        result = run(
+            args.repository,
+            args.executable,
+            args.run_dir,
+            args.max_steps,
+            args.dt,
+            args.timeout
+        )
     except (RuntimeError, ValueError, OSError) as error:
         parser.exit(1, f"{error}\n")
     print(json.dumps(
