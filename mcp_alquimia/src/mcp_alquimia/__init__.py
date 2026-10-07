@@ -1,11 +1,11 @@
-"""Alquimia subprocess runtime; MCP transport will be added in the next stage."""
+"""Alquimia MCP server and persistent native subprocess runtime."""
 
 
 def main() -> None:
-    """Run the step-one local demonstration, without starting an MCP server."""
-    from .run_pflotran_calcite import main as run_demo
+    """Run the local Alquimia MCP server over stdio."""
+    from .mcp_server import main as run_server
 
-    run_demo()
+    run_server()
 
 if __name__ == "__main__":
     main()

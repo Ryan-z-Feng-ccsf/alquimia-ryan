@@ -1,14 +1,16 @@
 [project]
 name = "mcp-alquimia"
 version = "0.1.0"
-description = "Alquimia subprocess runtime for a future MCP server"
+description = "Alquimia MCP server with a persistent native subprocess runtime"
 readme = "README.md"
 authors = [
     { name = "Ryan-z-Feng-ccsf", email = "zfeng57@mail.ccsf.edu" }
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "mcp>=2.2.0",
+    "mcp>=2.2.0,<3",
+    "anyio>=4.5",
+    "pydantic>=2.11",
 ]
 
 [project.scripts]
