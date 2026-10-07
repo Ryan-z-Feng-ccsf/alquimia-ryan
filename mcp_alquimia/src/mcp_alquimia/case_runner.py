@@ -8,8 +8,17 @@ from pathlib import Path
 from .subprocess_client import AlquimiaEngineProcess
 
 
-def run_case(repository: str | Path, executable: str | Path, run_dir: str | Path, *, case: str, prepare_case,
-             max_steps: int, dt: float, timeout: float):
+def run_case(
+    repository: str | Path,
+    executable: str | Path,
+    run_dir: str | Path,
+    *,
+    case: str,
+    prepare_case,
+    max_steps: int,
+    dt: float,
+    timeout: float
+    ):
     """Run a staged benchmark case and save its inputs, log, and state history.
 
     Writes simulation_request.json before launching the engine process and
@@ -85,7 +94,13 @@ def run_case(repository: str | Path, executable: str | Path, run_dir: str | Path
         raise
 
 
-def run_case_cli(run, description: str, *, max_steps: int, dt: float):
+def run_case_cli(
+    run,
+    description: str,
+    *,
+    max_steps: int,
+    dt: float
+    ):
     """Run a supported case using command-line arguments.
 
     Prints the final state and output directory as JSON on success.
