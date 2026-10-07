@@ -47,12 +47,14 @@ def prepare_case(repository: str | Path, run_dir: str | Path):
     }
 
 
-def run_ex8(repository: str | Path, 
-            executable: str | Path,
-            run_dir: str | Path, 
-            max_steps: int = 100, 
-            dt: float = 864000.0,
-            timeout: float = 60.0):
+def run_ex8(
+    repository: str | Path, 
+    executable: str | Path,
+    run_dir: str | Path, 
+    max_steps: int = 100, 
+    dt: float = 864000.0,
+    timeout: float = 60.0
+    ):
     """Run ONNX EX8 neural-network with step durations and response timeout in seconds.
 
     Args:
@@ -71,9 +73,16 @@ def run_ex8(repository: str | Path,
         OSError: Assets are missing, the destination exists, or file I/O fails.
         EngineProcessError: Native execution or communication fails.
     """
-    return run_case(repository, executable, run_dir, case="ex8-nn-batch1-onnx",
-                    prepare_case=prepare_case, max_steps=max_steps, dt=dt,
-                    timeout=timeout)
+    return run_case(
+        repository,
+        executable,
+        run_dir,
+        case="ex8-nn-batch1-onnx",
+        prepare_case=prepare_case,
+        max_steps=max_steps,
+        dt=dt,
+        timeout=timeout
+        )
 
 
 def main():

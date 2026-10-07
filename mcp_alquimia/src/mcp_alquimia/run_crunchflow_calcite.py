@@ -47,12 +47,14 @@ def prepare_case(repository: str | Path, run_dir: str | Path):
     }
 
 
-def run_calcite(repository: str | Path, 
-                executable: str | Path,
-                run_dir: str | Path, 
-                max_steps: int = 50, 
-                dt: float = 5.0,
-                timeout: float = 60.0):
+def run_calcite(
+    repository: str | Path, 
+    executable: str | Path,
+    run_dir: str | Path, 
+    max_steps: int = 50, 
+    dt: float = 5.0,
+    timeout: float = 60.0
+    ):
     """Run CrunchFlow calcite with step durations and response timeout in seconds.
 
     Args:
@@ -71,9 +73,16 @@ def run_calcite(repository: str | Path,
         OSError: Assets are missing, the destination exists, or file I/O fails.
         EngineProcessError: Native execution or communication fails.
     """
-    return run_case(repository, executable, run_dir, case="calcite-crunchflow",
-                    prepare_case=prepare_case, max_steps=max_steps, dt=dt,
-                    timeout=timeout)
+    return run_case(
+        repository,
+        executable,
+        run_dir,
+        case="calcite-crunchflow",
+        prepare_case=prepare_case,
+        max_steps=max_steps,
+        dt=dt,
+        timeout=timeout
+        )
 
 
 def main():

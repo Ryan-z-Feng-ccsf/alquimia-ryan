@@ -13,11 +13,13 @@ from subprocess_test_utils import assert_history_matches_driver, run_original_dr
 pytestmark = pytest.mark.native
 
 
-def test_matches_original_driver(repository_root, 
-                                 engine_process_executable,
-                                 batch_chem_executable,
-                                 tmp_path,
-                                 engine_case):
+def test_matches_original_driver(
+    repository_root, 
+    engine_process_executable,
+    batch_chem_executable,
+    tmp_path,
+    engine_case
+    ):
     """Compare each benchmark's history, chemistry invariants, and saved results."""
     run_dir = tmp_path / "subprocess"
     # Run the engine subprocess
@@ -54,11 +56,13 @@ def test_matches_original_driver(repository_root,
     assert json.loads((run_dir / "simulation_results.json").read_text()) == result
 
 
-def test_persistent_reactions_and_initialization_only(repository_root,
-                                                      engine_process_executable,
-                                                      tmp_path,
-                                                      engine_case,
-                                                      staged_engine_case):
+def test_persistent_reactions_and_initialization_only(
+    repository_root,
+    engine_process_executable,
+    tmp_path,
+    engine_case,
+    staged_engine_case
+    ):
     """Retain native state, honor custom timesteps, and support zero-step runs."""
     initial_only = engine_case.run(repository_root,
                                    engine_process_executable,
@@ -95,8 +99,14 @@ def test_unknown_condition_shuts_down(engine_process_executable, staged_engine_c
     pytest.param("setup", {"engine": "missing_engine"}, "missing_engine", id="unknown-engine"),
     pytest.param("react", {"timestep": 5}, "Call setup first", id="react-before-setup"),
 ])
-def test_protocol_errors_shutdown(repository_root, engine_process_executable, tmp_path,
-                                  operation, arguments, message):
+def test_protocol_errors_shutdown(
+    repository_root,
+    engine_process_executable,
+    tmp_path,
+    operation,
+    arguments,
+    message
+    ):
     """Reject invalid engines and command order before native initialization."""
     run_dir = tmp_path / "protocol"
     if operation == "setup":
