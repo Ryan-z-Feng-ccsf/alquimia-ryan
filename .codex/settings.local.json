@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(module avail *)",
+      "Bash(module load *)",
+      "Bash(pip install *)"
+    ]
+  },
+  "skillOverrides": {
+    "user-clarifier": "name-only"
+  }
+}

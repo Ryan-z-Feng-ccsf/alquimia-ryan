@@ -1,0 +1,8 @@
+# 1. 默认忽略项目根目录下的所有文件和文件夹
+/*
+
+# 2. 显式允许（不忽略）alquimia 和 drivers 这两个文件夹及其内部的所有子文件
+!/alquimia/
+!/alquimia/**
+!/drivers/
+!/drivers/**

@@ -1,0 +1,95 @@
+[
+  {
+    "id": "layer:core-c-api",
+    "name": "Core C API and Runtime",
+    "description": "Engine-neutral C interfaces, shared geochemical containers, lifecycle helpers, constants, diagnostics, and process-wide error handling form the foundation used by every adapter and driver.",
+    "nodeIds": [
+      "file:alquimia/alquimia_interface.c",
+      "file:alquimia/alquimia_memory.h",
+      "file:alquimia/alquimia_util.h",
+      "file:alquimia/alquimia_constants.c",
+      "file:alquimia/alquimia_constants.h",
+      "file:alquimia/alquimia_containers.h",
+      "file:alquimia/alquimia_interface.h",
+      "file:alquimia/alquimia_memory.c",
+      "file:alquimia/alquimia_util.c",
+      "file:alquimia/alquimia.c",
+      "file:alquimia/alquimia.h.in"
+    ]
+  },
+  {
+    "id": "layer:engine-adapters",
+    "name": "Reaction Engine Adapters",
+    "description": "PFLOTRAN, CrunchFlow, and ONNX implementations translate the generic Alquimia contract into engine setup, reaction stepping, state conversion, metadata, and inference operations.",
+    "nodeIds": [
+      "file:alquimia/crunch_alquimia_interface.h",
+      "file:alquimia/onnx_alquimia_config.c",
+      "file:alquimia/onnx_alquimia_config.h",
+      "file:alquimia/onnx_alquimia_interface.c",
+      "file:alquimia/onnx_alquimia_interface.h",
+      "file:alquimia/pflotran_alquimia_interface.h",
+      "file:alquimia/crunch_alquimia_interface.F90",
+      "file:alquimia/crunch_alquimia_wrappers.F90",
+      "file:alquimia/pflotran_alquimia_interface.F90",
+      "file:alquimia/pflotran_alquimia_wrappers.F90",
+      "file:alquimia/pflotran_petsc_stubs.F90"
+    ]
+  },
+  {
+    "id": "layer:fortran-bindings",
+    "name": "Fortran Bindings",
+    "description": "ISO_C_BINDING container mirrors, string conversion utilities, and an object-oriented Fortran facade expose the core C contract safely to Fortran callers.",
+    "nodeIds": [
+      "file:alquimia/alquimia_containers.F90",
+      "file:alquimia/alquimia_fortran_interface_mod.F90",
+      "file:alquimia/c_f_interface_module.F90"
+    ]
+  },
+  {
+    "id": "layer:mixed-language-examples",
+    "name": "Mixed-Language Examples",
+    "description": "Focused C++ and Fortran experiments demonstrate string exchange, derived-type layout compatibility, and pointer-backed structure-array ownership across the language boundary.",
+    "nodeIds": [
+      "file:alquimia/mixed/README",
+      "file:alquimia/mixed/cc-f90-strings.F90",
+      "file:alquimia/mixed/cc-f90-strings.cc",
+      "file:alquimia/mixed/cc-f90-strings.h",
+      "file:alquimia/mixed/struct-array-pointer.F90",
+      "file:alquimia/mixed/struct-array-pointer.cc",
+      "file:alquimia/mixed/struct-derived.F90",
+      "file:alquimia/mixed/struct-derived.cc"
+    ]
+  },
+  {
+    "id": "layer:driver-applications",
+    "name": "Driver Applications",
+    "description": "Standalone batch-chemistry and reactive-transport programs coordinate input parsing, engine execution, numerical transport, output serialization, and runtime diagnostics.",
+    "nodeIds": [
+      "file:drivers/DriverOutput.c",
+      "file:drivers/DriverOutput.h",
+      "file:drivers/TransportDriver.c",
+      "file:drivers/TransportDriver.h",
+      "file:drivers/batch_chem.c",
+      "file:drivers/transport.c",
+      "file:drivers/BatchChemDriver.c",
+      "file:drivers/BatchChemDriver.h",
+      "file:drivers/ini.c",
+      "file:drivers/ini.h",
+      "file:drivers/input_util.c",
+      "file:drivers/input_util.h",
+      "file:drivers/fpe.c",
+      "file:drivers/fpe.h"
+    ]
+  },
+  {
+    "id": "layer:build-project-support",
+    "name": "Build and Project Support",
+    "description": "CMake and Make rules select engine integrations, build and install libraries and drivers, compile interoperability experiments, and preserve third-party licensing terms.",
+    "nodeIds": [
+      "document:alquimia/CMakeLists.txt",
+      "service:alquimia/mixed/Makefile",
+      "document:drivers/CMakeLists.txt",
+      "document:drivers/LICENSE.inih.txt"
+    ]
+  }
+]

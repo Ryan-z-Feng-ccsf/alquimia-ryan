@@ -1,0 +1,644 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 8,
+  "filesSkipped": [
+    "alquimia/CMakeLists.txt",
+    "alquimia/alquimia.h.in",
+    "alquimia/alquimia_containers.F90",
+    "alquimia/alquimia_fortran_interface_mod.F90",
+    "alquimia/c_f_interface_module.F90",
+    "alquimia/crunch_alquimia_interface.F90",
+    "alquimia/crunch_alquimia_wrappers.F90",
+    "alquimia/mixed/README",
+    "alquimia/mixed/cc-f90-strings.F90",
+    "alquimia/mixed/struct-array-pointer.F90",
+    "alquimia/mixed/struct-derived.F90",
+    "alquimia/pflotran_alquimia_interface.F90",
+    "alquimia/pflotran_alquimia_wrappers.F90",
+    "alquimia/pflotran_petsc_stubs.F90",
+    "drivers/CMakeLists.txt",
+    "drivers/LICENSE.inih.txt"
+  ],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 8,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 7,
+      "failed": 0,
+      "skipped": 1
+    }
+  },
+  "results": [
+    {
+      "path": "alquimia/alquimia.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 101,
+      "nonEmptyLines": 84,
+      "functions": [
+        {
+          "name": "default_error_handler",
+          "startLine": 35,
+          "endLine": 39,
+          "params": [
+            "message"
+          ]
+        },
+        {
+          "name": "alquimia_error",
+          "startLine": 41,
+          "endLine": 56,
+          "params": [
+            "message"
+          ]
+        },
+        {
+          "name": "alquimia_set_error_handler",
+          "startLine": 58,
+          "endLine": 61,
+          "params": [
+            "handler"
+          ]
+        },
+        {
+          "name": "default_abort_function",
+          "startLine": 67,
+          "endLine": 71,
+          "params": [
+            "message"
+          ]
+        },
+        {
+          "name": "alquimia_abort",
+          "startLine": 73,
+          "endLine": 88,
+          "params": [
+            "message"
+          ]
+        },
+        {
+          "name": "alquimia_set_abort_function",
+          "startLine": 90,
+          "endLine": 93,
+          "params": [
+            "function"
+          ]
+        },
+        {
+          "name": "alquimia_version_fprintf",
+          "startLine": 95,
+          "endLine": 99,
+          "params": [
+            "exe_name",
+            "stream"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "alquimia_error",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "alquimia_set_error_handler",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "alquimia_abort",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "alquimia_set_abort_function",
+          "line": 90,
+          "isDefault": false
+        },
+        {
+          "name": "alquimia_version_fprintf",
+          "line": 95,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "default_error_handler",
+          "callee": "printf",
+          "lineNumber": 37
+        },
+        {
+          "caller": "default_error_handler",
+          "callee": "exit",
+          "lineNumber": 38
+        },
+        {
+          "caller": "alquimia_error",
+          "callee": "va_start",
+          "lineNumber": 50
+        },
+        {
+          "caller": "alquimia_error",
+          "callee": "vsnprintf",
+          "lineNumber": 51
+        },
+        {
+          "caller": "alquimia_error",
+          "callee": "va_end",
+          "lineNumber": 52
+        },
+        {
+          "caller": "alquimia_error",
+          "callee": "error_handler",
+          "lineNumber": 55
+        },
+        {
+          "caller": "default_abort_function",
+          "callee": "printf",
+          "lineNumber": 69
+        },
+        {
+          "caller": "default_abort_function",
+          "callee": "abort",
+          "lineNumber": 70
+        },
+        {
+          "caller": "alquimia_abort",
+          "callee": "va_start",
+          "lineNumber": 82
+        },
+        {
+          "caller": "alquimia_abort",
+          "callee": "vsnprintf",
+          "lineNumber": 83
+        },
+        {
+          "caller": "alquimia_abort",
+          "callee": "va_end",
+          "lineNumber": 84
+        },
+        {
+          "caller": "alquimia_abort",
+          "callee": "abort_function",
+          "lineNumber": 87
+        },
+        {
+          "caller": "alquimia_version_fprintf",
+          "callee": "fprintf",
+          "lineNumber": 98
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/mixed/Makefile",
+      "language": "makefile",
+      "fileCategory": "infra",
+      "totalLines": 94,
+      "nonEmptyLines": 79,
+      "steps": [
+        {
+          "name": "all",
+          "startLine": 37,
+          "endLine": 38
+        },
+        {
+          "name": "struct-derived",
+          "startLine": 42,
+          "endLine": 47
+        },
+        {
+          "name": "cc-f90-strings",
+          "startLine": 51,
+          "endLine": 55
+        },
+        {
+          "name": "struct-array-pointer",
+          "startLine": 59,
+          "endLine": 64
+        },
+        {
+          "name": "void-pointer",
+          "startLine": 68,
+          "endLine": 73
+        },
+        {
+          "name": "clean",
+          "startLine": 77,
+          "endLine": 83
+        },
+        {
+          "name": "clobber",
+          "startLine": 87,
+          "endLine": 89
+        },
+        {
+          "name": "FORCE",
+          "startLine": 93,
+          "endLine": 95
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "stepCount": 8
+      }
+    },
+    {
+      "path": "alquimia/mixed/cc-f90-strings.cc",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 79,
+      "nonEmptyLines": 67,
+      "functions": [
+        {
+          "name": "clear_string",
+          "startLine": 47,
+          "endLine": 51,
+          "params": [
+            "str"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 53,
+          "endLine": 79,
+          "params": [
+            "argc",
+            "argv"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "clear_string",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 53,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "main",
+          "callee": "copy",
+          "lineNumber": 64
+        },
+        {
+          "caller": "main",
+          "callee": "length",
+          "lineNumber": 64
+        },
+        {
+          "caller": "main",
+          "callee": "reverse_string_",
+          "lineNumber": 69
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/mixed/cc-f90-strings.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 35,
+      "nonEmptyLines": 31,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/mixed/struct-array-pointer.cc",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 144,
+      "nonEmptyLines": 121,
+      "functions": [
+        {
+          "name": "initialize_container",
+          "startLine": 61,
+          "endLine": 83,
+          "params": [
+            "c",
+            "num",
+            "length"
+          ]
+        },
+        {
+          "name": "free_container",
+          "startLine": 85,
+          "endLine": 92,
+          "params": [
+            "c"
+          ]
+        },
+        {
+          "name": "print_container",
+          "startLine": 94,
+          "endLine": 115,
+          "params": [
+            "c"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 117,
+          "endLine": 144,
+          "params": [
+            "argc",
+            "argv"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "container",
+          "startLine": 42,
+          "endLine": 45,
+          "methods": [],
+          "properties": [
+            "num",
+            "d"
+          ]
+        },
+        {
+          "name": "data",
+          "startLine": 47,
+          "endLine": 54,
+          "methods": [],
+          "properties": [
+            "name",
+            "outstr",
+            "xlength",
+            "x",
+            "ylength",
+            "y"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "container",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "data",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "initialize_container",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "free_container",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "print_container",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 117,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "initialize_container",
+          "callee": "strncpy",
+          "lineNumber": 70
+        },
+        {
+          "caller": "initialize_container",
+          "callee": "c_str",
+          "lineNumber": 70
+        },
+        {
+          "caller": "initialize_container",
+          "callee": "str",
+          "lineNumber": 70
+        },
+        {
+          "caller": "main",
+          "callee": "initialize_container",
+          "lineNumber": 131
+        },
+        {
+          "caller": "main",
+          "callee": "print_container",
+          "lineNumber": 134
+        },
+        {
+          "caller": "main",
+          "callee": "process_container_",
+          "lineNumber": 136
+        },
+        {
+          "caller": "main",
+          "callee": "print_container",
+          "lineNumber": 139
+        },
+        {
+          "caller": "main",
+          "callee": "free_container",
+          "lineNumber": 141
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 4,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "alquimia/mixed/struct-derived.cc",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 66,
+      "nonEmptyLines": 58,
+      "functions": [
+        {
+          "name": "print_point",
+          "startLine": 45,
+          "endLine": 48,
+          "params": [
+            "p"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 54,
+          "endLine": 65,
+          "params": [
+            "argc",
+            "argv"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "point",
+          "startLine": 38,
+          "endLine": 43,
+          "methods": [],
+          "properties": [
+            "w",
+            "x",
+            "y",
+            "z"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "point",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "print_point",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 54,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "main",
+          "callee": "std::numeric_limits<long>::max",
+          "lineNumber": 57
+        },
+        {
+          "caller": "main",
+          "callee": "std::numeric_limits<float>::epsilon",
+          "lineNumber": 58
+        },
+        {
+          "caller": "main",
+          "callee": "std::numeric_limits<int>::min",
+          "lineNumber": 59
+        },
+        {
+          "caller": "main",
+          "callee": "std::numeric_limits<double>::max",
+          "lineNumber": 60
+        },
+        {
+          "caller": "main",
+          "callee": "print_point",
+          "lineNumber": 61
+        },
+        {
+          "caller": "main",
+          "callee": "negate_",
+          "lineNumber": 62
+        },
+        {
+          "caller": "main",
+          "callee": "print_point",
+          "lineNumber": 63
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "drivers/fpe.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 94,
+      "nonEmptyLines": 77,
+      "callGraph": [
+        {
+          "caller": "EnableFPE",
+          "callee": "_MM_SET_EXCEPTION_MASK",
+          "lineNumber": 53
+        },
+        {
+          "caller": "EnableFPE",
+          "callee": "feclearexcept",
+          "lineNumber": 57
+        },
+        {
+          "caller": "EnableFPE",
+          "callee": "feenableexcept",
+          "lineNumber": 65
+        },
+        {
+          "caller": "DisableFPE",
+          "callee": "fesetenv",
+          "lineNumber": 71
+        },
+        {
+          "caller": "SuspendFPE",
+          "callee": "feholdexcept",
+          "lineNumber": 80
+        },
+        {
+          "caller": "ResumeFPE",
+          "callee": "feclearexcept",
+          "lineNumber": 86
+        },
+        {
+          "caller": "ResumeFPE",
+          "callee": "fesetenv",
+          "lineNumber": 89
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "drivers/fpe.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 54,
+      "nonEmptyLines": 44,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,260 @@
+{
+  "nodes": [
+    {
+      "id": "file:alquimia/alquimia_interface.c",
+      "type": "file",
+      "name": "alquimia_interface.c",
+      "filePath": "alquimia/alquimia_interface.c",
+      "summary": "Creates the generic Alquimia engine interface by selecting the PFLOTRAN, CrunchFlow, or ONNX implementation and wiring its function table at runtime.",
+      "tags": ["engine-factory", "interface-routing", "entry-point", "function-pointers"],
+      "complexity": "moderate",
+      "languageNotes": "Uses compile-time feature guards and a C function-pointer table to expose one engine-neutral API."
+    },
+    {
+      "id": "function:alquimia/alquimia_interface.c:CreateAlquimiaInterface",
+      "type": "function",
+      "name": "CreateAlquimiaInterface",
+      "filePath": "alquimia/alquimia_interface.c",
+      "lineRange": [39, 111],
+      "summary": "Initializes an AlquimiaInterface dispatch table for the requested reaction engine and reports unavailable or invalid engine selections.",
+      "tags": ["factory", "dispatch", "validation", "engine-selection"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:alquimia/crunch_alquimia_interface.h",
+      "type": "file",
+      "name": "crunch_alquimia_interface.h",
+      "filePath": "alquimia/crunch_alquimia_interface.h",
+      "summary": "Declares the CrunchFlow implementation of the generic Alquimia engine lifecycle, condition processing, reaction stepping, auxiliary output, and metadata hooks.",
+      "tags": ["api-declaration", "crunchflow", "engine-adapter", "type-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_config.c",
+      "type": "file",
+      "name": "onnx_alquimia_config.c",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "summary": "Parses and validates ONNX adapter JSON config, including tensor-to-state mappings, model-path resolution, and named initial conditions, with centralized cleanup on failure.",
+      "tags": ["configuration", "json-parser", "validation", "memory-management", "onnx"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:IsAllowedProperty",
+      "type": "function",
+      "name": "IsAllowedProperty",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [55, 69],
+      "summary": "Checks whether a JSON property name appears in the schema field allowlist.",
+      "tags": ["validation", "json-schema", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:ValidateProperties",
+      "type": "function",
+      "name": "ValidateProperties",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [84, 143],
+      "summary": "Validates object keys against an allowed schema and reports duplicate or unsupported JSON properties with context.",
+      "tags": ["validation", "json-schema", "diagnostics"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:GetRequiredString",
+      "type": "function",
+      "name": "GetRequiredString",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [157, 182],
+      "summary": "Reads a required string property from a JSON object and copies it into owned storage with contextual errors.",
+      "tags": ["json-parser", "validation", "string-handling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:GetRequiredInteger",
+      "type": "function",
+      "name": "GetRequiredInteger",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [197, 217],
+      "summary": "Extracts a required integer-valued JSON property and rejects missing or nonnumeric values.",
+      "tags": ["json-parser", "validation", "numeric-conversion"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:ResolveModelPath",
+      "type": "function",
+      "name": "ResolveModelPath",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [231, 279],
+      "summary": "Resolves a model filename relative to its config file while preserving absolute paths and allocating the resulting path.",
+      "tags": ["path-resolution", "configuration", "memory-management"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:ParseMappings",
+      "type": "function",
+      "name": "ParseMappings",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [296, 382],
+      "summary": "Parses an input or output mapping array into owned tensor, feature, and AlquimiaState mapping records.",
+      "tags": ["json-parser", "mapping", "serialization", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:ValidateUniqueMember",
+      "type": "function",
+      "name": "ValidateUniqueMember",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [395, 430],
+      "summary": "Rejects duplicate member names inside a JSON object to keep config interpretation deterministic.",
+      "tags": ["validation", "json-schema", "duplicate-detection"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:ValidateConditionFeature",
+      "type": "function",
+      "name": "ValidateConditionFeature",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [442, 480],
+      "summary": "Verifies that each condition feature corresponds to a configured ONNX input feature.",
+      "tags": ["validation", "conditions", "feature-mapping"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:ParseConditions",
+      "type": "function",
+      "name": "ParseConditions",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [490, 642],
+      "summary": "Parses named initial-condition objects, validates uniqueness and finite values, and stores feature-value pairs in adapter-owned arrays.",
+      "tags": ["json-parser", "conditions", "validation", "memory-management"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:ReadConfigjson_contents",
+      "type": "function",
+      "name": "ReadConfigjson_contents",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [657, 722],
+      "summary": "Reads an entire JSON config file into a newly allocated, null-terminated buffer with detailed I/O errors.",
+      "tags": ["file-io", "json-parser", "memory-management", "diagnostics"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:PopulateConfig",
+      "type": "function",
+      "name": "PopulateConfig",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [733, 802],
+      "summary": "Validates the root config object and populates the model path, input mappings, output mappings, and optional conditions.",
+      "tags": ["configuration", "orchestration", "validation", "mapping"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:FreeMappings",
+      "type": "function",
+      "name": "FreeMappings",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [809, 822],
+      "summary": "Releases strings and storage owned by an array of ONNX-to-Alquimia mapping records.",
+      "tags": ["memory-management", "cleanup", "mapping"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaFreeConfig",
+      "type": "function",
+      "name": "OnnxAlquimiaFreeConfig",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [831, 853],
+      "summary": "Releases every allocation owned by an OnnxAlquimiaConfig and resets the structure to a safe empty state.",
+      "tags": ["memory-management", "cleanup", "public-api", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig",
+      "type": "function",
+      "name": "OnnxAlquimiaLoadConfig",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "lineRange": [866, 918],
+      "summary": "Loads, parses, validates, and materializes an ONNX adapter config, rolling back all partial allocations on error.",
+      "tags": ["configuration", "public-api", "json-parser", "error-handling"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_config.h",
+      "type": "file",
+      "name": "onnx_alquimia_config.h",
+      "filePath": "alquimia/onnx_alquimia_config.h",
+      "summary": "Defines the private ONNX config ownership model for tensor mappings and named initial conditions, plus load and cleanup entry points.",
+      "tags": ["type-definition", "configuration", "onnx", "ownership"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_interface.c",
+      "type": "file",
+      "name": "onnx_alquimia_interface.c",
+      "filePath": "alquimia/onnx_alquimia_interface.c",
+      "summary": "Implements the ONNX Runtime reaction-engine adapter: session and tensor setup, config mapping validation, condition routing, inference, state updates, metadata export, and ordered resource teardown.",
+      "tags": ["onnx", "engine-adapter", "inference", "state-mapping", "memory-management"],
+      "complexity": "complex",
+      "languageNotes": "The adapter uses the ONNX Runtime C API with explicit ownership, flattened tensor mappings, and reusable mutable buffers that make a shared engine instance non-thread-safe."
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_interface.h",
+      "type": "file",
+      "name": "onnx_alquimia_interface.h",
+      "filePath": "alquimia/onnx_alquimia_interface.h",
+      "summary": "Declares the ONNX implementation of the generic Alquimia setup, shutdown, condition, reaction-step, auxiliary-output, and metadata callbacks.",
+      "tags": ["api-declaration", "onnx", "engine-adapter", "type-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:alquimia/pflotran_alquimia_interface.h",
+      "type": "file",
+      "name": "pflotran_alquimia_interface.h",
+      "filePath": "alquimia/pflotran_alquimia_interface.h",
+      "summary": "Declares the PFLOTRAN implementation of the generic Alquimia engine lifecycle, condition processing, reaction stepping, auxiliary output, and metadata hooks.",
+      "tags": ["api-declaration", "pflotran", "engine-adapter", "type-definition"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:alquimia/alquimia_interface.c", "target": "file:alquimia/alquimia_constants.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/alquimia_interface.c", "target": "file:alquimia/alquimia_interface.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/alquimia_interface.c", "target": "file:alquimia/alquimia_util.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/alquimia_interface.c", "target": "file:alquimia/crunch_alquimia_interface.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/alquimia_interface.c", "target": "file:alquimia/onnx_alquimia_interface.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/alquimia_interface.c", "target": "file:alquimia/pflotran_alquimia_interface.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "file:alquimia/onnx_alquimia_config.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/onnx_alquimia_interface.c", "target": "file:alquimia/alquimia_constants.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/onnx_alquimia_interface.c", "target": "file:alquimia/alquimia_util.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/onnx_alquimia_interface.c", "target": "file:alquimia/onnx_alquimia_config.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/onnx_alquimia_interface.c", "target": "file:alquimia/onnx_alquimia_interface.h", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:alquimia/alquimia_interface.c", "target": "function:alquimia/alquimia_interface.c:CreateAlquimiaInterface", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/alquimia_interface.c", "target": "function:alquimia/alquimia_interface.c:CreateAlquimiaInterface", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:IsAllowedProperty", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:ValidateProperties", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:GetRequiredString", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:GetRequiredInteger", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:ResolveModelPath", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:ParseMappings", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:ValidateUniqueMember", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:ValidateConditionFeature", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:ParseConditions", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:ReadConfigjson_contents", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:PopulateConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:FreeMappings", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaFreeConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaFreeConfig", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:alquimia/onnx_alquimia_config.c", "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaFreeConfig", "target": "function:alquimia/onnx_alquimia_config.c:FreeMappings", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig", "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaFreeConfig", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig", "target": "function:alquimia/onnx_alquimia_config.c:PopulateConfig", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig", "target": "function:alquimia/onnx_alquimia_config.c:ReadConfigjson_contents", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:ParseConditions", "target": "function:alquimia/onnx_alquimia_config.c:ValidateConditionFeature", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:ParseConditions", "target": "function:alquimia/onnx_alquimia_config.c:ValidateUniqueMember", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:PopulateConfig", "target": "function:alquimia/onnx_alquimia_config.c:ParseConditions", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:PopulateConfig", "target": "function:alquimia/onnx_alquimia_config.c:ParseMappings", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:PopulateConfig", "target": "function:alquimia/onnx_alquimia_config.c:ResolveModelPath", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:alquimia/onnx_alquimia_config.c:PopulateConfig", "target": "function:alquimia/onnx_alquimia_config.c:ValidateProperties", "type": "calls", "direction": "forward", "weight": 0.8}
+  ]
+}

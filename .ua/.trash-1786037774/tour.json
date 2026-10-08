@@ -1,0 +1,118 @@
+[
+  {
+    "order": 1,
+    "title": "Engine-Neutral Overview",
+    "description": "Begin with the runtime interface factory, the highest-fan-out code entry point in the graph. It shows Alquimia's central design: drivers use one function-table contract while runtime selection connects that contract to PFLOTRAN, CrunchFlow, or ONNX implementations.",
+    "nodeIds": [
+      "file:alquimia/alquimia_interface.c"
+    ],
+    "languageLesson": "In C, a table of function pointers provides runtime polymorphism without requiring C++ classes. Each engine supplies callbacks with the same signatures, so callers remain engine-neutral."
+  },
+  {
+    "order": 2,
+    "title": "Core Data Contract",
+    "description": "With engine selection established, study the public interface and the memory API on which every adapter and driver depends. The interface defines shared state and callback semantics, while the allocation helpers make ownership and cleanup consistent across dynamically sized geochemical containers.",
+    "nodeIds": [
+      "file:alquimia/alquimia_interface.h",
+      "file:alquimia/alquimia_memory.h",
+      "file:alquimia/alquimia_memory.c"
+    ],
+    "languageLesson": "C APIs often pair opaque or aggregate data contracts with explicit allocation and release functions. This makes ownership visible across C, C++, and Fortran boundaries."
+  },
+  {
+    "order": 3,
+    "title": "Shared Runtime Utilities",
+    "description": "The constants and utility modules give the contract from Step 2 a common vocabulary and reusable container operations. Their high fan-in reflects their role in error reporting, engine naming, lookup, copying, resizing, and diagnostics throughout the library.",
+    "nodeIds": [
+      "file:alquimia/alquimia_constants.h",
+      "file:alquimia/alquimia_util.h",
+      "file:alquimia/alquimia_util.c"
+    ]
+  },
+  {
+    "order": 4,
+    "title": "Reaction Engine Adapters",
+    "description": "Next, compare how the three adapters implement the same callback surface selected in Step 1. PFLOTRAN and CrunchFlow translate between Alquimia and native Fortran engine state, while the ONNX adapter manages model sessions, tensor mappings, condition routing, inference, and teardown.",
+    "nodeIds": [
+      "file:alquimia/pflotran_alquimia_interface.F90",
+      "file:alquimia/crunch_alquimia_interface.F90",
+      "file:alquimia/onnx_alquimia_interface.c"
+    ],
+    "languageLesson": "Adapter modules isolate engine-specific state conversion behind one stable callback contract. This allows a driver to switch engines without changing its simulation workflow."
+  },
+  {
+    "order": 5,
+    "title": "ONNX Configuration Path",
+    "description": "Building on the adapter comparison, follow the ONNX-specific configuration path that turns JSON records into validated tensor-to-state mappings and named conditions. Its explicit ownership structure and centralized failure cleanup prepare safe inputs for the inference lifecycle introduced in Step 4.",
+    "nodeIds": [
+      "file:alquimia/onnx_alquimia_config.h",
+      "file:alquimia/onnx_alquimia_config.c",
+      "file:alquimia/onnx_alquimia_interface.h"
+    ]
+  },
+  {
+    "order": 6,
+    "title": "Fortran Interoperability Layer",
+    "description": "The Fortran binding layer mirrors the C containers and converts stored C callbacks into callable Fortran procedures. String conversion utilities complete the boundary, allowing Fortran engines and applications to participate in the same data and lifecycle contract from Steps 1-4.",
+    "nodeIds": [
+      "file:alquimia/alquimia_containers.F90",
+      "file:alquimia/alquimia_fortran_interface_mod.F90",
+      "file:alquimia/c_f_interface_module.F90"
+    ],
+    "languageLesson": "Fortran ISO_C_BINDING supplies interoperable scalar kinds, derived types, and procedure-pointer bridges. BIND(C) layouts and explicit string conversion are essential because native Fortran strings and derived types do not automatically match C representations."
+  },
+  {
+    "order": 7,
+    "title": "Batch Chemistry Driver",
+    "description": "Now move from library internals to a complete application path. The batch entry point delegates setup, INI parsing, reaction stepping, history capture, cleanup, and result assembly to an opaque driver, demonstrating how a simulator consumes the engine-neutral API.",
+    "nodeIds": [
+      "file:drivers/batch_chem.c",
+      "file:drivers/BatchChemDriver.h",
+      "file:drivers/BatchChemDriver.c"
+    ]
+  },
+  {
+    "order": 8,
+    "title": "Reactive Transport Driver",
+    "description": "The transport application extends the same driver pattern with one-dimensional finite-volume advection and operator-split reactions. Read the small command-line entry point beside the driver implementation to see how engine-neutral chemistry is embedded in a coupled transport time loop.",
+    "nodeIds": [
+      "file:drivers/transport.c",
+      "file:drivers/TransportDriver.h",
+      "file:drivers/TransportDriver.c"
+    ],
+    "languageLesson": "Operator splitting advances transport and reaction as separate substeps. The approach keeps numerical transport independent of the selected geochemical engine while exchanging state through the shared Alquimia containers."
+  },
+  {
+    "order": 9,
+    "title": "Driver Input and Output",
+    "description": "Both applications rely on shared support for parsing regions, states, properties, conditions, constraints, and output settings. The embedded INI parser supplies low-level key-value callbacks, while the output abstraction converts simulation arrays into Python- or Gnuplot-friendly columns.",
+    "nodeIds": [
+      "file:drivers/input_util.c",
+      "file:drivers/ini.h",
+      "file:drivers/DriverOutput.c",
+      "file:drivers/DriverOutput.h"
+    ]
+  },
+  {
+    "order": 10,
+    "title": "Interop Experiments",
+    "description": "The mixed-language sandbox makes the boundary mechanics from Step 6 concrete through small C++ and Fortran experiments. Its Makefile exposes the compile-link relationships for strings, compatible derived types, and pointer-backed structure arrays, making it a useful place to learn or debug interoperability in isolation.",
+    "nodeIds": [
+      "file:alquimia/mixed/README",
+      "file:alquimia/mixed/struct-derived.cc",
+      "file:alquimia/mixed/struct-derived.F90",
+      "service:alquimia/mixed/Makefile"
+    ],
+    "languageLesson": "Make targets encode build dependencies, and mixed C++/Fortran targets must use compatible symbol names, data layouts, and linker inputs. Small standalone targets help verify those assumptions before they enter the main library."
+  },
+  {
+    "order": 11,
+    "title": "Build and Packaging",
+    "description": "Finish with the build definitions that assemble the architecture explored in the preceding steps. The core CMake file conditionally selects engine sources and dependencies, while the driver CMake file links and installs the batch and transport executables against the resulting Alquimia library.",
+    "nodeIds": [
+      "document:alquimia/CMakeLists.txt",
+      "document:drivers/CMakeLists.txt"
+    ],
+    "languageLesson": "CMake target definitions capture conditional source selection, transitive link dependencies, generated headers, and installation rules. Reading targets from libraries outward to executables mirrors the dependency flow of the codebase."
+  }
+]

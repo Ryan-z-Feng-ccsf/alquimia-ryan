@@ -1,0 +1,600 @@
+{
+  "scriptCompleted": true,
+  "entryPointCandidates": [
+    {
+      "id": "file:alquimia/alquimia_interface.c",
+      "score": 3,
+      "name": "alquimia_interface.c",
+      "summary": "Creates the generic Alquimia engine interface by selecting the PFLOTRAN, CrunchFlow, or ONNX implementation and wiring its function table at runtime."
+    },
+    {
+      "id": "file:alquimia/alquimia_memory.c",
+      "score": 3,
+      "name": "alquimia_memory.c",
+      "summary": "Implements allocation and release helpers for every dynamically sized Alquimia vector, state, metadata, condition, constraint, and aggregate data structure."
+    },
+    {
+      "id": "file:alquimia/alquimia_util.c",
+      "score": 3,
+      "name": "alquimia_util.c",
+      "summary": "Provides shared comparison, lookup, deep-copy, resize, and diagnostic printing operations for Alquimia containers and geochemical data structures."
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_interface.c",
+      "score": 3,
+      "name": "onnx_alquimia_interface.c",
+      "summary": "Implements the ONNX Runtime reaction-engine adapter: session and tensor setup, config mapping validation, condition routing, inference, state updates, metadata export, and ordered resource teardown."
+    },
+    {
+      "id": "file:drivers/batch_chem.c",
+      "score": 3,
+      "name": "batch_chem.c",
+      "summary": "Command-line entry point that runs a batch geochemistry simulation, selects Python or Gnuplot output, writes final state data, and releases driver resources."
+    }
+  ],
+  "fanInRanking": [
+    {
+      "id": "file:alquimia/alquimia_memory.h",
+      "fanIn": 8,
+      "name": "alquimia_memory.h"
+    },
+    {
+      "id": "file:alquimia/alquimia_util.h",
+      "fanIn": 8,
+      "name": "alquimia_util.h"
+    },
+    {
+      "id": "file:alquimia/alquimia_constants.h",
+      "fanIn": 6,
+      "name": "alquimia_constants.h"
+    },
+    {
+      "id": "file:alquimia/alquimia_interface.h",
+      "fanIn": 5,
+      "name": "alquimia_interface.h"
+    },
+    {
+      "id": "file:alquimia/alquimia_containers.F90",
+      "fanIn": 4,
+      "name": "alquimia_containers.F90"
+    },
+    {
+      "id": "file:drivers/ini.h",
+      "fanIn": 4,
+      "name": "ini.h"
+    },
+    {
+      "id": "file:drivers/DriverOutput.h",
+      "fanIn": 3,
+      "name": "DriverOutput.h"
+    },
+    {
+      "id": "file:alquimia/c_f_interface_module.F90",
+      "fanIn": 2,
+      "name": "c_f_interface_module.F90"
+    },
+    {
+      "id": "file:alquimia/crunch_alquimia_interface.F90",
+      "fanIn": 2,
+      "name": "crunch_alquimia_interface.F90"
+    },
+    {
+      "id": "file:alquimia/mixed/cc-f90-strings.F90",
+      "fanIn": 2,
+      "name": "cc-f90-strings.F90"
+    },
+    {
+      "id": "file:alquimia/mixed/struct-array-pointer.F90",
+      "fanIn": 2,
+      "name": "struct-array-pointer.F90"
+    },
+    {
+      "id": "file:alquimia/mixed/struct-derived.F90",
+      "fanIn": 2,
+      "name": "struct-derived.F90"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_config.h",
+      "fanIn": 2,
+      "name": "onnx_alquimia_config.h"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_interface.h",
+      "fanIn": 2,
+      "name": "onnx_alquimia_interface.h"
+    },
+    {
+      "id": "file:alquimia/pflotran_alquimia_interface.F90",
+      "fanIn": 2,
+      "name": "pflotran_alquimia_interface.F90"
+    },
+    {
+      "id": "file:drivers/BatchChemDriver.h",
+      "fanIn": 2,
+      "name": "BatchChemDriver.h"
+    },
+    {
+      "id": "file:drivers/TransportDriver.h",
+      "fanIn": 2,
+      "name": "TransportDriver.h"
+    },
+    {
+      "id": "file:alquimia/alquimia_containers.h",
+      "fanIn": 1,
+      "name": "alquimia_containers.h"
+    },
+    {
+      "id": "file:alquimia/alquimia.c",
+      "fanIn": 1,
+      "name": "alquimia.c"
+    },
+    {
+      "id": "file:alquimia/alquimia.h.in",
+      "fanIn": 1,
+      "name": "alquimia.h.in"
+    }
+  ],
+  "fanOutRanking": [
+    {
+      "id": "file:alquimia/alquimia_interface.c",
+      "fanOut": 6,
+      "name": "alquimia_interface.c"
+    },
+    {
+      "id": "service:alquimia/mixed/Makefile",
+      "fanOut": 6,
+      "name": "Makefile"
+    },
+    {
+      "id": "file:drivers/BatchChemDriver.c",
+      "fanOut": 5,
+      "name": "BatchChemDriver.c"
+    },
+    {
+      "id": "file:drivers/input_util.c",
+      "fanOut": 5,
+      "name": "input_util.c"
+    },
+    {
+      "id": "file:drivers/TransportDriver.c",
+      "fanOut": 5,
+      "name": "TransportDriver.c"
+    },
+    {
+      "id": "document:alquimia/CMakeLists.txt",
+      "fanOut": 4,
+      "name": "CMakeLists.txt"
+    },
+    {
+      "id": "file:alquimia/alquimia_memory.c",
+      "fanOut": 4,
+      "name": "alquimia_memory.c"
+    },
+    {
+      "id": "file:alquimia/alquimia_util.c",
+      "fanOut": 4,
+      "name": "alquimia_util.c"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_interface.c",
+      "fanOut": 4,
+      "name": "onnx_alquimia_interface.c"
+    },
+    {
+      "id": "file:drivers/batch_chem.c",
+      "fanOut": 4,
+      "name": "batch_chem.c"
+    },
+    {
+      "id": "file:drivers/transport.c",
+      "fanOut": 4,
+      "name": "transport.c"
+    },
+    {
+      "id": "file:alquimia/crunch_alquimia_interface.F90",
+      "fanOut": 2,
+      "name": "crunch_alquimia_interface.F90"
+    },
+    {
+      "id": "file:alquimia/mixed/cc-f90-strings.cc",
+      "fanOut": 2,
+      "name": "cc-f90-strings.cc"
+    },
+    {
+      "id": "file:alquimia/pflotran_alquimia_interface.F90",
+      "fanOut": 2,
+      "name": "pflotran_alquimia_interface.F90"
+    },
+    {
+      "id": "file:drivers/DriverOutput.c",
+      "fanOut": 2,
+      "name": "DriverOutput.c"
+    },
+    {
+      "id": "file:alquimia/alquimia_constants.c",
+      "fanOut": 1,
+      "name": "alquimia_constants.c"
+    },
+    {
+      "id": "file:alquimia/alquimia_fortran_interface_mod.F90",
+      "fanOut": 1,
+      "name": "alquimia_fortran_interface_mod.F90"
+    },
+    {
+      "id": "file:alquimia/alquimia.c",
+      "fanOut": 1,
+      "name": "alquimia.c"
+    },
+    {
+      "id": "file:alquimia/crunch_alquimia_wrappers.F90",
+      "fanOut": 1,
+      "name": "crunch_alquimia_wrappers.F90"
+    },
+    {
+      "id": "file:alquimia/mixed/README",
+      "fanOut": 1,
+      "name": "README"
+    }
+  ],
+  "bfsTraversal": {
+    "startNode": "file:alquimia/alquimia_interface.c",
+    "order": [
+      "file:alquimia/alquimia_interface.c",
+      "file:alquimia/alquimia_constants.h",
+      "file:alquimia/alquimia_interface.h",
+      "file:alquimia/alquimia_util.h",
+      "file:alquimia/crunch_alquimia_interface.h",
+      "file:alquimia/onnx_alquimia_interface.h",
+      "file:alquimia/pflotran_alquimia_interface.h"
+    ],
+    "depthMap": {
+      "file:alquimia/alquimia_interface.c": 0,
+      "file:alquimia/alquimia_constants.h": 1,
+      "file:alquimia/alquimia_interface.h": 1,
+      "file:alquimia/alquimia_util.h": 1,
+      "file:alquimia/crunch_alquimia_interface.h": 1,
+      "file:alquimia/onnx_alquimia_interface.h": 1,
+      "file:alquimia/pflotran_alquimia_interface.h": 1
+    },
+    "byDepth": {
+      "0": [
+        "file:alquimia/alquimia_interface.c"
+      ],
+      "1": [
+        "file:alquimia/alquimia_constants.h",
+        "file:alquimia/alquimia_interface.h",
+        "file:alquimia/alquimia_util.h",
+        "file:alquimia/crunch_alquimia_interface.h",
+        "file:alquimia/onnx_alquimia_interface.h",
+        "file:alquimia/pflotran_alquimia_interface.h"
+      ]
+    }
+  },
+  "nonCodeFiles": {
+    "documentation": [
+      {
+        "id": "document:alquimia/CMakeLists.txt",
+        "name": "CMakeLists.txt",
+        "type": "document",
+        "summary": "Defines the core Alquimia library build, conditionally adds PFLOTRAN, CrunchFlow, and ONNX engine sources and dependencies, and installs the library and public headers."
+      },
+      {
+        "id": "document:drivers/CMakeLists.txt",
+        "name": "CMakeLists.txt",
+        "type": "document",
+        "summary": "Defines and installs the batch-chemistry and one-dimensional reactive-transport driver executables linked against Alquimia."
+      },
+      {
+        "id": "document:drivers/LICENSE.inih.txt",
+        "name": "LICENSE.inih.txt",
+        "type": "document",
+        "summary": "Records the BSD license terms for the bundled inih configuration parser used by the driver programs."
+      }
+    ],
+    "infrastructure": [
+      {
+        "id": "service:alquimia/mixed/Makefile",
+        "name": "Makefile",
+        "type": "service",
+        "summary": "Builds standalone C++/Fortran interoperability experiments for derived types, strings, and pointer-backed structure arrays, with cleanup targets for generated artifacts."
+      }
+    ],
+    "data": [],
+    "config": []
+  },
+  "clusters": [],
+  "layers": {
+    "count": 6,
+    "list": [
+      {
+        "id": "layer:core-c-api",
+        "name": "Core C API and Runtime",
+        "description": "Engine-neutral C interfaces, shared geochemical containers, lifecycle helpers, constants, diagnostics, and process-wide error handling form the foundation used by every adapter and driver."
+      },
+      {
+        "id": "layer:engine-adapters",
+        "name": "Reaction Engine Adapters",
+        "description": "PFLOTRAN, CrunchFlow, and ONNX implementations translate the generic Alquimia contract into engine setup, reaction stepping, state conversion, metadata, and inference operations."
+      },
+      {
+        "id": "layer:fortran-bindings",
+        "name": "Fortran Bindings",
+        "description": "ISO_C_BINDING container mirrors, string conversion utilities, and an object-oriented Fortran facade expose the core C contract safely to Fortran callers."
+      },
+      {
+        "id": "layer:mixed-language-examples",
+        "name": "Mixed-Language Examples",
+        "description": "Focused C++ and Fortran experiments demonstrate string exchange, derived-type layout compatibility, and pointer-backed structure-array ownership across the language boundary."
+      },
+      {
+        "id": "layer:driver-applications",
+        "name": "Driver Applications",
+        "description": "Standalone batch-chemistry and reactive-transport programs coordinate input parsing, engine execution, numerical transport, output serialization, and runtime diagnostics."
+      },
+      {
+        "id": "layer:build-project-support",
+        "name": "Build and Project Support",
+        "description": "CMake and Make rules select engine integrations, build and install libraries and drivers, compile interoperability experiments, and preserve third-party licensing terms."
+      }
+    ]
+  },
+  "nodeSummaryIndex": {
+    "file:alquimia/alquimia_interface.c": {
+      "name": "alquimia_interface.c",
+      "type": "file",
+      "summary": "Creates the generic Alquimia engine interface by selecting the PFLOTRAN, CrunchFlow, or ONNX implementation and wiring its function table at runtime."
+    },
+    "file:alquimia/crunch_alquimia_interface.h": {
+      "name": "crunch_alquimia_interface.h",
+      "type": "file",
+      "summary": "Declares the CrunchFlow implementation of the generic Alquimia engine lifecycle, condition processing, reaction stepping, auxiliary output, and metadata hooks."
+    },
+    "file:alquimia/onnx_alquimia_config.c": {
+      "name": "onnx_alquimia_config.c",
+      "type": "file",
+      "summary": "Parses and validates ONNX adapter JSON config, including tensor-to-state mappings, model-path resolution, and named initial conditions, with centralized cleanup on failure."
+    },
+    "file:alquimia/onnx_alquimia_config.h": {
+      "name": "onnx_alquimia_config.h",
+      "type": "file",
+      "summary": "Defines the private ONNX config ownership model for tensor mappings and named initial conditions, plus load and cleanup entry points."
+    },
+    "file:alquimia/onnx_alquimia_interface.c": {
+      "name": "onnx_alquimia_interface.c",
+      "type": "file",
+      "summary": "Implements the ONNX Runtime reaction-engine adapter: session and tensor setup, config mapping validation, condition routing, inference, state updates, metadata export, and ordered resource teardown."
+    },
+    "file:alquimia/onnx_alquimia_interface.h": {
+      "name": "onnx_alquimia_interface.h",
+      "type": "file",
+      "summary": "Declares the ONNX implementation of the generic Alquimia setup, shutdown, condition, reaction-step, auxiliary-output, and metadata callbacks."
+    },
+    "file:alquimia/pflotran_alquimia_interface.h": {
+      "name": "pflotran_alquimia_interface.h",
+      "type": "file",
+      "summary": "Declares the PFLOTRAN implementation of the generic Alquimia engine lifecycle, condition processing, reaction stepping, auxiliary output, and metadata hooks."
+    },
+    "file:alquimia/alquimia_memory.h": {
+      "name": "alquimia_memory.h",
+      "type": "file",
+      "summary": "Declares the allocation and cleanup API for Alquimia vectors, chemistry state, metadata, properties, constraints, and aggregate data structures."
+    },
+    "file:drivers/DriverOutput.c": {
+      "name": "DriverOutput.c",
+      "type": "file",
+      "summary": "Implements pluggable Gnuplot and Python output writers for simulation vectors, including conversion of interleaved multi-component data into per-variable columns."
+    },
+    "file:drivers/DriverOutput.h": {
+      "name": "DriverOutput.h",
+      "type": "file",
+      "summary": "Defines the public opaque output interface, writer factories, and APIs for exporting ordinary and multi-component simulation vectors."
+    },
+    "file:drivers/TransportDriver.c": {
+      "name": "TransportDriver.c",
+      "type": "file",
+      "summary": "Implements a one-dimensional reactive transport driver that parses INI input, manages chemistry-engine state, advances mobile components with finite-volume advection and operator-split reactions, and assembles output fields."
+    },
+    "file:drivers/TransportDriver.h": {
+      "name": "TransportDriver.h",
+      "type": "file",
+      "summary": "Declares transport coupling modes, the complete user-input structure, and the lifecycle, execution, and output APIs for the reactive transport driver."
+    },
+    "file:drivers/batch_chem.c": {
+      "name": "batch_chem.c",
+      "type": "file",
+      "summary": "Command-line entry point that runs a batch geochemistry simulation, selects Python or Gnuplot output, writes final state data, and releases driver resources."
+    },
+    "file:drivers/transport.c": {
+      "name": "transport.c",
+      "type": "file",
+      "summary": "Command-line entry point that configures and runs the reactive transport driver, exports its final solute and auxiliary fields, and performs optional PETSc shutdown."
+    },
+    "file:alquimia/alquimia_util.h": {
+      "name": "alquimia_util.h",
+      "type": "file",
+      "summary": "Declares C-compatible utilities for strings, named-index lookup, deep copying, vector resizing, and diagnostic printing of Alquimia data structures."
+    },
+    "file:drivers/BatchChemDriver.c": {
+      "name": "BatchChemDriver.c",
+      "type": "file",
+      "summary": "Implements the standalone batch chemistry simulation driver, including INI parsing, engine setup, reaction stepping, state-history capture, cleanup, and output-vector assembly."
+    },
+    "file:drivers/BatchChemDriver.h": {
+      "name": "BatchChemDriver.h",
+      "type": "file",
+      "summary": "Defines batch chemistry input fields and the public lifecycle, execution, and result-retrieval API for the opaque BatchChemDriver."
+    },
+    "file:drivers/ini.c": {
+      "name": "ini.c",
+      "type": "file",
+      "summary": "Implements the embedded inih parser for INI sections, key-value pairs, comments, multiline values, stream callbacks, and file-backed parsing."
+    },
+    "file:drivers/ini.h": {
+      "name": "ini.h",
+      "type": "file",
+      "summary": "Declares the inih callback interfaces, parse entry points, and compile-time options for multiline input, BOM support, storage, and error handling."
+    },
+    "file:drivers/input_util.c": {
+      "name": "input_util.c",
+      "type": "file",
+      "summary": "Implements reusable INI-driven construction and parsing for chemistry engines, regions, states, material properties, geochemical conditions, constraints, and output settings."
+    },
+    "file:drivers/input_util.h": {
+      "name": "input_util.h",
+      "type": "file",
+      "summary": "Declares high-level input sweeps and low-level section parsers for engine setup, regions, state, properties, and geochemical constraints."
+    },
+    "file:alquimia/alquimia_constants.c": {
+      "name": "alquimia_constants.c",
+      "type": "file",
+      "summary": "Defines shared string limits, geochemical quantity names, engine identifiers, and error codes used throughout the Alquimia C interface."
+    },
+    "file:alquimia/alquimia_constants.h": {
+      "name": "alquimia_constants.h",
+      "type": "file",
+      "summary": "Declares the public constants for supported engines, geochemical quantities, string limits, and Alquimia error codes."
+    },
+    "file:alquimia/alquimia_containers.h": {
+      "name": "alquimia_containers.h",
+      "type": "file",
+      "summary": "Defines the C-compatible vectors and geochemical state, property, metadata, condition, constraint, and engine-status structures shared with reaction engines and Fortran bindings."
+    },
+    "file:alquimia/alquimia_interface.h": {
+      "name": "alquimia_interface.h",
+      "type": "file",
+      "summary": "Defines the engine-neutral AlquimiaData aggregate and the AlquimiaInterface function-pointer contract for setup, reaction stepping, condition processing, metadata, and auxiliary output."
+    },
+    "file:alquimia/alquimia_memory.c": {
+      "name": "alquimia_memory.c",
+      "type": "file",
+      "summary": "Implements allocation and release helpers for every dynamically sized Alquimia vector, state, metadata, condition, constraint, and aggregate data structure."
+    },
+    "file:alquimia/alquimia_util.c": {
+      "name": "alquimia_util.c",
+      "type": "file",
+      "summary": "Provides shared comparison, lookup, deep-copy, resize, and diagnostic printing operations for Alquimia containers and geochemical data structures."
+    },
+    "document:alquimia/CMakeLists.txt": {
+      "name": "CMakeLists.txt",
+      "type": "document",
+      "summary": "Defines the core Alquimia library build, conditionally adds PFLOTRAN, CrunchFlow, and ONNX engine sources and dependencies, and installs the library and public headers."
+    },
+    "file:alquimia/alquimia.c": {
+      "name": "alquimia.c",
+      "type": "file",
+      "summary": "Implements process-wide error and abort callbacks plus formatted version reporting for the public C API."
+    },
+    "file:alquimia/alquimia.h.in": {
+      "name": "alquimia.h.in",
+      "type": "file",
+      "summary": "CMake-configured public header template exposing version flags, engine availability macros, assertions, error callbacks, abort callbacks, and version output."
+    },
+    "file:alquimia/alquimia_containers.F90": {
+      "name": "alquimia_containers.F90",
+      "type": "file",
+      "summary": "Defines ISO_C_BINDING-compatible Fortran mirrors of the public Alquimia sizes, state, properties, metadata, status, constraint, and auxiliary-data containers."
+    },
+    "file:alquimia/alquimia_fortran_interface_mod.F90": {
+      "name": "alquimia_fortran_interface_mod.F90",
+      "type": "file",
+      "summary": "Provides an object-oriented Fortran facade over the C Alquimia interface, converting stored C function pointers into callable engine procedures and exposing allocation bindings."
+    },
+    "file:alquimia/c_f_interface_module.F90": {
+      "name": "c_f_interface_module.F90",
+      "type": "file",
+      "summary": "Implements reusable C/Fortran string conversions and a case-insensitive Fortran string comparison used by chemistry-engine adapters."
+    },
+    "file:alquimia/crunch_alquimia_interface.F90": {
+      "name": "crunch_alquimia_interface.F90",
+      "type": "file",
+      "summary": "Implements the full CrunchFlow-backed Alquimia engine lifecycle, constraint processing, operator-split reaction stepping, metadata extraction, and state translation."
+    },
+    "file:alquimia/crunch_alquimia_wrappers.F90": {
+      "name": "crunch_alquimia_wrappers.F90",
+      "type": "file",
+      "summary": "Exports stable BIND(C) entry points that forward the generic Alquimia engine operations to the CrunchFlow Fortran module despite compiler-specific module symbol mangling."
+    },
+    "service:alquimia/mixed/Makefile": {
+      "name": "Makefile",
+      "type": "service",
+      "summary": "Builds standalone C++/Fortran interoperability experiments for derived types, strings, and pointer-backed structure arrays, with cleanup targets for generated artifacts."
+    },
+    "file:alquimia/mixed/README": {
+      "name": "README",
+      "type": "file",
+      "summary": "Briefly identifies the mixed-language directory as a sandbox for C and Fortran interface experiments."
+    },
+    "file:alquimia/mixed/cc-f90-strings.F90": {
+      "name": "cc-f90-strings.F90",
+      "type": "file",
+      "summary": "Fortran side of a mixed-language string experiment that reverses a fixed-length C-compatible character buffer."
+    },
+    "file:alquimia/mixed/cc-f90-strings.cc": {
+      "name": "cc-f90-strings.cc",
+      "type": "file",
+      "summary": "C++ driver for testing fixed-buffer string exchange with Fortran, including buffer clearing and invocation of the Fortran reversal routine."
+    },
+    "file:alquimia/mixed/cc-f90-strings.h": {
+      "name": "cc-f90-strings.h",
+      "type": "file",
+      "summary": "Declares shared constants and the external Fortran string-reversal symbol used by the mixed C++/Fortran example."
+    },
+    "file:alquimia/mixed/struct-array-pointer.F90": {
+      "name": "struct-array-pointer.F90",
+      "type": "file",
+      "summary": "Fortran half of an interoperability experiment that maps a C structure array and nested pointer fields, creates output arrays, and writes results back through C pointers."
+    },
+    "file:alquimia/mixed/struct-array-pointer.cc": {
+      "name": "struct-array-pointer.cc",
+      "type": "file",
+      "summary": "C++ half of a C/Fortran structure-array experiment that allocates nested buffers, invokes Fortran processing, prints results, and frees owned memory."
+    },
+    "file:alquimia/mixed/struct-derived.F90": {
+      "name": "struct-derived.F90",
+      "type": "file",
+      "summary": "Fortran routine used to verify layout compatibility by mutating numeric fields in a derived type passed from C++."
+    },
+    "file:alquimia/mixed/struct-derived.cc": {
+      "name": "struct-derived.cc",
+      "type": "file",
+      "summary": "C++ driver that constructs a plain numeric structure, passes it to Fortran for mutation, and prints values before and after the call."
+    },
+    "file:alquimia/pflotran_alquimia_interface.F90": {
+      "name": "pflotran_alquimia_interface.F90",
+      "type": "file",
+      "summary": "Implements the PFLOTRAN-backed Alquimia engine, including setup, conditions, operator-split reaction solves, auxiliary output, metadata, and bidirectional state packing."
+    },
+    "file:alquimia/pflotran_alquimia_wrappers.F90": {
+      "name": "pflotran_alquimia_wrappers.F90",
+      "type": "file",
+      "summary": "Exports stable BIND(C) wrappers for PFLOTRAN-backed setup, shutdown, condition processing, reaction stepping, auxiliary output, and metadata operations."
+    },
+    "file:alquimia/pflotran_petsc_stubs.F90": {
+      "name": "pflotran_petsc_stubs.F90",
+      "type": "file",
+      "summary": "Provides a no-op PETSc logging entry point required when linking the PFLOTRAN adapter in configurations without the full logging implementation."
+    },
+    "document:drivers/CMakeLists.txt": {
+      "name": "CMakeLists.txt",
+      "type": "document",
+      "summary": "Defines and installs the batch-chemistry and one-dimensional reactive-transport driver executables linked against Alquimia."
+    },
+    "document:drivers/LICENSE.inih.txt": {
+      "name": "LICENSE.inih.txt",
+      "type": "document",
+      "summary": "Records the BSD license terms for the bundled inih configuration parser used by the driver programs."
+    },
+    "file:drivers/fpe.c": {
+      "name": "fpe.c",
+      "type": "file",
+      "summary": "Implements portable helpers for enabling, disabling, suspending, and restoring floating-point exception trapping across Apple and GNU environments."
+    },
+    "file:drivers/fpe.h": {
+      "name": "fpe.h",
+      "type": "file",
+      "summary": "Declares the driver-facing floating-point exception control API with C++ linkage compatibility."
+    }
+  },
+  "totalNodes": 51,
+  "totalEdges": 423
+}

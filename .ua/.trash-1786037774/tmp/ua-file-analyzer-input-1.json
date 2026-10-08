@@ -1,0 +1,35 @@
+{
+  "projectRoot": "/home/zfeng3/alquimia-ryan",
+  "batchFiles": [
+    {"path": "alquimia/alquimia_interface.c", "language": "c", "sizeLines": 111, "fileCategory": "code"},
+    {"path": "alquimia/crunch_alquimia_interface.h", "language": "c", "sizeLines": 90, "fileCategory": "code"},
+    {"path": "alquimia/onnx_alquimia_config.c", "language": "c", "sizeLines": 918, "fileCategory": "code"},
+    {"path": "alquimia/onnx_alquimia_config.h", "language": "c", "sizeLines": 72, "fileCategory": "code"},
+    {"path": "alquimia/onnx_alquimia_interface.c", "language": "c", "sizeLines": 2348, "fileCategory": "code"},
+    {"path": "alquimia/onnx_alquimia_interface.h", "language": "c", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "alquimia/pflotran_alquimia_interface.h", "language": "c", "sizeLines": 90, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "alquimia/alquimia_interface.c": [
+      "alquimia/alquimia_constants.h",
+      "alquimia/alquimia_interface.h",
+      "alquimia/alquimia_util.h",
+      "alquimia/crunch_alquimia_interface.h",
+      "alquimia/onnx_alquimia_interface.h",
+      "alquimia/pflotran_alquimia_interface.h"
+    ],
+    "alquimia/crunch_alquimia_interface.h": [],
+    "alquimia/onnx_alquimia_config.c": [
+      "alquimia/onnx_alquimia_config.h"
+    ],
+    "alquimia/onnx_alquimia_config.h": [],
+    "alquimia/onnx_alquimia_interface.c": [
+      "alquimia/alquimia_constants.h",
+      "alquimia/alquimia_util.h",
+      "alquimia/onnx_alquimia_config.h",
+      "alquimia/onnx_alquimia_interface.h"
+    ],
+    "alquimia/onnx_alquimia_interface.h": [],
+    "alquimia/pflotran_alquimia_interface.h": []
+  }
+}

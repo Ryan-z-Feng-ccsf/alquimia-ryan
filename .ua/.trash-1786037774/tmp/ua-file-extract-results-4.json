@@ -1,0 +1,2536 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 6,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 6,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "alquimia/alquimia_constants.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 57,
+      "nonEmptyLines": 50,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/alquimia_constants.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 65,
+      "nonEmptyLines": 57,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/alquimia_containers.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 194,
+      "nonEmptyLines": 169,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/alquimia_interface.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 124,
+      "nonEmptyLines": 108,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/alquimia_memory.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 528,
+      "nonEmptyLines": 451,
+      "functions": [
+        {
+          "name": "nearest_power_of_2",
+          "startLine": 54,
+          "endLine": 61,
+          "params": [
+            "n"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaVectorDouble",
+          "startLine": 68,
+          "endLine": 79,
+          "params": [
+            "size",
+            "vector"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaVectorDouble",
+          "startLine": 81,
+          "endLine": 88,
+          "params": [
+            "vector"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaVectorInt",
+          "startLine": 90,
+          "endLine": 101,
+          "params": [
+            "size",
+            "vector"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaVectorInt",
+          "startLine": 103,
+          "endLine": 110,
+          "params": [
+            "vector"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaVectorString",
+          "startLine": 112,
+          "endLine": 128,
+          "params": [
+            "size",
+            "vector"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaVectorString",
+          "startLine": 130,
+          "endLine": 141,
+          "params": [
+            "vector"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaState",
+          "startLine": 149,
+          "endLine": 173,
+          "params": [
+            "sizes",
+            "state"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaState",
+          "startLine": 175,
+          "endLine": 185,
+          "params": [
+            "state"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaAuxiliaryData",
+          "startLine": 193,
+          "endLine": 201,
+          "params": [
+            "sizes",
+            "aux_data"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaAuxiliaryData",
+          "startLine": 203,
+          "endLine": 208,
+          "params": [
+            "aux_data"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaProperties",
+          "startLine": 216,
+          "endLine": 229,
+          "params": [
+            "sizes",
+            "props"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaProperties",
+          "startLine": 231,
+          "endLine": 239,
+          "params": [
+            "props"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaProblemMetaData",
+          "startLine": 247,
+          "endLine": 274,
+          "params": [
+            "sizes",
+            "meta_data"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaProblemMetaData",
+          "startLine": 276,
+          "endLine": 288,
+          "params": [
+            "meta_data"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaAuxiliaryOutputData",
+          "startLine": 296,
+          "endLine": 321,
+          "params": [
+            "sizes",
+            "aux_output"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaAuxiliaryOutputData",
+          "startLine": 323,
+          "endLine": 334,
+          "params": [
+            "aux_output"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaEngineStatus",
+          "startLine": 342,
+          "endLine": 348,
+          "params": [
+            "status"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaEngineStatus",
+          "startLine": 350,
+          "endLine": 356,
+          "params": [
+            "status"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaGeochemicalConditionVector",
+          "startLine": 366,
+          "endLine": 380,
+          "params": [
+            "num_conditions",
+            "condition_list"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaGeochemicalCondition",
+          "startLine": 382,
+          "endLine": 394,
+          "params": [
+            "size_name",
+            "num_aqueous_constraints",
+            "num_mineral_constraints",
+            "condition"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaAqueousConstraint",
+          "startLine": 396,
+          "endLine": 404,
+          "params": [
+            "constraint"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaAqueousConstraintVector",
+          "startLine": 406,
+          "endLine": 417,
+          "params": [
+            "num_constraints",
+            "constraint_list"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaMineralConstraint",
+          "startLine": 419,
+          "endLine": 424,
+          "params": [
+            "constraint"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaMineralConstraintVector",
+          "startLine": 426,
+          "endLine": 437,
+          "params": [
+            "num_constraints",
+            "constraint_list"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaGeochemicalConditionVector",
+          "startLine": 439,
+          "endLine": 452,
+          "params": [
+            "condition_list"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaGeochemicalCondition",
+          "startLine": 454,
+          "endLine": 463,
+          "params": [
+            "condition"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaAqueousConstraintVector",
+          "startLine": 465,
+          "endLine": 478,
+          "params": [
+            "vector"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaAqueousConstraint",
+          "startLine": 480,
+          "endLine": 487,
+          "params": [
+            "constraint"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaMineralConstraintVector",
+          "startLine": 489,
+          "endLine": 500,
+          "params": [
+            "vector"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaMineralConstraint",
+          "startLine": 502,
+          "endLine": 505,
+          "params": [
+            "constraint"
+          ]
+        },
+        {
+          "name": "AllocateAlquimiaData",
+          "startLine": 513,
+          "endLine": 519,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "FreeAlquimiaData",
+          "startLine": 522,
+          "endLine": 528,
+          "params": [
+            "data"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AllocateAlquimiaVectorDouble",
+          "line": 68,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaVectorDouble",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaVectorInt",
+          "line": 90,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaVectorInt",
+          "line": 103,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaVectorString",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaVectorString",
+          "line": 130,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaState",
+          "line": 149,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaState",
+          "line": 175,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaAuxiliaryData",
+          "line": 193,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaAuxiliaryData",
+          "line": 203,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaProperties",
+          "line": 216,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaProperties",
+          "line": 231,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaProblemMetaData",
+          "line": 247,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaProblemMetaData",
+          "line": 276,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaAuxiliaryOutputData",
+          "line": 296,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaAuxiliaryOutputData",
+          "line": 323,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaEngineStatus",
+          "line": 342,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaEngineStatus",
+          "line": 350,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaGeochemicalConditionVector",
+          "line": 366,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaGeochemicalCondition",
+          "line": 382,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaAqueousConstraint",
+          "line": 396,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaAqueousConstraintVector",
+          "line": 406,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaMineralConstraint",
+          "line": 419,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaMineralConstraintVector",
+          "line": 426,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaGeochemicalConditionVector",
+          "line": 439,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaGeochemicalCondition",
+          "line": 454,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaAqueousConstraintVector",
+          "line": 465,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaAqueousConstraint",
+          "line": 480,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaMineralConstraintVector",
+          "line": 489,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaMineralConstraint",
+          "line": 502,
+          "isDefault": false
+        },
+        {
+          "name": "AllocateAlquimiaData",
+          "line": 513,
+          "isDefault": false
+        },
+        {
+          "name": "FreeAlquimiaData",
+          "line": 522,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AllocateAlquimiaVectorDouble",
+          "callee": "nearest_power_of_2",
+          "lineNumber": 71
+        },
+        {
+          "caller": "AllocateAlquimiaVectorDouble",
+          "callee": "calloc",
+          "lineNumber": 72
+        },
+        {
+          "caller": "AllocateAlquimiaVectorDouble",
+          "callee": "ALQUIMIA_ASSERT",
+          "lineNumber": 73
+        },
+        {
+          "caller": "FreeAlquimiaVectorDouble",
+          "callee": "free",
+          "lineNumber": 83
+        },
+        {
+          "caller": "AllocateAlquimiaVectorInt",
+          "callee": "nearest_power_of_2",
+          "lineNumber": 93
+        },
+        {
+          "caller": "AllocateAlquimiaVectorInt",
+          "callee": "calloc",
+          "lineNumber": 94
+        },
+        {
+          "caller": "AllocateAlquimiaVectorInt",
+          "callee": "ALQUIMIA_ASSERT",
+          "lineNumber": 95
+        },
+        {
+          "caller": "FreeAlquimiaVectorInt",
+          "callee": "free",
+          "lineNumber": 105
+        },
+        {
+          "caller": "AllocateAlquimiaVectorString",
+          "callee": "nearest_power_of_2",
+          "lineNumber": 116
+        },
+        {
+          "caller": "AllocateAlquimiaVectorString",
+          "callee": "calloc",
+          "lineNumber": 117
+        },
+        {
+          "caller": "AllocateAlquimiaVectorString",
+          "callee": "ALQUIMIA_ASSERT",
+          "lineNumber": 118
+        },
+        {
+          "caller": "AllocateAlquimiaVectorString",
+          "callee": "calloc",
+          "lineNumber": 120
+        },
+        {
+          "caller": "AllocateAlquimiaVectorString",
+          "callee": "ALQUIMIA_ASSERT",
+          "lineNumber": 121
+        },
+        {
+          "caller": "FreeAlquimiaVectorString",
+          "callee": "free",
+          "lineNumber": 134
+        },
+        {
+          "caller": "FreeAlquimiaVectorString",
+          "callee": "free",
+          "lineNumber": 136
+        },
+        {
+          "caller": "AllocateAlquimiaState",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 151
+        },
+        {
+          "caller": "AllocateAlquimiaState",
+          "callee": "ALQUIMIA_ASSERT",
+          "lineNumber": 152
+        },
+        {
+          "caller": "AllocateAlquimiaState",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 154
+        },
+        {
+          "caller": "AllocateAlquimiaState",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 156
+        },
+        {
+          "caller": "AllocateAlquimiaState",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 159
+        },
+        {
+          "caller": "AllocateAlquimiaState",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 162
+        },
+        {
+          "caller": "AllocateAlquimiaState",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 165
+        },
+        {
+          "caller": "AllocateAlquimiaState",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 171
+        },
+        {
+          "caller": "FreeAlquimiaState",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 177
+        },
+        {
+          "caller": "FreeAlquimiaState",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 178
+        },
+        {
+          "caller": "FreeAlquimiaState",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 179
+        },
+        {
+          "caller": "FreeAlquimiaState",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 180
+        },
+        {
+          "caller": "FreeAlquimiaState",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 181
+        },
+        {
+          "caller": "FreeAlquimiaState",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 182
+        },
+        {
+          "caller": "FreeAlquimiaState",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 183
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryData",
+          "callee": "AllocateAlquimiaVectorInt",
+          "lineNumber": 195
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 198
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryData",
+          "callee": "FreeAlquimiaVectorInt",
+          "lineNumber": 205
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 206
+        },
+        {
+          "caller": "AllocateAlquimiaProperties",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 218
+        },
+        {
+          "caller": "AllocateAlquimiaProperties",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 220
+        },
+        {
+          "caller": "AllocateAlquimiaProperties",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 222
+        },
+        {
+          "caller": "AllocateAlquimiaProperties",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 224
+        },
+        {
+          "caller": "AllocateAlquimiaProperties",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 226
+        },
+        {
+          "caller": "FreeAlquimiaProperties",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 233
+        },
+        {
+          "caller": "FreeAlquimiaProperties",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 234
+        },
+        {
+          "caller": "FreeAlquimiaProperties",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 235
+        },
+        {
+          "caller": "FreeAlquimiaProperties",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 236
+        },
+        {
+          "caller": "FreeAlquimiaProperties",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 237
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "AllocateAlquimiaVectorString",
+          "lineNumber": 250
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "ALQUIMIA_ASSERT",
+          "lineNumber": 251
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "AllocateAlquimiaVectorInt",
+          "lineNumber": 253
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "memset",
+          "lineNumber": 254
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "AllocateAlquimiaVectorString",
+          "lineNumber": 256
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "AllocateAlquimiaVectorString",
+          "lineNumber": 259
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "AllocateAlquimiaVectorString",
+          "lineNumber": 262
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "AllocateAlquimiaVectorString",
+          "lineNumber": 265
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "AllocateAlquimiaVectorString",
+          "lineNumber": 268
+        },
+        {
+          "caller": "AllocateAlquimiaProblemMetaData",
+          "callee": "AllocateAlquimiaVectorString",
+          "lineNumber": 271
+        },
+        {
+          "caller": "FreeAlquimiaProblemMetaData",
+          "callee": "FreeAlquimiaVectorString",
+          "lineNumber": 279
+        },
+        {
+          "caller": "FreeAlquimiaProblemMetaData",
+          "callee": "FreeAlquimiaVectorInt",
+          "lineNumber": 280
+        },
+        {
+          "caller": "FreeAlquimiaProblemMetaData",
+          "callee": "FreeAlquimiaVectorString",
+          "lineNumber": 281
+        },
+        {
+          "caller": "FreeAlquimiaProblemMetaData",
+          "callee": "FreeAlquimiaVectorString",
+          "lineNumber": 282
+        },
+        {
+          "caller": "FreeAlquimiaProblemMetaData",
+          "callee": "FreeAlquimiaVectorString",
+          "lineNumber": 283
+        },
+        {
+          "caller": "FreeAlquimiaProblemMetaData",
+          "callee": "FreeAlquimiaVectorString",
+          "lineNumber": 284
+        },
+        {
+          "caller": "FreeAlquimiaProblemMetaData",
+          "callee": "FreeAlquimiaVectorString",
+          "lineNumber": 285
+        },
+        {
+          "caller": "FreeAlquimiaProblemMetaData",
+          "callee": "FreeAlquimiaVectorString",
+          "lineNumber": 286
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryOutputData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 299
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryOutputData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 302
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryOutputData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 305
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryOutputData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 308
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryOutputData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 310
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryOutputData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 313
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryOutputData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 315
+        },
+        {
+          "caller": "AllocateAlquimiaAuxiliaryOutputData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 318
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryOutputData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 325
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryOutputData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 326
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryOutputData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 327
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryOutputData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 328
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryOutputData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 329
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryOutputData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 330
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryOutputData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 331
+        },
+        {
+          "caller": "FreeAlquimiaAuxiliaryOutputData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 332
+        },
+        {
+          "caller": "AllocateAlquimiaEngineStatus",
+          "callee": "calloc",
+          "lineNumber": 344
+        },
+        {
+          "caller": "FreeAlquimiaEngineStatus",
+          "callee": "free",
+          "lineNumber": 352
+        },
+        {
+          "caller": "AllocateAlquimiaGeochemicalConditionVector",
+          "callee": "fprintf",
+          "lineNumber": 370
+        },
+        {
+          "caller": "AllocateAlquimiaGeochemicalConditionVector",
+          "callee": "nearest_power_of_2",
+          "lineNumber": 373
+        },
+        {
+          "caller": "AllocateAlquimiaGeochemicalConditionVector",
+          "callee": "calloc",
+          "lineNumber": 377
+        },
+        {
+          "caller": "AllocateAlquimiaGeochemicalCondition",
+          "callee": "calloc",
+          "lineNumber": 390
+        },
+        {
+          "caller": "AllocateAlquimiaGeochemicalCondition",
+          "callee": "AllocateAlquimiaAqueousConstraintVector",
+          "lineNumber": 391
+        },
+        {
+          "caller": "AllocateAlquimiaGeochemicalCondition",
+          "callee": "AllocateAlquimiaMineralConstraintVector",
+          "lineNumber": 392
+        },
+        {
+          "caller": "AllocateAlquimiaAqueousConstraint",
+          "callee": "calloc",
+          "lineNumber": 398
+        },
+        {
+          "caller": "AllocateAlquimiaAqueousConstraint",
+          "callee": "calloc",
+          "lineNumber": 400
+        },
+        {
+          "caller": "AllocateAlquimiaAqueousConstraint",
+          "callee": "calloc",
+          "lineNumber": 402
+        },
+        {
+          "caller": "AllocateAlquimiaAqueousConstraintVector",
+          "callee": "nearest_power_of_2",
+          "lineNumber": 409
+        },
+        {
+          "caller": "AllocateAlquimiaAqueousConstraintVector",
+          "callee": "calloc",
+          "lineNumber": 412
+        },
+        {
+          "caller": "AllocateAlquimiaMineralConstraint",
+          "callee": "calloc",
+          "lineNumber": 421
+        },
+        {
+          "caller": "AllocateAlquimiaMineralConstraintVector",
+          "callee": "nearest_power_of_2",
+          "lineNumber": 429
+        },
+        {
+          "caller": "AllocateAlquimiaMineralConstraintVector",
+          "callee": "calloc",
+          "lineNumber": 432
+        },
+        {
+          "caller": "FreeAlquimiaGeochemicalConditionVector",
+          "callee": "FreeAlquimiaGeochemicalCondition",
+          "lineNumber": 443
+        },
+        {
+          "caller": "FreeAlquimiaGeochemicalConditionVector",
+          "callee": "free",
+          "lineNumber": 446
+        },
+        {
+          "caller": "FreeAlquimiaGeochemicalCondition",
+          "callee": "free",
+          "lineNumber": 457
+        },
+        {
+          "caller": "FreeAlquimiaGeochemicalCondition",
+          "callee": "FreeAlquimiaAqueousConstraintVector",
+          "lineNumber": 460
+        },
+        {
+          "caller": "FreeAlquimiaGeochemicalCondition",
+          "callee": "FreeAlquimiaMineralConstraintVector",
+          "lineNumber": 461
+        },
+        {
+          "caller": "FreeAlquimiaAqueousConstraintVector",
+          "callee": "FreeAlquimiaAqueousConstraint",
+          "lineNumber": 469
+        },
+        {
+          "caller": "FreeAlquimiaAqueousConstraintVector",
+          "callee": "free",
+          "lineNumber": 472
+        },
+        {
+          "caller": "FreeAlquimiaAqueousConstraint",
+          "callee": "free",
+          "lineNumber": 481
+        },
+        {
+          "caller": "FreeAlquimiaAqueousConstraint",
+          "callee": "free",
+          "lineNumber": 483
+        },
+        {
+          "caller": "FreeAlquimiaAqueousConstraint",
+          "callee": "free",
+          "lineNumber": 485
+        },
+        {
+          "caller": "FreeAlquimiaMineralConstraintVector",
+          "callee": "FreeAlquimiaMineralConstraint",
+          "lineNumber": 493
+        },
+        {
+          "caller": "FreeAlquimiaMineralConstraintVector",
+          "callee": "free",
+          "lineNumber": 495
+        },
+        {
+          "caller": "FreeAlquimiaMineralConstraint",
+          "callee": "free",
+          "lineNumber": 503
+        },
+        {
+          "caller": "AllocateAlquimiaData",
+          "callee": "AllocateAlquimiaState",
+          "lineNumber": 514
+        },
+        {
+          "caller": "AllocateAlquimiaData",
+          "callee": "AllocateAlquimiaProperties",
+          "lineNumber": 515
+        },
+        {
+          "caller": "AllocateAlquimiaData",
+          "callee": "AllocateAlquimiaAuxiliaryData",
+          "lineNumber": 516
+        },
+        {
+          "caller": "AllocateAlquimiaData",
+          "callee": "AllocateAlquimiaProblemMetaData",
+          "lineNumber": 517
+        },
+        {
+          "caller": "AllocateAlquimiaData",
+          "callee": "AllocateAlquimiaAuxiliaryOutputData",
+          "lineNumber": 518
+        },
+        {
+          "caller": "FreeAlquimiaData",
+          "callee": "FreeAlquimiaState",
+          "lineNumber": 523
+        },
+        {
+          "caller": "FreeAlquimiaData",
+          "callee": "FreeAlquimiaProperties",
+          "lineNumber": 524
+        },
+        {
+          "caller": "FreeAlquimiaData",
+          "callee": "FreeAlquimiaAuxiliaryData",
+          "lineNumber": 525
+        },
+        {
+          "caller": "FreeAlquimiaData",
+          "callee": "FreeAlquimiaProblemMetaData",
+          "lineNumber": 526
+        },
+        {
+          "caller": "FreeAlquimiaData",
+          "callee": "FreeAlquimiaAuxiliaryOutputData",
+          "lineNumber": 527
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 32,
+        "functionCount": 33,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/alquimia_util.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 529,
+      "nonEmptyLines": 475,
+      "functions": [
+        {
+          "name": "AlquimiaCaseInsensitiveStringCompare",
+          "startLine": 55,
+          "endLine": 70,
+          "params": [
+            "str1",
+            "str2"
+          ]
+        },
+        {
+          "name": "AlquimiaFindIndexFromName",
+          "startLine": 77,
+          "endLine": 88,
+          "params": [
+            "name",
+            "names",
+            "index"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaVectorDouble",
+          "startLine": 96,
+          "endLine": 101,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaVectorInt",
+          "startLine": 103,
+          "endLine": 108,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaVectorString",
+          "startLine": 110,
+          "endLine": 116,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaSizes",
+          "startLine": 118,
+          "endLine": 122,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaProblemMetaData",
+          "startLine": 124,
+          "endLine": 135,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaProperties",
+          "startLine": 137,
+          "endLine": 147,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaEngineFunctionality",
+          "startLine": 149,
+          "endLine": 153,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaState",
+          "startLine": 155,
+          "endLine": 169,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaAuxiliaryData",
+          "startLine": 171,
+          "endLine": 176,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaAuxiliaryOutputData",
+          "startLine": 178,
+          "endLine": 190,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaGeochemicalCondition",
+          "startLine": 192,
+          "endLine": 200,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaGeochemicalConditionVector",
+          "startLine": 202,
+          "endLine": 208,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaAqueousConstraint",
+          "startLine": 210,
+          "endLine": 223,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaAqueousConstraintVector",
+          "startLine": 225,
+          "endLine": 231,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaMineralConstraint",
+          "startLine": 233,
+          "endLine": 241,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "CopyAlquimiaMineralConstraintVector",
+          "startLine": 243,
+          "endLine": 249,
+          "params": [
+            "source",
+            "destination"
+          ]
+        },
+        {
+          "name": "ResizeAlquimiaVectorDouble",
+          "startLine": 256,
+          "endLine": 267,
+          "params": [
+            "vec",
+            "new_size"
+          ]
+        },
+        {
+          "name": "ResizeAlquimiaVectorInt",
+          "startLine": 269,
+          "endLine": 280,
+          "params": [
+            "vec",
+            "new_size"
+          ]
+        },
+        {
+          "name": "ResizeAlquimiaVectorString",
+          "startLine": 282,
+          "endLine": 293,
+          "params": [
+            "vec",
+            "new_size"
+          ]
+        },
+        {
+          "name": "ResizeAlquimiaGeochemicalConditionVector",
+          "startLine": 295,
+          "endLine": 306,
+          "params": [
+            "vec",
+            "new_size"
+          ]
+        },
+        {
+          "name": "ResizeAlquimiaAqueousConstraintVector",
+          "startLine": 308,
+          "endLine": 319,
+          "params": [
+            "vec",
+            "new_size"
+          ]
+        },
+        {
+          "name": "ResizeAlquimiaMineralConstraintVector",
+          "startLine": 321,
+          "endLine": 332,
+          "params": [
+            "vec",
+            "new_size"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaVectorDouble",
+          "startLine": 339,
+          "endLine": 349,
+          "params": [
+            "name",
+            "vector",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaVectorInt",
+          "startLine": 351,
+          "endLine": 361,
+          "params": [
+            "name",
+            "vector",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaVectorString",
+          "startLine": 363,
+          "endLine": 373,
+          "params": [
+            "name",
+            "vector",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaData",
+          "startLine": 381,
+          "endLine": 392,
+          "params": [
+            "data",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaSizes",
+          "startLine": 394,
+          "endLine": 406,
+          "params": [
+            "sizes",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaEngineFunctionality",
+          "startLine": 408,
+          "endLine": 418,
+          "params": [
+            "functionality",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaProblemMetaData",
+          "startLine": 420,
+          "endLine": 431,
+          "params": [
+            "meta_data",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaProperties",
+          "startLine": 433,
+          "endLine": 443,
+          "params": [
+            "mat_prop",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaState",
+          "startLine": 445,
+          "endLine": 464,
+          "params": [
+            "state",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaAuxiliaryData",
+          "startLine": 466,
+          "endLine": 471,
+          "params": [
+            "aux_data",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaAuxiliaryOutputData",
+          "startLine": 473,
+          "endLine": 492,
+          "params": [
+            "aux_output",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaGeochemicalConditionVector",
+          "startLine": 494,
+          "endLine": 502,
+          "params": [
+            "condition_list",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaGeochemicalCondition",
+          "startLine": 504,
+          "endLine": 514,
+          "params": [
+            "condition",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaAqueousConstraint",
+          "startLine": 516,
+          "endLine": 522,
+          "params": [
+            "constraint",
+            "file"
+          ]
+        },
+        {
+          "name": "PrintAlquimiaMineralConstraint",
+          "startLine": 524,
+          "endLine": 529,
+          "params": [
+            "constraint",
+            "file"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AlquimiaCaseInsensitiveStringCompare",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "AlquimiaFindIndexFromName",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaVectorDouble",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaVectorInt",
+          "line": 103,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaVectorString",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaSizes",
+          "line": 118,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaProblemMetaData",
+          "line": 124,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaProperties",
+          "line": 137,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaEngineFunctionality",
+          "line": 149,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaState",
+          "line": 155,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaAuxiliaryData",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaAuxiliaryOutputData",
+          "line": 178,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaGeochemicalCondition",
+          "line": 192,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaGeochemicalConditionVector",
+          "line": 202,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaAqueousConstraint",
+          "line": 210,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaAqueousConstraintVector",
+          "line": 225,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaMineralConstraint",
+          "line": 233,
+          "isDefault": false
+        },
+        {
+          "name": "CopyAlquimiaMineralConstraintVector",
+          "line": 243,
+          "isDefault": false
+        },
+        {
+          "name": "ResizeAlquimiaVectorDouble",
+          "line": 256,
+          "isDefault": false
+        },
+        {
+          "name": "ResizeAlquimiaVectorInt",
+          "line": 269,
+          "isDefault": false
+        },
+        {
+          "name": "ResizeAlquimiaVectorString",
+          "line": 282,
+          "isDefault": false
+        },
+        {
+          "name": "ResizeAlquimiaGeochemicalConditionVector",
+          "line": 295,
+          "isDefault": false
+        },
+        {
+          "name": "ResizeAlquimiaAqueousConstraintVector",
+          "line": 308,
+          "isDefault": false
+        },
+        {
+          "name": "ResizeAlquimiaMineralConstraintVector",
+          "line": 321,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaVectorDouble",
+          "line": 339,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaVectorInt",
+          "line": 351,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaVectorString",
+          "line": 363,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaData",
+          "line": 381,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaSizes",
+          "line": 394,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaEngineFunctionality",
+          "line": 408,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaProblemMetaData",
+          "line": 420,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaProperties",
+          "line": 433,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaState",
+          "line": 445,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaAuxiliaryData",
+          "line": 466,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaAuxiliaryOutputData",
+          "line": 473,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaGeochemicalConditionVector",
+          "line": 494,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaGeochemicalCondition",
+          "line": 504,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaAqueousConstraint",
+          "line": 516,
+          "isDefault": false
+        },
+        {
+          "name": "PrintAlquimiaMineralConstraint",
+          "line": 524,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AlquimiaCaseInsensitiveStringCompare",
+          "callee": "strlen",
+          "lineNumber": 59
+        },
+        {
+          "caller": "AlquimiaCaseInsensitiveStringCompare",
+          "callee": "strlen",
+          "lineNumber": 59
+        },
+        {
+          "caller": "AlquimiaCaseInsensitiveStringCompare",
+          "callee": "strlen",
+          "lineNumber": 62
+        },
+        {
+          "caller": "AlquimiaCaseInsensitiveStringCompare",
+          "callee": "tolower",
+          "lineNumber": 63
+        },
+        {
+          "caller": "AlquimiaCaseInsensitiveStringCompare",
+          "callee": "tolower",
+          "lineNumber": 63
+        },
+        {
+          "caller": "AlquimiaFindIndexFromName",
+          "callee": "strncmp",
+          "lineNumber": 83
+        },
+        {
+          "caller": "CopyAlquimiaVectorDouble",
+          "callee": "ResizeAlquimiaVectorDouble",
+          "lineNumber": 99
+        },
+        {
+          "caller": "CopyAlquimiaVectorDouble",
+          "callee": "memcpy",
+          "lineNumber": 100
+        },
+        {
+          "caller": "CopyAlquimiaVectorInt",
+          "callee": "ResizeAlquimiaVectorInt",
+          "lineNumber": 106
+        },
+        {
+          "caller": "CopyAlquimiaVectorInt",
+          "callee": "memcpy",
+          "lineNumber": 107
+        },
+        {
+          "caller": "CopyAlquimiaVectorString",
+          "callee": "ResizeAlquimiaVectorString",
+          "lineNumber": 113
+        },
+        {
+          "caller": "CopyAlquimiaVectorString",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 115
+        },
+        {
+          "caller": "CopyAlquimiaSizes",
+          "callee": "memcpy",
+          "lineNumber": 121
+        },
+        {
+          "caller": "CopyAlquimiaProblemMetaData",
+          "callee": "CopyAlquimiaVectorString",
+          "lineNumber": 127
+        },
+        {
+          "caller": "CopyAlquimiaProblemMetaData",
+          "callee": "CopyAlquimiaVectorInt",
+          "lineNumber": 128
+        },
+        {
+          "caller": "CopyAlquimiaProblemMetaData",
+          "callee": "CopyAlquimiaVectorString",
+          "lineNumber": 129
+        },
+        {
+          "caller": "CopyAlquimiaProblemMetaData",
+          "callee": "CopyAlquimiaVectorString",
+          "lineNumber": 130
+        },
+        {
+          "caller": "CopyAlquimiaProblemMetaData",
+          "callee": "CopyAlquimiaVectorString",
+          "lineNumber": 131
+        },
+        {
+          "caller": "CopyAlquimiaProblemMetaData",
+          "callee": "CopyAlquimiaVectorString",
+          "lineNumber": 132
+        },
+        {
+          "caller": "CopyAlquimiaProblemMetaData",
+          "callee": "CopyAlquimiaVectorString",
+          "lineNumber": 133
+        },
+        {
+          "caller": "CopyAlquimiaProblemMetaData",
+          "callee": "CopyAlquimiaVectorString",
+          "lineNumber": 134
+        },
+        {
+          "caller": "CopyAlquimiaProperties",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 142
+        },
+        {
+          "caller": "CopyAlquimiaProperties",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 143
+        },
+        {
+          "caller": "CopyAlquimiaProperties",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 144
+        },
+        {
+          "caller": "CopyAlquimiaProperties",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 145
+        },
+        {
+          "caller": "CopyAlquimiaProperties",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 146
+        },
+        {
+          "caller": "CopyAlquimiaEngineFunctionality",
+          "callee": "memcpy",
+          "lineNumber": 152
+        },
+        {
+          "caller": "CopyAlquimiaState",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 162
+        },
+        {
+          "caller": "CopyAlquimiaState",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 163
+        },
+        {
+          "caller": "CopyAlquimiaState",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 164
+        },
+        {
+          "caller": "CopyAlquimiaState",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 165
+        },
+        {
+          "caller": "CopyAlquimiaState",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 166
+        },
+        {
+          "caller": "CopyAlquimiaState",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 167
+        },
+        {
+          "caller": "CopyAlquimiaState",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 168
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryData",
+          "callee": "CopyAlquimiaVectorInt",
+          "lineNumber": 174
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryData",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 175
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryOutputData",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 182
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryOutputData",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 183
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryOutputData",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 184
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryOutputData",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 185
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryOutputData",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 186
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryOutputData",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 187
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryOutputData",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 188
+        },
+        {
+          "caller": "CopyAlquimiaAuxiliaryOutputData",
+          "callee": "CopyAlquimiaVectorDouble",
+          "lineNumber": 189
+        },
+        {
+          "caller": "CopyAlquimiaGeochemicalCondition",
+          "callee": "free",
+          "lineNumber": 196
+        },
+        {
+          "caller": "CopyAlquimiaGeochemicalCondition",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 197
+        },
+        {
+          "caller": "CopyAlquimiaGeochemicalCondition",
+          "callee": "CopyAlquimiaAqueousConstraintVector",
+          "lineNumber": 198
+        },
+        {
+          "caller": "CopyAlquimiaGeochemicalCondition",
+          "callee": "CopyAlquimiaMineralConstraintVector",
+          "lineNumber": 199
+        },
+        {
+          "caller": "CopyAlquimiaGeochemicalConditionVector",
+          "callee": "ResizeAlquimiaGeochemicalConditionVector",
+          "lineNumber": 205
+        },
+        {
+          "caller": "CopyAlquimiaGeochemicalConditionVector",
+          "callee": "CopyAlquimiaGeochemicalCondition",
+          "lineNumber": 207
+        },
+        {
+          "caller": "CopyAlquimiaAqueousConstraint",
+          "callee": "free",
+          "lineNumber": 214
+        },
+        {
+          "caller": "CopyAlquimiaAqueousConstraint",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 215
+        },
+        {
+          "caller": "CopyAlquimiaAqueousConstraint",
+          "callee": "free",
+          "lineNumber": 217
+        },
+        {
+          "caller": "CopyAlquimiaAqueousConstraint",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 218
+        },
+        {
+          "caller": "CopyAlquimiaAqueousConstraint",
+          "callee": "free",
+          "lineNumber": 220
+        },
+        {
+          "caller": "CopyAlquimiaAqueousConstraint",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 221
+        },
+        {
+          "caller": "CopyAlquimiaAqueousConstraintVector",
+          "callee": "ResizeAlquimiaAqueousConstraintVector",
+          "lineNumber": 228
+        },
+        {
+          "caller": "CopyAlquimiaAqueousConstraintVector",
+          "callee": "CopyAlquimiaAqueousConstraint",
+          "lineNumber": 230
+        },
+        {
+          "caller": "CopyAlquimiaMineralConstraint",
+          "callee": "free",
+          "lineNumber": 237
+        },
+        {
+          "caller": "CopyAlquimiaMineralConstraint",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 238
+        },
+        {
+          "caller": "CopyAlquimiaMineralConstraintVector",
+          "callee": "ResizeAlquimiaMineralConstraintVector",
+          "lineNumber": 246
+        },
+        {
+          "caller": "CopyAlquimiaMineralConstraintVector",
+          "callee": "CopyAlquimiaMineralConstraint",
+          "lineNumber": 248
+        },
+        {
+          "caller": "ResizeAlquimiaVectorDouble",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 259
+        },
+        {
+          "caller": "ResizeAlquimiaVectorDouble",
+          "callee": "realloc",
+          "lineNumber": 264
+        },
+        {
+          "caller": "ResizeAlquimiaVectorInt",
+          "callee": "AllocateAlquimiaVectorInt",
+          "lineNumber": 272
+        },
+        {
+          "caller": "ResizeAlquimiaVectorInt",
+          "callee": "realloc",
+          "lineNumber": 277
+        },
+        {
+          "caller": "ResizeAlquimiaVectorString",
+          "callee": "AllocateAlquimiaVectorString",
+          "lineNumber": 285
+        },
+        {
+          "caller": "ResizeAlquimiaVectorString",
+          "callee": "realloc",
+          "lineNumber": 290
+        },
+        {
+          "caller": "ResizeAlquimiaGeochemicalConditionVector",
+          "callee": "AllocateAlquimiaGeochemicalConditionVector",
+          "lineNumber": 298
+        },
+        {
+          "caller": "ResizeAlquimiaGeochemicalConditionVector",
+          "callee": "realloc",
+          "lineNumber": 303
+        },
+        {
+          "caller": "ResizeAlquimiaAqueousConstraintVector",
+          "callee": "AllocateAlquimiaAqueousConstraintVector",
+          "lineNumber": 311
+        },
+        {
+          "caller": "ResizeAlquimiaAqueousConstraintVector",
+          "callee": "realloc",
+          "lineNumber": 316
+        },
+        {
+          "caller": "ResizeAlquimiaMineralConstraintVector",
+          "callee": "AllocateAlquimiaMineralConstraintVector",
+          "lineNumber": 324
+        },
+        {
+          "caller": "ResizeAlquimiaMineralConstraintVector",
+          "callee": "realloc",
+          "lineNumber": 329
+        },
+        {
+          "caller": "PrintAlquimiaVectorDouble",
+          "callee": "fprintf",
+          "lineNumber": 343
+        },
+        {
+          "caller": "PrintAlquimiaVectorDouble",
+          "callee": "fprintf",
+          "lineNumber": 344
+        },
+        {
+          "caller": "PrintAlquimiaVectorDouble",
+          "callee": "fprintf",
+          "lineNumber": 346
+        },
+        {
+          "caller": "PrintAlquimiaVectorDouble",
+          "callee": "fprintf",
+          "lineNumber": 348
+        },
+        {
+          "caller": "PrintAlquimiaVectorInt",
+          "callee": "fprintf",
+          "lineNumber": 355
+        },
+        {
+          "caller": "PrintAlquimiaVectorInt",
+          "callee": "fprintf",
+          "lineNumber": 356
+        },
+        {
+          "caller": "PrintAlquimiaVectorInt",
+          "callee": "fprintf",
+          "lineNumber": 358
+        },
+        {
+          "caller": "PrintAlquimiaVectorInt",
+          "callee": "fprintf",
+          "lineNumber": 360
+        },
+        {
+          "caller": "PrintAlquimiaVectorString",
+          "callee": "fprintf",
+          "lineNumber": 367
+        },
+        {
+          "caller": "PrintAlquimiaVectorString",
+          "callee": "fprintf",
+          "lineNumber": 368
+        },
+        {
+          "caller": "PrintAlquimiaVectorString",
+          "callee": "fprintf",
+          "lineNumber": 370
+        },
+        {
+          "caller": "PrintAlquimiaVectorString",
+          "callee": "fprintf",
+          "lineNumber": 372
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "fprintf",
+          "lineNumber": 382
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "fprintf",
+          "lineNumber": 383
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "PrintAlquimiaSizes",
+          "lineNumber": 384
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "PrintAlquimiaEngineFunctionality",
+          "lineNumber": 385
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "PrintAlquimiaState",
+          "lineNumber": 386
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "PrintAlquimiaProperties",
+          "lineNumber": 387
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "PrintAlquimiaAuxiliaryData",
+          "lineNumber": 388
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "PrintAlquimiaProblemMetaData",
+          "lineNumber": 389
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "PrintAlquimiaAuxiliaryOutputData",
+          "lineNumber": 390
+        },
+        {
+          "caller": "PrintAlquimiaData",
+          "callee": "fprintf",
+          "lineNumber": 391
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 395
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 396
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 397
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 398
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 399
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 400
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 401
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 402
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 403
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 404
+        },
+        {
+          "caller": "PrintAlquimiaSizes",
+          "callee": "fprintf",
+          "lineNumber": 405
+        },
+        {
+          "caller": "PrintAlquimiaEngineFunctionality",
+          "callee": "fprintf",
+          "lineNumber": 410
+        },
+        {
+          "caller": "PrintAlquimiaEngineFunctionality",
+          "callee": "fprintf",
+          "lineNumber": 411
+        },
+        {
+          "caller": "PrintAlquimiaEngineFunctionality",
+          "callee": "fprintf",
+          "lineNumber": 412
+        },
+        {
+          "caller": "PrintAlquimiaEngineFunctionality",
+          "callee": "fprintf",
+          "lineNumber": 414
+        },
+        {
+          "caller": "PrintAlquimiaEngineFunctionality",
+          "callee": "fprintf",
+          "lineNumber": 416
+        },
+        {
+          "caller": "PrintAlquimiaEngineFunctionality",
+          "callee": "fprintf",
+          "lineNumber": 417
+        },
+        {
+          "caller": "PrintAlquimiaProblemMetaData",
+          "callee": "fprintf",
+          "lineNumber": 422
+        },
+        {
+          "caller": "PrintAlquimiaProblemMetaData",
+          "callee": "PrintAlquimiaVectorString",
+          "lineNumber": 423
+        },
+        {
+          "caller": "PrintAlquimiaProblemMetaData",
+          "callee": "PrintAlquimiaVectorInt",
+          "lineNumber": 424
+        },
+        {
+          "caller": "PrintAlquimiaProblemMetaData",
+          "callee": "PrintAlquimiaVectorString",
+          "lineNumber": 425
+        },
+        {
+          "caller": "PrintAlquimiaProblemMetaData",
+          "callee": "PrintAlquimiaVectorString",
+          "lineNumber": 426
+        },
+        {
+          "caller": "PrintAlquimiaProblemMetaData",
+          "callee": "PrintAlquimiaVectorString",
+          "lineNumber": 427
+        },
+        {
+          "caller": "PrintAlquimiaProblemMetaData",
+          "callee": "PrintAlquimiaVectorString",
+          "lineNumber": 428
+        },
+        {
+          "caller": "PrintAlquimiaProblemMetaData",
+          "callee": "PrintAlquimiaVectorString",
+          "lineNumber": 429
+        },
+        {
+          "caller": "PrintAlquimiaProblemMetaData",
+          "callee": "PrintAlquimiaVectorString",
+          "lineNumber": 430
+        },
+        {
+          "caller": "PrintAlquimiaProperties",
+          "callee": "fprintf",
+          "lineNumber": 435
+        },
+        {
+          "caller": "PrintAlquimiaProperties",
+          "callee": "fprintf",
+          "lineNumber": 436
+        },
+        {
+          "caller": "PrintAlquimiaProperties",
+          "callee": "fprintf",
+          "lineNumber": 437
+        },
+        {
+          "caller": "PrintAlquimiaProperties",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 438
+        },
+        {
+          "caller": "PrintAlquimiaProperties",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 439
+        },
+        {
+          "caller": "PrintAlquimiaProperties",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 440
+        },
+        {
+          "caller": "PrintAlquimiaProperties",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 441
+        },
+        {
+          "caller": "PrintAlquimiaProperties",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 442
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "fprintf",
+          "lineNumber": 447
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "fprintf",
+          "lineNumber": 448
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "fprintf",
+          "lineNumber": 449
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "fprintf",
+          "lineNumber": 450
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "fprintf",
+          "lineNumber": 451
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 453
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 454
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 455
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 457
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 459
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 461
+        },
+        {
+          "caller": "PrintAlquimiaState",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 463
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryData",
+          "callee": "fprintf",
+          "lineNumber": 468
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryData",
+          "callee": "PrintAlquimiaVectorInt",
+          "lineNumber": 469
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryData",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 470
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryOutputData",
+          "callee": "fprintf",
+          "lineNumber": 475
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryOutputData",
+          "callee": "fprintf",
+          "lineNumber": 476
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryOutputData",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 478
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryOutputData",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 480
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryOutputData",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 482
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryOutputData",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 484
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryOutputData",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 486
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryOutputData",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 488
+        },
+        {
+          "caller": "PrintAlquimiaAuxiliaryOutputData",
+          "callee": "PrintAlquimiaVectorDouble",
+          "lineNumber": 490
+        },
+        {
+          "caller": "PrintAlquimiaGeochemicalConditionVector",
+          "callee": "fprintf",
+          "lineNumber": 496
+        },
+        {
+          "caller": "PrintAlquimiaGeochemicalConditionVector",
+          "callee": "PrintAlquimiaGeochemicalCondition",
+          "lineNumber": 498
+        },
+        {
+          "caller": "PrintAlquimiaGeochemicalConditionVector",
+          "callee": "fprintf",
+          "lineNumber": 499
+        },
+        {
+          "caller": "PrintAlquimiaGeochemicalConditionVector",
+          "callee": "fprintf",
+          "lineNumber": 501
+        },
+        {
+          "caller": "PrintAlquimiaGeochemicalCondition",
+          "callee": "fprintf",
+          "lineNumber": 506
+        },
+        {
+          "caller": "PrintAlquimiaGeochemicalCondition",
+          "callee": "PrintAlquimiaAqueousConstraint",
+          "lineNumber": 508
+        },
+        {
+          "caller": "PrintAlquimiaGeochemicalCondition",
+          "callee": "PrintAlquimiaMineralConstraint",
+          "lineNumber": 511
+        },
+        {
+          "caller": "PrintAlquimiaGeochemicalCondition",
+          "callee": "fprintf",
+          "lineNumber": 513
+        },
+        {
+          "caller": "PrintAlquimiaAqueousConstraint",
+          "callee": "fprintf",
+          "lineNumber": 517
+        },
+        {
+          "caller": "PrintAlquimiaAqueousConstraint",
+          "callee": "fprintf",
+          "lineNumber": 518
+        },
+        {
+          "caller": "PrintAlquimiaAqueousConstraint",
+          "callee": "fprintf",
+          "lineNumber": 519
+        },
+        {
+          "caller": "PrintAlquimiaAqueousConstraint",
+          "callee": "fprintf",
+          "lineNumber": 520
+        },
+        {
+          "caller": "PrintAlquimiaAqueousConstraint",
+          "callee": "fprintf",
+          "lineNumber": 521
+        },
+        {
+          "caller": "PrintAlquimiaMineralConstraint",
+          "callee": "fprintf",
+          "lineNumber": 525
+        },
+        {
+          "caller": "PrintAlquimiaMineralConstraint",
+          "callee": "fprintf",
+          "lineNumber": 526
+        },
+        {
+          "caller": "PrintAlquimiaMineralConstraint",
+          "callee": "fprintf",
+          "lineNumber": 527
+        },
+        {
+          "caller": "PrintAlquimiaMineralConstraint",
+          "callee": "fprintf",
+          "lineNumber": 528
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 39,
+        "functionCount": 39,
+        "classCount": 0
+      }
+    }
+  ]
+}

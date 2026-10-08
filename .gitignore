@@ -18,3 +18,7 @@ build/
 *.out.alquimia
 *crunch.txt
 *pflotran.txt
+models/onnx_data.csv
+models/onnx_model_input_feature.txt
+*lsurf*
+LSURF*

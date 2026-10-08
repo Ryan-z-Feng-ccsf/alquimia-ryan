@@ -1,0 +1,29 @@
+{
+  "projectRoot": "/home/zfeng3/alquimia-ryan",
+  "batchFiles": [
+    {"path":"alquimia/alquimia_constants.c","language":"c","sizeLines":57,"fileCategory":"code"},
+    {"path":"alquimia/alquimia_constants.h","language":"c","sizeLines":65,"fileCategory":"code"},
+    {"path":"alquimia/alquimia_containers.h","language":"c","sizeLines":194,"fileCategory":"code"},
+    {"path":"alquimia/alquimia_interface.h","language":"c","sizeLines":124,"fileCategory":"code"},
+    {"path":"alquimia/alquimia_memory.c","language":"c","sizeLines":528,"fileCategory":"code"},
+    {"path":"alquimia/alquimia_util.c","language":"c","sizeLines":529,"fileCategory":"code"}
+  ],
+  "batchImportData": {
+    "alquimia/alquimia_constants.c": ["alquimia/alquimia_constants.h"],
+    "alquimia/alquimia_constants.h": [],
+    "alquimia/alquimia_containers.h": [],
+    "alquimia/alquimia_interface.h": [],
+    "alquimia/alquimia_memory.c": [
+      "alquimia/alquimia_constants.h",
+      "alquimia/alquimia_containers.h",
+      "alquimia/alquimia_interface.h",
+      "alquimia/alquimia_memory.h"
+    ],
+    "alquimia/alquimia_util.c": [
+      "alquimia/alquimia_constants.h",
+      "alquimia/alquimia_interface.h",
+      "alquimia/alquimia_memory.h",
+      "alquimia/alquimia_util.h"
+    ]
+  }
+}

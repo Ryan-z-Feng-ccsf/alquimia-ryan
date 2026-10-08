@@ -1,0 +1,122 @@
+{
+  "scriptCompleted": true,
+  "stats": {
+    "filesScanned": 51,
+    "filesWithImports": 14,
+    "totalEdges": 47
+  },
+  "importMap": {
+    "alquimia/CMakeLists.txt": [],
+    "alquimia/alquimia.c": [],
+    "alquimia/alquimia.h.in": [],
+    "alquimia/alquimia_constants.c": [
+      "alquimia/alquimia_constants.h"
+    ],
+    "alquimia/alquimia_constants.h": [],
+    "alquimia/alquimia_containers.F90": [],
+    "alquimia/alquimia_containers.h": [],
+    "alquimia/alquimia_fortran_interface_mod.F90": [],
+    "alquimia/alquimia_interface.c": [
+      "alquimia/alquimia_constants.h",
+      "alquimia/alquimia_interface.h",
+      "alquimia/alquimia_util.h",
+      "alquimia/crunch_alquimia_interface.h",
+      "alquimia/onnx_alquimia_interface.h",
+      "alquimia/pflotran_alquimia_interface.h"
+    ],
+    "alquimia/alquimia_interface.h": [],
+    "alquimia/alquimia_memory.c": [
+      "alquimia/alquimia_constants.h",
+      "alquimia/alquimia_containers.h",
+      "alquimia/alquimia_interface.h",
+      "alquimia/alquimia_memory.h"
+    ],
+    "alquimia/alquimia_memory.h": [],
+    "alquimia/alquimia_util.c": [
+      "alquimia/alquimia_constants.h",
+      "alquimia/alquimia_interface.h",
+      "alquimia/alquimia_memory.h",
+      "alquimia/alquimia_util.h"
+    ],
+    "alquimia/alquimia_util.h": [],
+    "alquimia/c_f_interface_module.F90": [],
+    "alquimia/crunch_alquimia_interface.F90": [],
+    "alquimia/crunch_alquimia_interface.h": [],
+    "alquimia/crunch_alquimia_wrappers.F90": [],
+    "alquimia/mixed/Makefile": [],
+    "alquimia/mixed/README": [],
+    "alquimia/mixed/cc-f90-strings.F90": [],
+    "alquimia/mixed/cc-f90-strings.cc": [
+      "alquimia/mixed/cc-f90-strings.h"
+    ],
+    "alquimia/mixed/cc-f90-strings.h": [],
+    "alquimia/mixed/struct-array-pointer.F90": [],
+    "alquimia/mixed/struct-array-pointer.cc": [],
+    "alquimia/mixed/struct-derived.F90": [],
+    "alquimia/mixed/struct-derived.cc": [],
+    "alquimia/onnx_alquimia_config.c": [
+      "alquimia/onnx_alquimia_config.h"
+    ],
+    "alquimia/onnx_alquimia_config.h": [],
+    "alquimia/onnx_alquimia_interface.c": [
+      "alquimia/alquimia_constants.h",
+      "alquimia/alquimia_util.h",
+      "alquimia/onnx_alquimia_config.h",
+      "alquimia/onnx_alquimia_interface.h"
+    ],
+    "alquimia/onnx_alquimia_interface.h": [],
+    "alquimia/pflotran_alquimia_interface.F90": [],
+    "alquimia/pflotran_alquimia_interface.h": [],
+    "alquimia/pflotran_alquimia_wrappers.F90": [],
+    "alquimia/pflotran_petsc_stubs.F90": [],
+    "drivers/BatchChemDriver.c": [
+      "alquimia/alquimia_interface.h",
+      "alquimia/alquimia_memory.h",
+      "alquimia/alquimia_util.h",
+      "drivers/BatchChemDriver.h",
+      "drivers/ini.h"
+    ],
+    "drivers/BatchChemDriver.h": [],
+    "drivers/CMakeLists.txt": [],
+    "drivers/DriverOutput.c": [
+      "alquimia/alquimia_memory.h",
+      "drivers/DriverOutput.h"
+    ],
+    "drivers/DriverOutput.h": [],
+    "drivers/LICENSE.inih.txt": [],
+    "drivers/TransportDriver.c": [
+      "alquimia/alquimia_interface.h",
+      "alquimia/alquimia_memory.h",
+      "alquimia/alquimia_util.h",
+      "drivers/TransportDriver.h",
+      "drivers/ini.h"
+    ],
+    "drivers/TransportDriver.h": [],
+    "drivers/batch_chem.c": [
+      "alquimia/alquimia_memory.h",
+      "alquimia/alquimia_util.h",
+      "drivers/BatchChemDriver.h",
+      "drivers/DriverOutput.h"
+    ],
+    "drivers/fpe.c": [],
+    "drivers/fpe.h": [],
+    "drivers/ini.c": [
+      "drivers/ini.h"
+    ],
+    "drivers/ini.h": [],
+    "drivers/input_util.c": [
+      "alquimia/alquimia_constants.h",
+      "alquimia/alquimia_memory.h",
+      "alquimia/alquimia_util.h",
+      "drivers/ini.h",
+      "drivers/input_util.h"
+    ],
+    "drivers/input_util.h": [],
+    "drivers/transport.c": [
+      "alquimia/alquimia_memory.h",
+      "alquimia/alquimia_util.h",
+      "drivers/DriverOutput.h",
+      "drivers/TransportDriver.h"
+    ]
+  }
+}

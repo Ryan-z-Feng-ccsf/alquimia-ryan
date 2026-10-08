@@ -1,0 +1,2350 @@
+{
+  "nodes": [
+    {
+      "id": "file:alquimia/alquimia_interface.h",
+      "type": "file",
+      "name": "alquimia_interface.h",
+      "filePath": "alquimia/alquimia_interface.h",
+      "summary": "Defines the engine-neutral AlquimiaData aggregate and the AlquimiaInterface function-pointer contract for setup, reaction stepping, condition processing, metadata, and auxiliary output.",
+      "tags": [
+        "public-api",
+        "interface",
+        "function-pointers",
+        "engine-adapter"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "A C function-pointer table provides runtime engine polymorphism without exposing engine-specific types to drivers."
+    },
+    {
+      "id": "file:alquimia/alquimia_memory.c",
+      "type": "file",
+      "name": "alquimia_memory.c",
+      "filePath": "alquimia/alquimia_memory.c",
+      "summary": "Implements allocation and release helpers for every dynamically sized Alquimia vector, state, metadata, condition, constraint, and aggregate data structure.",
+      "tags": [
+        "memory-management",
+        "resource-lifecycle",
+        "data-model",
+        "utility"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Vector capacities are rounded to powers of two, and paired Allocate/Free routines centralize ownership of nested C allocations."
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorDouble",
+      "type": "function",
+      "name": "AllocateAlquimiaVectorDouble",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        68,
+        79
+      ],
+      "summary": "Allocates a zero-initialized Alquimia double vector with power-of-two capacity while retaining the requested logical size.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorDouble",
+      "type": "function",
+      "name": "FreeAlquimiaVectorDouble",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        81,
+        88
+      ],
+      "summary": "Releases owned storage held by an Alquimia double vector and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorInt",
+      "type": "function",
+      "name": "AllocateAlquimiaVectorInt",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        90,
+        101
+      ],
+      "summary": "Allocates a zero-initialized Alquimia integer vector with power-of-two capacity while retaining the requested logical size.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorInt",
+      "type": "function",
+      "name": "FreeAlquimiaVectorInt",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        103,
+        110
+      ],
+      "summary": "Releases owned storage held by an Alquimia integer vector and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorString",
+      "type": "function",
+      "name": "AllocateAlquimiaVectorString",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        112,
+        128
+      ],
+      "summary": "Allocates a string vector and fixed-size character buffers for every requested element.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorString",
+      "type": "function",
+      "name": "FreeAlquimiaVectorString",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        130,
+        141
+      ],
+      "summary": "Releases owned storage held by an Alquimia string vector and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaState",
+      "type": "function",
+      "name": "AllocateAlquimiaState",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        149,
+        173
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia state according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaState",
+      "type": "function",
+      "name": "FreeAlquimiaState",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        175,
+        185
+      ],
+      "summary": "Releases owned storage held by an Alquimia state and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryData",
+      "type": "function",
+      "name": "AllocateAlquimiaAuxiliaryData",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        193,
+        201
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia auxiliary data according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryData",
+      "type": "function",
+      "name": "FreeAlquimiaAuxiliaryData",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        203,
+        208
+      ],
+      "summary": "Releases owned storage held by an Alquimia auxiliary data and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProperties",
+      "type": "function",
+      "name": "AllocateAlquimiaProperties",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        216,
+        229
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia properties according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaProperties",
+      "type": "function",
+      "name": "FreeAlquimiaProperties",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        231,
+        239
+      ],
+      "summary": "Releases owned storage held by an Alquimia properties and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProblemMetaData",
+      "type": "function",
+      "name": "AllocateAlquimiaProblemMetaData",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        247,
+        274
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia problem metadata according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaProblemMetaData",
+      "type": "function",
+      "name": "FreeAlquimiaProblemMetaData",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        276,
+        288
+      ],
+      "summary": "Releases owned storage held by an Alquimia problem metadata and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryOutputData",
+      "type": "function",
+      "name": "AllocateAlquimiaAuxiliaryOutputData",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        296,
+        321
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia auxiliary output data according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryOutputData",
+      "type": "function",
+      "name": "FreeAlquimiaAuxiliaryOutputData",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        323,
+        334
+      ],
+      "summary": "Releases owned storage held by an Alquimia auxiliary output data and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaEngineStatus",
+      "type": "function",
+      "name": "AllocateAlquimiaEngineStatus",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        342,
+        348
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia engine status according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaEngineStatus",
+      "type": "function",
+      "name": "FreeAlquimiaEngineStatus",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        350,
+        356
+      ],
+      "summary": "Releases owned storage held by an Alquimia engine status and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalConditionVector",
+      "type": "function",
+      "name": "AllocateAlquimiaGeochemicalConditionVector",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        366,
+        380
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia geochemical-condition vector according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalCondition",
+      "type": "function",
+      "name": "AllocateAlquimiaGeochemicalCondition",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        382,
+        394
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia geochemical condition according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraint",
+      "type": "function",
+      "name": "AllocateAlquimiaAqueousConstraint",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        396,
+        404
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia aqueous constraint according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraintVector",
+      "type": "function",
+      "name": "AllocateAlquimiaAqueousConstraintVector",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        406,
+        417
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia aqueous-constraint vector according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraint",
+      "type": "function",
+      "name": "AllocateAlquimiaMineralConstraint",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        419,
+        424
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia mineral constraint according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraintVector",
+      "type": "function",
+      "name": "AllocateAlquimiaMineralConstraintVector",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        426,
+        437
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia mineral-constraint vector according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalConditionVector",
+      "type": "function",
+      "name": "FreeAlquimiaGeochemicalConditionVector",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        439,
+        452
+      ],
+      "summary": "Releases owned storage held by an Alquimia geochemical-condition vector and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalCondition",
+      "type": "function",
+      "name": "FreeAlquimiaGeochemicalCondition",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        454,
+        463
+      ],
+      "summary": "Releases owned storage held by an Alquimia geochemical condition and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraintVector",
+      "type": "function",
+      "name": "FreeAlquimiaAqueousConstraintVector",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        465,
+        478
+      ],
+      "summary": "Releases owned storage held by an Alquimia aqueous-constraint vector and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraint",
+      "type": "function",
+      "name": "FreeAlquimiaAqueousConstraint",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        480,
+        487
+      ],
+      "summary": "Releases owned storage held by an Alquimia aqueous constraint and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraintVector",
+      "type": "function",
+      "name": "FreeAlquimiaMineralConstraintVector",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        489,
+        500
+      ],
+      "summary": "Releases owned storage held by an Alquimia mineral-constraint vector and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraint",
+      "type": "function",
+      "name": "FreeAlquimiaMineralConstraint",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        502,
+        505
+      ],
+      "summary": "Releases owned storage held by an Alquimia mineral constraint and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:AllocateAlquimiaData",
+      "type": "function",
+      "name": "AllocateAlquimiaData",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        513,
+        519
+      ],
+      "summary": "Allocates and initializes the nested storage required by an Alquimia data aggregate according to the supplied sizes or element count.",
+      "tags": [
+        "memory-management",
+        "allocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_memory.c:FreeAlquimiaData",
+      "type": "function",
+      "name": "FreeAlquimiaData",
+      "filePath": "alquimia/alquimia_memory.c",
+      "lineRange": [
+        522,
+        528
+      ],
+      "summary": "Releases owned storage held by an Alquimia data aggregate and clears its dynamically allocated members.",
+      "tags": [
+        "memory-management",
+        "deallocation",
+        "resource-lifecycle"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:alquimia/alquimia_util.c",
+      "type": "file",
+      "name": "alquimia_util.c",
+      "filePath": "alquimia/alquimia_util.c",
+      "summary": "Provides shared comparison, lookup, deep-copy, resize, and diagnostic printing operations for Alquimia containers and geochemical data structures.",
+      "tags": [
+        "utility",
+        "serialization",
+        "data-model",
+        "diagnostics"
+      ],
+      "complexity": "complex",
+      "languageNotes": "The utility API applies operation families consistently across primitive vectors and nested geochemical container types."
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:AlquimiaCaseInsensitiveStringCompare",
+      "type": "function",
+      "name": "AlquimiaCaseInsensitiveStringCompare",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        55,
+        70
+      ],
+      "summary": "Compares two strings without case sensitivity and returns the ordering result used by name-based lookup operations.",
+      "tags": [
+        "utility",
+        "string-comparison",
+        "lookup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:AlquimiaFindIndexFromName",
+      "type": "function",
+      "name": "AlquimiaFindIndexFromName",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        77,
+        88
+      ],
+      "summary": "Finds a requested name in an Alquimia string vector using case-insensitive comparison and returns its index or a missing-value sentinel.",
+      "tags": [
+        "utility",
+        "name-lookup",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorDouble",
+      "type": "function",
+      "name": "CopyAlquimiaVectorDouble",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        96,
+        101
+      ],
+      "summary": "Copies the values and nested members of an Alquimia double vector into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorInt",
+      "type": "function",
+      "name": "CopyAlquimiaVectorInt",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        103,
+        108
+      ],
+      "summary": "Copies the values and nested members of an Alquimia integer vector into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorString",
+      "type": "function",
+      "name": "CopyAlquimiaVectorString",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        110,
+        116
+      ],
+      "summary": "Copies the values and nested members of an Alquimia string vector into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaSizes",
+      "type": "function",
+      "name": "CopyAlquimiaSizes",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        118,
+        122
+      ],
+      "summary": "Copies the values and nested members of an Alquimia sizes into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaProblemMetaData",
+      "type": "function",
+      "name": "CopyAlquimiaProblemMetaData",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        124,
+        135
+      ],
+      "summary": "Copies the values and nested members of an Alquimia problem metadata into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaProperties",
+      "type": "function",
+      "name": "CopyAlquimiaProperties",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        137,
+        147
+      ],
+      "summary": "Copies the values and nested members of an Alquimia properties into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaEngineFunctionality",
+      "type": "function",
+      "name": "CopyAlquimiaEngineFunctionality",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        149,
+        153
+      ],
+      "summary": "Copies the values and nested members of an Alquimia engine functionality into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaState",
+      "type": "function",
+      "name": "CopyAlquimiaState",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        155,
+        169
+      ],
+      "summary": "Copies the values and nested members of an Alquimia state into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryData",
+      "type": "function",
+      "name": "CopyAlquimiaAuxiliaryData",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        171,
+        176
+      ],
+      "summary": "Copies the values and nested members of an Alquimia auxiliary data into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryOutputData",
+      "type": "function",
+      "name": "CopyAlquimiaAuxiliaryOutputData",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        178,
+        190
+      ],
+      "summary": "Copies the values and nested members of an Alquimia auxiliary output data into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalCondition",
+      "type": "function",
+      "name": "CopyAlquimiaGeochemicalCondition",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        192,
+        200
+      ],
+      "summary": "Copies the values and nested members of an Alquimia geochemical condition into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalConditionVector",
+      "type": "function",
+      "name": "CopyAlquimiaGeochemicalConditionVector",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        202,
+        208
+      ],
+      "summary": "Copies the values and nested members of an Alquimia geochemical-condition vector into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraint",
+      "type": "function",
+      "name": "CopyAlquimiaAqueousConstraint",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        210,
+        223
+      ],
+      "summary": "Copies the values and nested members of an Alquimia aqueous constraint into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraintVector",
+      "type": "function",
+      "name": "CopyAlquimiaAqueousConstraintVector",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        225,
+        231
+      ],
+      "summary": "Copies the values and nested members of an Alquimia aqueous-constraint vector into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraint",
+      "type": "function",
+      "name": "CopyAlquimiaMineralConstraint",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        233,
+        241
+      ],
+      "summary": "Copies the values and nested members of an Alquimia mineral constraint into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraintVector",
+      "type": "function",
+      "name": "CopyAlquimiaMineralConstraintVector",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        243,
+        249
+      ],
+      "summary": "Copies the values and nested members of an Alquimia mineral-constraint vector into an already allocated destination.",
+      "tags": [
+        "utility",
+        "deep-copy",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorDouble",
+      "type": "function",
+      "name": "ResizeAlquimiaVectorDouble",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        256,
+        267
+      ],
+      "summary": "Resizes an Alquimia double vector, preserving existing elements and allocating replacement storage when capacity is insufficient.",
+      "tags": [
+        "memory-management",
+        "resize",
+        "data-preservation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorInt",
+      "type": "function",
+      "name": "ResizeAlquimiaVectorInt",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        269,
+        280
+      ],
+      "summary": "Resizes an Alquimia integer vector, preserving existing elements and allocating replacement storage when capacity is insufficient.",
+      "tags": [
+        "memory-management",
+        "resize",
+        "data-preservation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorString",
+      "type": "function",
+      "name": "ResizeAlquimiaVectorString",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        282,
+        293
+      ],
+      "summary": "Resizes an Alquimia string vector, preserving existing elements and allocating replacement storage when capacity is insufficient.",
+      "tags": [
+        "memory-management",
+        "resize",
+        "data-preservation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:ResizeAlquimiaGeochemicalConditionVector",
+      "type": "function",
+      "name": "ResizeAlquimiaGeochemicalConditionVector",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        295,
+        306
+      ],
+      "summary": "Resizes an Alquimia geochemical-condition vector, preserving existing elements and allocating replacement storage when capacity is insufficient.",
+      "tags": [
+        "memory-management",
+        "resize",
+        "data-preservation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:ResizeAlquimiaAqueousConstraintVector",
+      "type": "function",
+      "name": "ResizeAlquimiaAqueousConstraintVector",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        308,
+        319
+      ],
+      "summary": "Resizes an Alquimia aqueous-constraint vector, preserving existing elements and allocating replacement storage when capacity is insufficient.",
+      "tags": [
+        "memory-management",
+        "resize",
+        "data-preservation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:ResizeAlquimiaMineralConstraintVector",
+      "type": "function",
+      "name": "ResizeAlquimiaMineralConstraintVector",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        321,
+        332
+      ],
+      "summary": "Resizes an Alquimia mineral-constraint vector, preserving existing elements and allocating replacement storage when capacity is insufficient.",
+      "tags": [
+        "memory-management",
+        "resize",
+        "data-preservation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorDouble",
+      "type": "function",
+      "name": "PrintAlquimiaVectorDouble",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        339,
+        349
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia double vector in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorInt",
+      "type": "function",
+      "name": "PrintAlquimiaVectorInt",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        351,
+        361
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia integer vector in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorString",
+      "type": "function",
+      "name": "PrintAlquimiaVectorString",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        363,
+        373
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia string vector in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaData",
+      "type": "function",
+      "name": "PrintAlquimiaData",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        381,
+        392
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia data aggregate in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaSizes",
+      "type": "function",
+      "name": "PrintAlquimiaSizes",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        394,
+        406
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia sizes in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaEngineFunctionality",
+      "type": "function",
+      "name": "PrintAlquimiaEngineFunctionality",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        408,
+        418
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia engine functionality in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaProblemMetaData",
+      "type": "function",
+      "name": "PrintAlquimiaProblemMetaData",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        420,
+        431
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia problem metadata in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaProperties",
+      "type": "function",
+      "name": "PrintAlquimiaProperties",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        433,
+        443
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia properties in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaState",
+      "type": "function",
+      "name": "PrintAlquimiaState",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        445,
+        464
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia state in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryData",
+      "type": "function",
+      "name": "PrintAlquimiaAuxiliaryData",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        466,
+        471
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia auxiliary data in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryOutputData",
+      "type": "function",
+      "name": "PrintAlquimiaAuxiliaryOutputData",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        473,
+        492
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia auxiliary output data in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalConditionVector",
+      "type": "function",
+      "name": "PrintAlquimiaGeochemicalConditionVector",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        494,
+        502
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia geochemical-condition vector in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalCondition",
+      "type": "function",
+      "name": "PrintAlquimiaGeochemicalCondition",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        504,
+        514
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia geochemical condition in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaAqueousConstraint",
+      "type": "function",
+      "name": "PrintAlquimiaAqueousConstraint",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        516,
+        522
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia aqueous constraint in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:alquimia/alquimia_util.c:PrintAlquimiaMineralConstraint",
+      "type": "function",
+      "name": "PrintAlquimiaMineralConstraint",
+      "filePath": "alquimia/alquimia_util.c",
+      "lineRange": [
+        524,
+        529
+      ],
+      "summary": "Prints the fields and nested values of an Alquimia mineral constraint in a human-readable diagnostic form.",
+      "tags": [
+        "diagnostics",
+        "serialization",
+        "debugging"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProperties",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProperties",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProblemMetaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProblemMetaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProblemMetaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProblemMetaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryOutputData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryOutputData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryOutputData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryOutputData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaEngineStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaEngineStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaEngineStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaEngineStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalCondition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalCondition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalCondition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalCondition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:AlquimiaCaseInsensitiveStringCompare",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:AlquimiaCaseInsensitiveStringCompare",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:AlquimiaFindIndexFromName",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:AlquimiaFindIndexFromName",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaSizes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaSizes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaProblemMetaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaProblemMetaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaProperties",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaEngineFunctionality",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaEngineFunctionality",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryOutputData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryOutputData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalCondition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalCondition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaAqueousConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaAqueousConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaMineralConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaMineralConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaSizes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaSizes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaEngineFunctionality",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaEngineFunctionality",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaProblemMetaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaProblemMetaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaProperties",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryOutputData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryOutputData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalCondition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalCondition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAqueousConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAqueousConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaMineralConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaMineralConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "file:alquimia/alquimia_constants.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "file:alquimia/alquimia_containers.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "file:alquimia/alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "file:alquimia/alquimia_constants.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "file:alquimia/alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "file:alquimia/alquimia_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorDouble",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorDouble",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorInt",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorInt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorString",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorString",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaGeochemicalConditionVector",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalConditionVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaAqueousConstraintVector",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraintVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaMineralConstraintVector",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraintVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

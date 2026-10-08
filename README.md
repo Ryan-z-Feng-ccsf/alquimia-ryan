@@ -277,5 +277,3 @@ build/
 ```
 
 You can execute them directly from `build/install/bin/` or add this directory to your system's `PATH`.
-
-

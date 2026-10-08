@@ -1,0 +1,56 @@
+{
+  "nodes": [
+    {
+      "id": "file:alquimia/alquimia_constants.c",
+      "type": "file",
+      "name": "alquimia_constants.c",
+      "filePath": "alquimia/alquimia_constants.c",
+      "summary": "Defines shared string limits, geochemical quantity names, engine identifiers, and error codes used throughout the Alquimia C interface.",
+      "tags": [
+        "constants",
+        "geochemistry",
+        "error-codes",
+        "shared-api"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:alquimia/alquimia_constants.h",
+      "type": "file",
+      "name": "alquimia_constants.h",
+      "filePath": "alquimia/alquimia_constants.h",
+      "summary": "Declares the public constants for supported engines, geochemical quantities, string limits, and Alquimia error codes.",
+      "tags": [
+        "type-definition",
+        "constants",
+        "public-api",
+        "geochemistry"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:alquimia/alquimia_containers.h",
+      "type": "file",
+      "name": "alquimia_containers.h",
+      "filePath": "alquimia/alquimia_containers.h",
+      "summary": "Defines the C-compatible vectors and geochemical state, property, metadata, condition, constraint, and engine-status structures shared with reaction engines and Fortran bindings.",
+      "tags": [
+        "data-model",
+        "type-definition",
+        "geochemistry",
+        "interop"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "The plain C structs and extern C guards preserve a stable layout and calling boundary for C, C++, and Fortran interoperability."
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:alquimia/alquimia_constants.c",
+      "target": "file:alquimia/alquimia_constants.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

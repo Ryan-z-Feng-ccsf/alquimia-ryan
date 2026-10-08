@@ -1,0 +1,2616 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 7,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 7,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 7,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "alquimia/alquimia_interface.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 111,
+      "nonEmptyLines": 101,
+      "functions": [
+        {
+          "name": "CreateAlquimiaInterface",
+          "startLine": 39,
+          "endLine": 111,
+          "params": [
+            "engine_name",
+            "interface",
+            "status"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CreateAlquimiaInterface",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 49
+        },
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "snprintf",
+          "lineNumber": 59
+        },
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "snprintf",
+          "lineNumber": 63
+        },
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 67
+        },
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "snprintf",
+          "lineNumber": 78
+        },
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "snprintf",
+          "lineNumber": 82
+        },
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 86
+        },
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "snprintf",
+          "lineNumber": 96
+        },
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "snprintf",
+          "lineNumber": 100
+        },
+        {
+          "caller": "CreateAlquimiaInterface",
+          "callee": "snprintf",
+          "lineNumber": 106
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/crunch_alquimia_interface.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 90,
+      "nonEmptyLines": 81,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/onnx_alquimia_config.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 918,
+      "nonEmptyLines": 874,
+      "functions": [
+        {
+          "name": "SetError",
+          "startLine": 24,
+          "endLine": 30,
+          "params": [
+            "error_message",
+            "error_message_size",
+            "error_detail"
+          ]
+        },
+        {
+          "name": "IsAllowedProperty",
+          "startLine": 55,
+          "endLine": 69,
+          "params": [
+            "name",
+            "allowed_schema_fields",
+            "num_allowed_schema_fields"
+          ]
+        },
+        {
+          "name": "ValidateProperties",
+          "startLine": 84,
+          "endLine": 143,
+          "params": [
+            "cjson_object",
+            "allowed_schema_fields",
+            "num_allowed_schema_fields",
+            "context",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "GetRequiredString",
+          "startLine": 157,
+          "endLine": 182,
+          "params": [
+            "cjson_object",
+            "name",
+            "context",
+            "str_value",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "GetRequiredInteger",
+          "startLine": 197,
+          "endLine": 217,
+          "params": [
+            "cjson_object",
+            "name",
+            "context",
+            "int_value",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "ResolveModelPath",
+          "startLine": 231,
+          "endLine": 279,
+          "params": [
+            "config_path",
+            "model",
+            "model_path",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "ParseMappings",
+          "startLine": 296,
+          "endLine": 382,
+          "params": [
+            "cjson_array",
+            "mapping_role",
+            "mappings",
+            "num_mappings",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "ValidateUniqueMember",
+          "startLine": 395,
+          "endLine": 430,
+          "params": [
+            "cjson_object",
+            "context",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "ValidateConditionFeature",
+          "startLine": 442,
+          "endLine": 480,
+          "params": [
+            "onnx_config",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "ParseConditions",
+          "startLine": 490,
+          "endLine": 642,
+          "params": [
+            "cjson_conditions",
+            "onnx_config",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "ReadConfigjson_contents",
+          "startLine": 657,
+          "endLine": 722,
+          "params": [
+            "config_path",
+            "json_contents",
+            "file_length",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "PopulateConfig",
+          "startLine": 733,
+          "endLine": 802,
+          "params": [
+            "config_path",
+            "cjson_root",
+            "onnx_config",
+            "error_message",
+            "error_message_size"
+          ]
+        },
+        {
+          "name": "FreeMappings",
+          "startLine": 809,
+          "endLine": 822,
+          "params": [
+            "mappings",
+            "num_mappings"
+          ]
+        },
+        {
+          "name": "OnnxAlquimiaFreeConfig",
+          "startLine": 831,
+          "endLine": 853,
+          "params": [
+            "onnx_config"
+          ]
+        },
+        {
+          "name": "OnnxAlquimiaLoadConfig",
+          "startLine": 866,
+          "endLine": 918,
+          "params": [
+            "config_path",
+            "onnx_config",
+            "error_message",
+            "error_message_size"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "OnnxAlquimiaFreeConfig",
+          "line": 831,
+          "isDefault": false
+        },
+        {
+          "name": "OnnxAlquimiaLoadConfig",
+          "line": 866,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SetError",
+          "callee": "snprintf",
+          "lineNumber": 28
+        },
+        {
+          "caller": "IsAllowedProperty",
+          "callee": "strcmp",
+          "lineNumber": 63
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "IsAllowedProperty",
+          "lineNumber": 105
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "snprintf",
+          "lineNumber": 107
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "strcmp",
+          "lineNumber": 116
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "strcmp",
+          "lineNumber": 126
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "snprintf",
+          "lineNumber": 134
+        },
+        {
+          "caller": "GetRequiredString",
+          "callee": "cJSON_GetObjectItemCaseSensitive",
+          "lineNumber": 165
+        },
+        {
+          "caller": "GetRequiredString",
+          "callee": "cJSON_IsString",
+          "lineNumber": 166
+        },
+        {
+          "caller": "GetRequiredString",
+          "callee": "snprintf",
+          "lineNumber": 169
+        },
+        {
+          "caller": "GetRequiredString",
+          "callee": "CopyString",
+          "lineNumber": 174
+        },
+        {
+          "caller": "GetRequiredString",
+          "callee": "SetError",
+          "lineNumber": 177
+        },
+        {
+          "caller": "GetRequiredInteger",
+          "callee": "cJSON_GetObjectItemCaseSensitive",
+          "lineNumber": 205
+        },
+        {
+          "caller": "GetRequiredInteger",
+          "callee": "cJSON_IsNumber",
+          "lineNumber": 206
+        },
+        {
+          "caller": "GetRequiredInteger",
+          "callee": "snprintf",
+          "lineNumber": 210
+        },
+        {
+          "caller": "ResolveModelPath",
+          "callee": "strlen",
+          "lineNumber": 241
+        },
+        {
+          "caller": "ResolveModelPath",
+          "callee": "CopyString",
+          "lineNumber": 246
+        },
+        {
+          "caller": "ResolveModelPath",
+          "callee": "strrchr",
+          "lineNumber": 252
+        },
+        {
+          "caller": "ResolveModelPath",
+          "callee": "SetError",
+          "lineNumber": 258
+        },
+        {
+          "caller": "ResolveModelPath",
+          "callee": "malloc",
+          "lineNumber": 262
+        },
+        {
+          "caller": "ResolveModelPath",
+          "callee": "memcpy",
+          "lineNumber": 266
+        },
+        {
+          "caller": "ResolveModelPath",
+          "callee": "memcpy",
+          "lineNumber": 268
+        },
+        {
+          "caller": "ResolveModelPath",
+          "callee": "SetError",
+          "lineNumber": 274
+        },
+        {
+          "caller": "ParseMappings",
+          "callee": "cJSON_GetArraySize",
+          "lineNumber": 315
+        },
+        {
+          "caller": "ParseMappings",
+          "callee": "snprintf",
+          "lineNumber": 317
+        },
+        {
+          "caller": "ParseMappings",
+          "callee": "snprintf",
+          "lineNumber": 322
+        },
+        {
+          "caller": "ParseMappings",
+          "callee": "calloc",
+          "lineNumber": 330
+        },
+        {
+          "caller": "ParseMappings",
+          "callee": "snprintf",
+          "lineNumber": 336
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "cJSON_IsObject",
+          "lineNumber": 348
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "ValidateProperties",
+          "lineNumber": 349
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "GetRequiredString",
+          "lineNumber": 352
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "GetRequiredInteger",
+          "lineNumber": 355
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "GetRequiredString",
+          "lineNumber": 358
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "GetRequiredString",
+          "lineNumber": 361
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "GetRequiredInteger",
+          "lineNumber": 364
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "cJSON_IsObject",
+          "lineNumber": 368
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "snprintf",
+          "lineNumber": 372
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "snprintf",
+          "lineNumber": 409
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "strcmp",
+          "lineNumber": 420
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "snprintf",
+          "lineNumber": 422
+        },
+        {
+          "caller": "ValidateConditionFeature",
+          "callee": "strcmp",
+          "lineNumber": 463
+        },
+        {
+          "caller": "ValidateConditionFeature",
+          "callee": "snprintf",
+          "lineNumber": 472
+        },
+        {
+          "caller": "ParseConditions",
+          "callee": "cJSON_IsObject",
+          "lineNumber": 519
+        },
+        {
+          "caller": "ParseConditions",
+          "callee": "SetError",
+          "lineNumber": 521
+        },
+        {
+          "caller": "ParseConditions",
+          "callee": "ValidateUniqueMember",
+          "lineNumber": 526
+        },
+        {
+          "caller": "ParseConditions",
+          "callee": "cJSON_GetArraySize",
+          "lineNumber": 533
+        },
+        {
+          "caller": "ParseConditions",
+          "callee": "SetError",
+          "lineNumber": 541
+        },
+        {
+          "caller": "ParseConditions",
+          "callee": "calloc",
+          "lineNumber": 548
+        },
+        {
+          "caller": "ParseConditions",
+          "callee": "SetError",
+          "lineNumber": 552
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "CopyString",
+          "lineNumber": 568
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "SetError",
+          "lineNumber": 571
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "cJSON_IsObject",
+          "lineNumber": 577
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "snprintf",
+          "lineNumber": 579
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "ValidateUniqueMember",
+          "lineNumber": 585
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "cJSON_GetArraySize",
+          "lineNumber": 592
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "snprintf",
+          "lineNumber": 597
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "calloc",
+          "lineNumber": 605
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "SetError",
+          "lineNumber": 609
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "cJSON_IsNumber",
+          "lineNumber": 617
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "isfinite",
+          "lineNumber": 618
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "snprintf",
+          "lineNumber": 620
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "CopyString",
+          "lineNumber": 626
+        },
+        {
+          "caller": "cJSON_ArrayForEach",
+          "callee": "SetError",
+          "lineNumber": 629
+        },
+        {
+          "caller": "ParseConditions",
+          "callee": "ValidateConditionFeature",
+          "lineNumber": 640
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "fopen",
+          "lineNumber": 672
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "fseek",
+          "lineNumber": 674
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "ftell",
+          "lineNumber": 675
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "fseek",
+          "lineNumber": 675
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "fclose",
+          "lineNumber": 679
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "snprintf",
+          "lineNumber": 681
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "fclose",
+          "lineNumber": 688
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "SetError",
+          "lineNumber": 689
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "malloc",
+          "lineNumber": 694
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "fclose",
+          "lineNumber": 697
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "SetError",
+          "lineNumber": 698
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "fread",
+          "lineNumber": 707
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "fclose",
+          "lineNumber": 708
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "free",
+          "lineNumber": 712
+        },
+        {
+          "caller": "ReadConfigjson_contents",
+          "callee": "SetError",
+          "lineNumber": 714
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_IsObject",
+          "lineNumber": 752
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "SetError",
+          "lineNumber": 754
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "ValidateProperties",
+          "lineNumber": 759
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_GetObjectItemCaseSensitive",
+          "lineNumber": 765
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_GetObjectItemCaseSensitive",
+          "lineNumber": 766
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_GetObjectItemCaseSensitive",
+          "lineNumber": 767
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_GetObjectItemCaseSensitive",
+          "lineNumber": 768
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_GetObjectItemCaseSensitive",
+          "lineNumber": 769
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_IsNumber",
+          "lineNumber": 771
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "SetError",
+          "lineNumber": 773
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_IsString",
+          "lineNumber": 777
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "SetError",
+          "lineNumber": 780
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_IsArray",
+          "lineNumber": 784
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "cJSON_IsArray",
+          "lineNumber": 784
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "SetError",
+          "lineNumber": 786
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "ResolveModelPath",
+          "lineNumber": 792
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "ParseMappings",
+          "lineNumber": 794
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "ParseMappings",
+          "lineNumber": 797
+        },
+        {
+          "caller": "PopulateConfig",
+          "callee": "ParseConditions",
+          "lineNumber": 800
+        },
+        {
+          "caller": "FreeMappings",
+          "callee": "free",
+          "lineNumber": 817
+        },
+        {
+          "caller": "FreeMappings",
+          "callee": "free",
+          "lineNumber": 818
+        },
+        {
+          "caller": "FreeMappings",
+          "callee": "free",
+          "lineNumber": 819
+        },
+        {
+          "caller": "FreeMappings",
+          "callee": "free",
+          "lineNumber": 821
+        },
+        {
+          "caller": "OnnxAlquimiaFreeConfig",
+          "callee": "free",
+          "lineNumber": 838
+        },
+        {
+          "caller": "OnnxAlquimiaFreeConfig",
+          "callee": "free",
+          "lineNumber": 842
+        },
+        {
+          "caller": "OnnxAlquimiaFreeConfig",
+          "callee": "free",
+          "lineNumber": 845
+        },
+        {
+          "caller": "OnnxAlquimiaFreeConfig",
+          "callee": "free",
+          "lineNumber": 847
+        },
+        {
+          "caller": "OnnxAlquimiaFreeConfig",
+          "callee": "free",
+          "lineNumber": 849
+        },
+        {
+          "caller": "OnnxAlquimiaFreeConfig",
+          "callee": "FreeMappings",
+          "lineNumber": 850
+        },
+        {
+          "caller": "OnnxAlquimiaFreeConfig",
+          "callee": "FreeMappings",
+          "lineNumber": 851
+        },
+        {
+          "caller": "OnnxAlquimiaFreeConfig",
+          "callee": "memset",
+          "lineNumber": 852
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "memset",
+          "lineNumber": 880
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "SetError",
+          "lineNumber": 885
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "ReadConfigjson_contents",
+          "lineNumber": 889
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "cJSON_ParseWithLengthOpts",
+          "lineNumber": 897
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "SetError",
+          "lineNumber": 902
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "cJSON_Delete",
+          "lineNumber": 904
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "free",
+          "lineNumber": 905
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "PopulateConfig",
+          "lineNumber": 909
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "cJSON_Delete",
+          "lineNumber": 911
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "free",
+          "lineNumber": 912
+        },
+        {
+          "caller": "OnnxAlquimiaLoadConfig",
+          "callee": "OnnxAlquimiaFreeConfig",
+          "lineNumber": 915
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 15,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/onnx_alquimia_config.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 72,
+      "nonEmptyLines": 62,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/onnx_alquimia_interface.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 2348,
+      "nonEmptyLines": 2187,
+      "callGraph": [
+        {
+          "caller": "CheckStatus",
+          "callee": "GetErrorMessage",
+          "lineNumber": 177
+        },
+        {
+          "caller": "CheckStatus",
+          "callee": "snprintf",
+          "lineNumber": 179
+        },
+        {
+          "caller": "CheckStatus",
+          "callee": "ReleaseStatus",
+          "lineNumber": 180
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 195
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 197
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 199
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 201
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 203
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 205
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 207
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 209
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 211
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 213
+        },
+        {
+          "caller": "ParseStructName",
+          "callee": "strcmp",
+          "lineNumber": 215
+        },
+        {
+          "caller": "StoreMetadataName",
+          "callee": "strncpy",
+          "lineNumber": 314
+        },
+        {
+          "caller": "ParseConfigMapping",
+          "callee": "ParseStructName",
+          "lineNumber": 355
+        },
+        {
+          "caller": "ParseConfigMapping",
+          "callee": "snprintf",
+          "lineNumber": 358
+        },
+        {
+          "caller": "ParseConfigMapping",
+          "callee": "IsScalarMapping",
+          "lineNumber": 366
+        },
+        {
+          "caller": "ParseConfigMapping",
+          "callee": "IsScalarMapping",
+          "lineNumber": 368
+        },
+        {
+          "caller": "ParseConfigMapping",
+          "callee": "snprintf",
+          "lineNumber": 373
+        },
+        {
+          "caller": "FindFlatTensorElement",
+          "callee": "strcmp",
+          "lineNumber": 459
+        },
+        {
+          "caller": "FindFlatTensorElement",
+          "callee": "snprintf",
+          "lineNumber": 465
+        },
+        {
+          "caller": "FindFlatTensorElement",
+          "callee": "snprintf",
+          "lineNumber": 481
+        },
+        {
+          "caller": "FindFlatTensorElement",
+          "callee": "snprintf",
+          "lineNumber": 489
+        },
+        {
+          "caller": "ValidateUniqueInputFeature",
+          "callee": "strcmp",
+          "lineNumber": 521
+        },
+        {
+          "caller": "ValidateUniqueInputFeature",
+          "callee": "snprintf",
+          "lineNumber": 524
+        },
+        {
+          "caller": "ValidateConsistentFeatureName",
+          "callee": "StateNameCategory",
+          "lineNumber": 556
+        },
+        {
+          "caller": "ValidateConsistentFeatureName",
+          "callee": "StateNameCategory",
+          "lineNumber": 557
+        },
+        {
+          "caller": "ValidateConsistentFeatureName",
+          "callee": "StateNameCategory",
+          "lineNumber": 558
+        },
+        {
+          "caller": "ValidateConsistentFeatureName",
+          "callee": "strcmp",
+          "lineNumber": 560
+        },
+        {
+          "caller": "ValidateConsistentFeatureName",
+          "callee": "snprintf",
+          "lineNumber": 563
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "calloc",
+          "lineNumber": 600
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "calloc",
+          "lineNumber": 602
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "calloc",
+          "lineNumber": 604
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "calloc",
+          "lineNumber": 605
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "snprintf",
+          "lineNumber": 611
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 613
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 614
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "memset",
+          "lineNumber": 618
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "FindFlatTensorElement",
+          "lineNumber": 630
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 637
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 638
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "snprintf",
+          "lineNumber": 645
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 648
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 649
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "ParseConfigMapping",
+          "lineNumber": 654
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 658
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 659
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "ValidateUniqueInputFeature",
+          "lineNumber": 663
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 667
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 668
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "ValidateConsistentFeatureName",
+          "lineNumber": 674
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 678
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 679
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "CopyFeatureName",
+          "lineNumber": 683
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "snprintf",
+          "lineNumber": 687
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 689
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 690
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "UpdateSizesForMapping",
+          "lineNumber": 696
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "FindFlatTensorElement",
+          "lineNumber": 709
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 716
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 717
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "snprintf",
+          "lineNumber": 724
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 727
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 728
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "ParseConfigMapping",
+          "lineNumber": 733
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 737
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 738
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "ValidateConsistentFeatureName",
+          "lineNumber": 742
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "ValidateConsistentFeatureName",
+          "lineNumber": 746
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 750
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 751
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "CopyFeatureName",
+          "lineNumber": 754
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "snprintf",
+          "lineNumber": 758
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 760
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 761
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "UpdateSizesForMapping",
+          "lineNumber": 767
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "snprintf",
+          "lineNumber": 775
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 777
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 778
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "snprintf",
+          "lineNumber": 787
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 789
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 790
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 795
+        },
+        {
+          "caller": "BuildConfigMappings",
+          "callee": "free",
+          "lineNumber": 796
+        },
+        {
+          "caller": "GetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 819
+        },
+        {
+          "caller": "GetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 828
+        },
+        {
+          "caller": "GetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 836
+        },
+        {
+          "caller": "GetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 844
+        },
+        {
+          "caller": "GetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 852
+        },
+        {
+          "caller": "GetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 860
+        },
+        {
+          "caller": "GetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 880
+        },
+        {
+          "caller": "GetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 887
+        },
+        {
+          "caller": "SetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 911
+        },
+        {
+          "caller": "SetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 920
+        },
+        {
+          "caller": "SetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 930
+        },
+        {
+          "caller": "SetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 940
+        },
+        {
+          "caller": "SetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 950
+        },
+        {
+          "caller": "SetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 960
+        },
+        {
+          "caller": "SetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 986
+        },
+        {
+          "caller": "SetAlquimiaValue",
+          "callee": "snprintf",
+          "lineNumber": 994
+        },
+        {
+          "caller": "BuildPairedOutputLookup",
+          "callee": "calloc",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "BuildPairedOutputLookup",
+          "callee": "snprintf",
+          "lineNumber": 1046
+        },
+        {
+          "caller": "BuildPairedOutputLookup",
+          "callee": "HasMappedOutput",
+          "lineNumber": 1068
+        },
+        {
+          "caller": "SetAlquimiaModelOutput",
+          "callee": "SetAlquimiaValue",
+          "lineNumber": 1111
+        },
+        {
+          "caller": "SetAlquimiaModelOutput",
+          "callee": "SetAlquimiaValue",
+          "lineNumber": 1121
+        },
+        {
+          "caller": "SetAlquimiaModelOutput",
+          "callee": "SetAlquimiaValue",
+          "lineNumber": 1128
+        },
+        {
+          "caller": "SetAlquimiaModelOutput",
+          "callee": "SetAlquimiaValue",
+          "lineNumber": 1135
+        },
+        {
+          "caller": "SetAlquimiaModelOutput",
+          "callee": "GetAlquimiaValue",
+          "lineNumber": 1139
+        },
+        {
+          "caller": "SetAlquimiaModelOutput",
+          "callee": "GetAlquimiaValue",
+          "lineNumber": 1144
+        },
+        {
+          "caller": "SetAlquimiaModelOutput",
+          "callee": "SetAlquimiaValue",
+          "lineNumber": 1151
+        },
+        {
+          "caller": "SetAlquimiaModelOutput",
+          "callee": "SetAlquimiaValue",
+          "lineNumber": 1156
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "ReleaseValue",
+          "lineNumber": 1174
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "free",
+          "lineNumber": 1177
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "free",
+          "lineNumber": 1183
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "free",
+          "lineNumber": 1185
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "free",
+          "lineNumber": 1191
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "free",
+          "lineNumber": 1193
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "free",
+          "lineNumber": 1197
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "free",
+          "lineNumber": 1201
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "Free",
+          "lineNumber": 1213
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "free",
+          "lineNumber": 1216
+        },
+        {
+          "caller": "ReleaseOrtTensors",
+          "callee": "memset",
+          "lineNumber": 1219
+        },
+        {
+          "caller": "CleanupOnSetupFailure",
+          "callee": "onnx_alquimia_shutdown",
+          "lineNumber": 1235
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1273
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1279
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1283
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "OnnxAlquimiaLoadConfig",
+          "lineNumber": 1288
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "free",
+          "lineNumber": 1293
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1300
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "OnnxAlquimiaFreeConfig",
+          "lineNumber": 1302
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "free",
+          "lineNumber": 1303
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "fopen",
+          "lineNumber": 1306
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1310
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "OnnxAlquimiaFreeConfig",
+          "lineNumber": 1313
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "free",
+          "lineNumber": 1314
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "fclose",
+          "lineNumber": 1317
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "GetApi",
+          "lineNumber": 1319
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "OrtGetApiBase",
+          "lineNumber": 1319
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1323
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "OnnxAlquimiaFreeConfig",
+          "lineNumber": 1324
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "free",
+          "lineNumber": 1325
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CreateEnv",
+          "lineNumber": 1330
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1333
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "OnnxAlquimiaFreeConfig",
+          "lineNumber": 1335
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "free",
+          "lineNumber": 1336
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CreateSessionOptions",
+          "lineNumber": 1340
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1342
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseEnv",
+          "lineNumber": 1344
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "OnnxAlquimiaFreeConfig",
+          "lineNumber": 1345
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "free",
+          "lineNumber": 1346
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CreateSession",
+          "lineNumber": 1350
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1353
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseSessionOptions",
+          "lineNumber": 1355
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseEnv",
+          "lineNumber": 1357
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "OnnxAlquimiaFreeConfig",
+          "lineNumber": 1358
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "free",
+          "lineNumber": 1359
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CreateCpuMemoryInfo",
+          "lineNumber": 1363
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1366
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1368
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CreateAllocator",
+          "lineNumber": 1372
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1375
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1377
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "SessionGetInputCount",
+          "lineNumber": 1383
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1385
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1387
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "SessionGetOutputCount",
+          "lineNumber": 1393
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1395
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1397
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1406
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1407
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1413
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1415
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1417
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1419
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1421
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1423
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1434
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1435
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "SessionGetInputName",
+          "lineNumber": 1444
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1446
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1448
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "SessionGetInputTypeInfo",
+          "lineNumber": 1454
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1456
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1458
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CastTypeInfoToTensorInfo",
+          "lineNumber": 1465
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1467
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1469
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1470
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "GetTensorElementType",
+          "lineNumber": 1474
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1476
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1478
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1479
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1485
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1487
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1490
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "GetDimensionsCount",
+          "lineNumber": 1496
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1498
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1500
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1501
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1512
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1515
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1517
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1518
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1528
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1531
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1533
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1534
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "GetDimensions",
+          "lineNumber": 1538
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1540
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1542
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1543
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1562
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1564
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1567
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1579
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1581
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1584
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1593
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1596
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1598
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1599
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CreateTensorWithDataAsOrtValue",
+          "lineNumber": 1604
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1610
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1612
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1613
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1617
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1621
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1623
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1625
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1627
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1629
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1631
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1641
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1642
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "SessionGetOutputName",
+          "lineNumber": 1651
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1653
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1655
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "SessionGetOutputTypeInfo",
+          "lineNumber": 1661
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1663
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1665
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CastTypeInfoToTensorInfo",
+          "lineNumber": 1672
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1674
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1676
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1677
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "GetTensorElementType",
+          "lineNumber": 1681
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1683
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1685
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1686
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1692
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1694
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1697
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "GetDimensionsCount",
+          "lineNumber": 1703
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1705
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1707
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1708
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1719
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1722
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1724
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1725
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1735
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1738
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1740
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1741
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "GetDimensions",
+          "lineNumber": 1745
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1747
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1749
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1750
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1767
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1769
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1772
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1784
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1786
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1789
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "calloc",
+          "lineNumber": 1798
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1801
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1803
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1804
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CreateTensorWithDataAsOrtValue",
+          "lineNumber": 1809
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CheckStatus",
+          "lineNumber": 1816
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1818
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1819
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "ReleaseTypeInfo",
+          "lineNumber": 1823
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1848
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1850
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "snprintf",
+          "lineNumber": 1865
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1867
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "BuildConfigMappings",
+          "lineNumber": 1877
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "BuildPairedOutputLookup",
+          "lineNumber": 1879
+        },
+        {
+          "caller": "onnx_alquimia_setup",
+          "callee": "CleanupOnSetupFailure",
+          "lineNumber": 1881
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "snprintf",
+          "lineNumber": 1919
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "free",
+          "lineNumber": 1931
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "free",
+          "lineNumber": 1933
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "free",
+          "lineNumber": 1940
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "free",
+          "lineNumber": 1942
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "free",
+          "lineNumber": 1945
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "ReleaseOrtTensors",
+          "lineNumber": 1949
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "ReleaseOrtTensors",
+          "lineNumber": 1950
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "ReleaseAllocator",
+          "lineNumber": 1955
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "ReleaseMemoryInfo",
+          "lineNumber": 1960
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "ReleaseSession",
+          "lineNumber": 1966
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "ReleaseSessionOptions",
+          "lineNumber": 1971
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "ReleaseEnv",
+          "lineNumber": 1977
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "OnnxAlquimiaFreeConfig",
+          "lineNumber": 1981
+        },
+        {
+          "caller": "onnx_alquimia_shutdown",
+          "callee": "free",
+          "lineNumber": 1982
+        },
+        {
+          "caller": "onnx_alquimia_processcondition",
+          "callee": "snprintf",
+          "lineNumber": 2020
+        },
+        {
+          "caller": "onnx_alquimia_processcondition",
+          "callee": "snprintf",
+          "lineNumber": 2029
+        },
+        {
+          "caller": "onnx_alquimia_processcondition",
+          "callee": "strcmp",
+          "lineNumber": 2050
+        },
+        {
+          "caller": "onnx_alquimia_processcondition",
+          "callee": "snprintf",
+          "lineNumber": 2060
+        },
+        {
+          "caller": "onnx_alquimia_processcondition",
+          "callee": "strcmp",
+          "lineNumber": 2079
+        },
+        {
+          "caller": "onnx_alquimia_processcondition",
+          "callee": "snprintf",
+          "lineNumber": 2090
+        },
+        {
+          "caller": "onnx_alquimia_processcondition",
+          "callee": "SetAlquimiaValue",
+          "lineNumber": 2095
+        },
+        {
+          "caller": "onnx_alquimia_processcondition",
+          "callee": "strcmp",
+          "lineNumber": 2123
+        },
+        {
+          "caller": "onnx_alquimia_processcondition",
+          "callee": "SetAlquimiaValue",
+          "lineNumber": 2132
+        },
+        {
+          "caller": "onnx_alquimia_reactionstepoperatorsplit",
+          "callee": "snprintf",
+          "lineNumber": 2182
+        },
+        {
+          "caller": "onnx_alquimia_reactionstepoperatorsplit",
+          "callee": "snprintf",
+          "lineNumber": 2191
+        },
+        {
+          "caller": "onnx_alquimia_reactionstepoperatorsplit",
+          "callee": "GetAlquimiaValue",
+          "lineNumber": 2202
+        },
+        {
+          "caller": "onnx_alquimia_reactionstepoperatorsplit",
+          "callee": "Run",
+          "lineNumber": 2214
+        },
+        {
+          "caller": "onnx_alquimia_reactionstepoperatorsplit",
+          "callee": "CheckStatus",
+          "lineNumber": 2224
+        },
+        {
+          "caller": "onnx_alquimia_reactionstepoperatorsplit",
+          "callee": "GetTensorMutableData",
+          "lineNumber": 2237
+        },
+        {
+          "caller": "onnx_alquimia_reactionstepoperatorsplit",
+          "callee": "CheckStatus",
+          "lineNumber": 2239
+        },
+        {
+          "caller": "onnx_alquimia_reactionstepoperatorsplit",
+          "callee": "snprintf",
+          "lineNumber": 2247
+        },
+        {
+          "caller": "onnx_alquimia_reactionstepoperatorsplit",
+          "callee": "SetAlquimiaModelOutput",
+          "lineNumber": 2254
+        },
+        {
+          "caller": "onnx_alquimia_getproblemmetadata",
+          "callee": "snprintf",
+          "lineNumber": 2316
+        },
+        {
+          "caller": "onnx_alquimia_getproblemmetadata",
+          "callee": "snprintf",
+          "lineNumber": 2324
+        },
+        {
+          "caller": "onnx_alquimia_getproblemmetadata",
+          "callee": "MetadataNamesForMapping",
+          "lineNumber": 2333
+        },
+        {
+          "caller": "onnx_alquimia_getproblemmetadata",
+          "callee": "StoreMetadataName",
+          "lineNumber": 2336
+        },
+        {
+          "caller": "onnx_alquimia_getproblemmetadata",
+          "callee": "MetadataNamesForMapping",
+          "lineNumber": 2341
+        },
+        {
+          "caller": "onnx_alquimia_getproblemmetadata",
+          "callee": "StoreMetadataName",
+          "lineNumber": 2343
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/onnx_alquimia_interface.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 50,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "alquimia/pflotran_alquimia_interface.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 90,
+      "nonEmptyLines": 81,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

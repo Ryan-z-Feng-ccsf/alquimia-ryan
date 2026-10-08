@@ -1,0 +1,13 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 0,
+  "edgesRestored": 0,
+  "crossBatchEdgesAdded": 0,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "Merge counts are consistent: all 202 input nodes and 423 input edges were preserved.",
+    "All 47 import relationships in scan-result.json are represented by file-level imports edges.",
+    "No missing IDs, unknown node types, invalid complexity values, duplicate IDs, duplicate edges, or dangling edge references were found."
+  ]
+}

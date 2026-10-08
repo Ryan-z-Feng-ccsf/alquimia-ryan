@@ -1,0 +1,1053 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "louvain",
+  "totalFiles": 51,
+  "totalBatches": 5,
+  "exportsByPath": {
+    "alquimia/alquimia.c": [
+      "alquimia_error",
+      "alquimia_set_error_handler",
+      "alquimia_abort",
+      "alquimia_set_abort_function",
+      "alquimia_version_fprintf"
+    ],
+    "alquimia/alquimia.h.in": [],
+    "alquimia/alquimia_constants.c": [],
+    "alquimia/alquimia_constants.h": [],
+    "alquimia/alquimia_containers.F90": [],
+    "alquimia/alquimia_containers.h": [],
+    "alquimia/alquimia_fortran_interface_mod.F90": [],
+    "alquimia/alquimia_interface.c": [
+      "CreateAlquimiaInterface"
+    ],
+    "alquimia/alquimia_interface.h": [],
+    "alquimia/alquimia_memory.c": [
+      "AllocateAlquimiaVectorDouble",
+      "FreeAlquimiaVectorDouble",
+      "AllocateAlquimiaVectorInt",
+      "FreeAlquimiaVectorInt",
+      "AllocateAlquimiaVectorString",
+      "FreeAlquimiaVectorString",
+      "AllocateAlquimiaState",
+      "FreeAlquimiaState",
+      "AllocateAlquimiaAuxiliaryData",
+      "FreeAlquimiaAuxiliaryData",
+      "AllocateAlquimiaProperties",
+      "FreeAlquimiaProperties",
+      "AllocateAlquimiaProblemMetaData",
+      "FreeAlquimiaProblemMetaData",
+      "AllocateAlquimiaAuxiliaryOutputData",
+      "FreeAlquimiaAuxiliaryOutputData",
+      "AllocateAlquimiaEngineStatus",
+      "FreeAlquimiaEngineStatus",
+      "AllocateAlquimiaGeochemicalConditionVector",
+      "AllocateAlquimiaGeochemicalCondition",
+      "AllocateAlquimiaAqueousConstraint",
+      "AllocateAlquimiaAqueousConstraintVector",
+      "AllocateAlquimiaMineralConstraint",
+      "AllocateAlquimiaMineralConstraintVector",
+      "FreeAlquimiaGeochemicalConditionVector",
+      "FreeAlquimiaGeochemicalCondition",
+      "FreeAlquimiaAqueousConstraintVector",
+      "FreeAlquimiaAqueousConstraint",
+      "FreeAlquimiaMineralConstraintVector",
+      "FreeAlquimiaMineralConstraint",
+      "AllocateAlquimiaData",
+      "FreeAlquimiaData"
+    ],
+    "alquimia/alquimia_memory.h": [],
+    "alquimia/alquimia_util.c": [
+      "AlquimiaCaseInsensitiveStringCompare",
+      "AlquimiaFindIndexFromName",
+      "CopyAlquimiaVectorDouble",
+      "CopyAlquimiaVectorInt",
+      "CopyAlquimiaVectorString",
+      "CopyAlquimiaSizes",
+      "CopyAlquimiaProblemMetaData",
+      "CopyAlquimiaProperties",
+      "CopyAlquimiaEngineFunctionality",
+      "CopyAlquimiaState",
+      "CopyAlquimiaAuxiliaryData",
+      "CopyAlquimiaAuxiliaryOutputData",
+      "CopyAlquimiaGeochemicalCondition",
+      "CopyAlquimiaGeochemicalConditionVector",
+      "CopyAlquimiaAqueousConstraint",
+      "CopyAlquimiaAqueousConstraintVector",
+      "CopyAlquimiaMineralConstraint",
+      "CopyAlquimiaMineralConstraintVector",
+      "ResizeAlquimiaVectorDouble",
+      "ResizeAlquimiaVectorInt",
+      "ResizeAlquimiaVectorString",
+      "ResizeAlquimiaGeochemicalConditionVector",
+      "ResizeAlquimiaAqueousConstraintVector",
+      "ResizeAlquimiaMineralConstraintVector",
+      "PrintAlquimiaVectorDouble",
+      "PrintAlquimiaVectorInt",
+      "PrintAlquimiaVectorString",
+      "PrintAlquimiaData",
+      "PrintAlquimiaSizes",
+      "PrintAlquimiaEngineFunctionality",
+      "PrintAlquimiaProblemMetaData",
+      "PrintAlquimiaProperties",
+      "PrintAlquimiaState",
+      "PrintAlquimiaAuxiliaryData",
+      "PrintAlquimiaAuxiliaryOutputData",
+      "PrintAlquimiaGeochemicalConditionVector",
+      "PrintAlquimiaGeochemicalCondition",
+      "PrintAlquimiaAqueousConstraint",
+      "PrintAlquimiaMineralConstraint"
+    ],
+    "alquimia/alquimia_util.h": [],
+    "alquimia/c_f_interface_module.F90": [],
+    "alquimia/crunch_alquimia_interface.F90": [],
+    "alquimia/crunch_alquimia_interface.h": [],
+    "alquimia/crunch_alquimia_wrappers.F90": [],
+    "alquimia/mixed/README": [],
+    "alquimia/mixed/cc-f90-strings.F90": [],
+    "alquimia/mixed/cc-f90-strings.cc": [
+      "clear_string",
+      "main"
+    ],
+    "alquimia/mixed/cc-f90-strings.h": [],
+    "alquimia/mixed/struct-array-pointer.F90": [],
+    "alquimia/mixed/struct-array-pointer.cc": [
+      "container",
+      "data",
+      "initialize_container",
+      "free_container",
+      "print_container",
+      "main"
+    ],
+    "alquimia/mixed/struct-derived.F90": [],
+    "alquimia/mixed/struct-derived.cc": [
+      "point",
+      "print_point",
+      "main"
+    ],
+    "alquimia/onnx_alquimia_config.c": [
+      "OnnxAlquimiaFreeConfig",
+      "OnnxAlquimiaLoadConfig"
+    ],
+    "alquimia/onnx_alquimia_config.h": [],
+    "alquimia/onnx_alquimia_interface.c": [],
+    "alquimia/onnx_alquimia_interface.h": [],
+    "alquimia/pflotran_alquimia_interface.F90": [],
+    "alquimia/pflotran_alquimia_interface.h": [],
+    "alquimia/pflotran_alquimia_wrappers.F90": [],
+    "alquimia/pflotran_petsc_stubs.F90": [],
+    "drivers/BatchChemDriver.c": [
+      "BatchChemDriverInput_Free",
+      "BatchChemDriver",
+      "BatchChemDriver_Free",
+      "BatchChemDriver_Run",
+      "BatchChemDriver_GetSoluteAndAuxData"
+    ],
+    "drivers/BatchChemDriver.h": [],
+    "drivers/DriverOutput.c": [
+      "DriverOutput",
+      "DriverOutput_WriteVectors",
+      "DriverOutput_WriteMulticompVector"
+    ],
+    "drivers/DriverOutput.h": [],
+    "drivers/TransportDriver.c": [
+      "TransportDriverInput_Free",
+      "TransportDriver",
+      "TransportDriver_Free",
+      "TransportDriver_Run",
+      "TransportDriver_GetSoluteAndAuxData"
+    ],
+    "drivers/TransportDriver.h": [],
+    "drivers/batch_chem.c": [
+      "Usage",
+      "main"
+    ],
+    "drivers/fpe.c": [],
+    "drivers/fpe.h": [],
+    "drivers/ini.c": [
+      "ini_parse_stream",
+      "ini_parse_file",
+      "ini_parse"
+    ],
+    "drivers/ini.h": [],
+    "drivers/input_util.c": [
+      "Input_CreateAlquimiaInterface",
+      "Input_GetRegions",
+      "Input_GetRegionData",
+      "Input_GetGeochemicalConditions",
+      "Input_GetOutputParameters",
+      "Input_IsStateSection",
+      "Input_ParseState",
+      "Input_IsPropertiesSection",
+      "Input_ParseProperty",
+      "Input_IsGeochemicalConditionSection",
+      "Input_ParseGeochemicalCondition",
+      "Input_ParseAqueousConstraint",
+      "Input_ParseMineralConstraint"
+    ],
+    "drivers/input_util.h": [],
+    "drivers/transport.c": [
+      "Usage",
+      "main"
+    ]
+  },
+  "batches": [
+    {
+      "batchIndex": 1,
+      "files": [
+        {
+          "path": "alquimia/alquimia_interface.c",
+          "language": "c",
+          "sizeLines": 111,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/crunch_alquimia_interface.h",
+          "language": "c",
+          "sizeLines": 90,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/onnx_alquimia_config.c",
+          "language": "c",
+          "sizeLines": 918,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/onnx_alquimia_config.h",
+          "language": "c",
+          "sizeLines": 72,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/onnx_alquimia_interface.c",
+          "language": "c",
+          "sizeLines": 2348,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/onnx_alquimia_interface.h",
+          "language": "c",
+          "sizeLines": 58,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/pflotran_alquimia_interface.h",
+          "language": "c",
+          "sizeLines": 90,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "alquimia/alquimia_interface.c": [
+          "alquimia/alquimia_constants.h",
+          "alquimia/alquimia_interface.h",
+          "alquimia/alquimia_util.h",
+          "alquimia/crunch_alquimia_interface.h",
+          "alquimia/onnx_alquimia_interface.h",
+          "alquimia/pflotran_alquimia_interface.h"
+        ],
+        "alquimia/crunch_alquimia_interface.h": [],
+        "alquimia/onnx_alquimia_config.c": [
+          "alquimia/onnx_alquimia_config.h"
+        ],
+        "alquimia/onnx_alquimia_config.h": [],
+        "alquimia/onnx_alquimia_interface.c": [
+          "alquimia/alquimia_constants.h",
+          "alquimia/alquimia_util.h",
+          "alquimia/onnx_alquimia_config.h",
+          "alquimia/onnx_alquimia_interface.h"
+        ],
+        "alquimia/onnx_alquimia_interface.h": [],
+        "alquimia/pflotran_alquimia_interface.h": []
+      },
+      "neighborMap": {
+        "alquimia/alquimia_interface.c": [
+          {
+            "path": "alquimia/alquimia_constants.h",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "alquimia/alquimia_interface.h",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "alquimia/alquimia_util.h",
+            "batchIndex": 3,
+            "symbols": []
+          }
+        ],
+        "alquimia/onnx_alquimia_interface.c": [
+          {
+            "path": "alquimia/alquimia_constants.h",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "alquimia/alquimia_util.h",
+            "batchIndex": 3,
+            "symbols": []
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 2,
+      "files": [
+        {
+          "path": "alquimia/alquimia_memory.h",
+          "language": "c",
+          "sizeLines": 112,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/DriverOutput.c",
+          "language": "c",
+          "sizeLines": 138,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/DriverOutput.h",
+          "language": "c",
+          "sizeLines": 57,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/TransportDriver.c",
+          "language": "c",
+          "sizeLines": 928,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/TransportDriver.h",
+          "language": "c",
+          "sizeLines": 137,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/batch_chem.c",
+          "language": "c",
+          "sizeLines": 107,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/transport.c",
+          "language": "c",
+          "sizeLines": 108,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "alquimia/alquimia_memory.h": [],
+        "drivers/DriverOutput.c": [
+          "alquimia/alquimia_memory.h",
+          "drivers/DriverOutput.h"
+        ],
+        "drivers/DriverOutput.h": [],
+        "drivers/TransportDriver.c": [
+          "alquimia/alquimia_interface.h",
+          "alquimia/alquimia_memory.h",
+          "alquimia/alquimia_util.h",
+          "drivers/TransportDriver.h",
+          "drivers/ini.h"
+        ],
+        "drivers/TransportDriver.h": [],
+        "drivers/batch_chem.c": [
+          "alquimia/alquimia_memory.h",
+          "alquimia/alquimia_util.h",
+          "drivers/BatchChemDriver.h",
+          "drivers/DriverOutput.h"
+        ],
+        "drivers/transport.c": [
+          "alquimia/alquimia_memory.h",
+          "alquimia/alquimia_util.h",
+          "drivers/DriverOutput.h",
+          "drivers/TransportDriver.h"
+        ]
+      },
+      "neighborMap": {
+        "alquimia/alquimia_memory.h": [
+          {
+            "path": "alquimia/alquimia_memory.c",
+            "batchIndex": 4,
+            "symbols": [
+              "AllocateAlquimiaVectorDouble",
+              "FreeAlquimiaVectorDouble",
+              "AllocateAlquimiaVectorInt",
+              "FreeAlquimiaVectorInt",
+              "AllocateAlquimiaVectorString",
+              "FreeAlquimiaVectorString",
+              "AllocateAlquimiaState",
+              "FreeAlquimiaState",
+              "AllocateAlquimiaAuxiliaryData",
+              "FreeAlquimiaAuxiliaryData",
+              "AllocateAlquimiaProperties",
+              "FreeAlquimiaProperties",
+              "AllocateAlquimiaProblemMetaData",
+              "FreeAlquimiaProblemMetaData",
+              "AllocateAlquimiaAuxiliaryOutputData",
+              "FreeAlquimiaAuxiliaryOutputData",
+              "AllocateAlquimiaEngineStatus",
+              "FreeAlquimiaEngineStatus",
+              "AllocateAlquimiaGeochemicalConditionVector",
+              "AllocateAlquimiaGeochemicalCondition",
+              "AllocateAlquimiaAqueousConstraint",
+              "AllocateAlquimiaAqueousConstraintVector",
+              "AllocateAlquimiaMineralConstraint",
+              "AllocateAlquimiaMineralConstraintVector",
+              "FreeAlquimiaGeochemicalConditionVector",
+              "FreeAlquimiaGeochemicalCondition",
+              "FreeAlquimiaAqueousConstraintVector",
+              "FreeAlquimiaAqueousConstraint",
+              "FreeAlquimiaMineralConstraintVector",
+              "FreeAlquimiaMineralConstraint",
+              "AllocateAlquimiaData",
+              "FreeAlquimiaData"
+            ]
+          },
+          {
+            "path": "alquimia/alquimia_util.c",
+            "batchIndex": 4,
+            "symbols": [
+              "AlquimiaCaseInsensitiveStringCompare",
+              "AlquimiaFindIndexFromName",
+              "CopyAlquimiaVectorDouble",
+              "CopyAlquimiaVectorInt",
+              "CopyAlquimiaVectorString",
+              "CopyAlquimiaSizes",
+              "CopyAlquimiaProblemMetaData",
+              "CopyAlquimiaProperties",
+              "CopyAlquimiaEngineFunctionality",
+              "CopyAlquimiaState",
+              "CopyAlquimiaAuxiliaryData",
+              "CopyAlquimiaAuxiliaryOutputData",
+              "CopyAlquimiaGeochemicalCondition",
+              "CopyAlquimiaGeochemicalConditionVector",
+              "CopyAlquimiaAqueousConstraint",
+              "CopyAlquimiaAqueousConstraintVector",
+              "CopyAlquimiaMineralConstraint",
+              "CopyAlquimiaMineralConstraintVector",
+              "ResizeAlquimiaVectorDouble",
+              "ResizeAlquimiaVectorInt",
+              "ResizeAlquimiaVectorString",
+              "ResizeAlquimiaGeochemicalConditionVector",
+              "ResizeAlquimiaAqueousConstraintVector",
+              "ResizeAlquimiaMineralConstraintVector",
+              "PrintAlquimiaVectorDouble",
+              "PrintAlquimiaVectorInt",
+              "PrintAlquimiaVectorString",
+              "PrintAlquimiaData",
+              "PrintAlquimiaSizes",
+              "PrintAlquimiaEngineFunctionality",
+              "PrintAlquimiaProblemMetaData",
+              "PrintAlquimiaProperties",
+              "PrintAlquimiaState",
+              "PrintAlquimiaAuxiliaryData",
+              "PrintAlquimiaAuxiliaryOutputData",
+              "PrintAlquimiaGeochemicalConditionVector",
+              "PrintAlquimiaGeochemicalCondition",
+              "PrintAlquimiaAqueousConstraint",
+              "PrintAlquimiaMineralConstraint"
+            ]
+          },
+          {
+            "path": "drivers/BatchChemDriver.c",
+            "batchIndex": 3,
+            "symbols": [
+              "BatchChemDriverInput_Free",
+              "BatchChemDriver",
+              "BatchChemDriver_Free",
+              "BatchChemDriver_Run",
+              "BatchChemDriver_GetSoluteAndAuxData"
+            ]
+          },
+          {
+            "path": "drivers/input_util.c",
+            "batchIndex": 3,
+            "symbols": [
+              "Input_CreateAlquimiaInterface",
+              "Input_GetRegions",
+              "Input_GetRegionData",
+              "Input_GetGeochemicalConditions",
+              "Input_GetOutputParameters",
+              "Input_IsStateSection",
+              "Input_ParseState",
+              "Input_IsPropertiesSection",
+              "Input_ParseProperty",
+              "Input_IsGeochemicalConditionSection",
+              "Input_ParseGeochemicalCondition",
+              "Input_ParseAqueousConstraint",
+              "Input_ParseMineralConstraint"
+            ]
+          }
+        ],
+        "drivers/TransportDriver.c": [
+          {
+            "path": "alquimia/alquimia_interface.h",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "alquimia/alquimia_util.h",
+            "batchIndex": 3,
+            "symbols": []
+          },
+          {
+            "path": "drivers/ini.h",
+            "batchIndex": 3,
+            "symbols": []
+          }
+        ],
+        "drivers/batch_chem.c": [
+          {
+            "path": "alquimia/alquimia_util.h",
+            "batchIndex": 3,
+            "symbols": []
+          },
+          {
+            "path": "drivers/BatchChemDriver.h",
+            "batchIndex": 3,
+            "symbols": []
+          }
+        ],
+        "drivers/transport.c": [
+          {
+            "path": "alquimia/alquimia_util.h",
+            "batchIndex": 3,
+            "symbols": []
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 3,
+      "files": [
+        {
+          "path": "alquimia/alquimia_util.h",
+          "language": "c",
+          "sizeLines": 119,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/BatchChemDriver.c",
+          "language": "c",
+          "sizeLines": 793,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/BatchChemDriver.h",
+          "language": "c",
+          "sizeLines": 131,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/ini.c",
+          "language": "c",
+          "sizeLines": 187,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/ini.h",
+          "language": "c",
+          "sizeLines": 83,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/input_util.c",
+          "language": "c",
+          "sizeLines": 555,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/input_util.h",
+          "language": "c",
+          "sizeLines": 136,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "alquimia/alquimia_util.h": [],
+        "drivers/BatchChemDriver.c": [
+          "alquimia/alquimia_interface.h",
+          "alquimia/alquimia_memory.h",
+          "alquimia/alquimia_util.h",
+          "drivers/BatchChemDriver.h",
+          "drivers/ini.h"
+        ],
+        "drivers/BatchChemDriver.h": [],
+        "drivers/ini.c": [
+          "drivers/ini.h"
+        ],
+        "drivers/ini.h": [],
+        "drivers/input_util.c": [
+          "alquimia/alquimia_constants.h",
+          "alquimia/alquimia_memory.h",
+          "alquimia/alquimia_util.h",
+          "drivers/ini.h",
+          "drivers/input_util.h"
+        ],
+        "drivers/input_util.h": []
+      },
+      "neighborMap": {
+        "alquimia/alquimia_util.h": [
+          {
+            "path": "alquimia/alquimia_interface.c",
+            "batchIndex": 1,
+            "symbols": [
+              "CreateAlquimiaInterface"
+            ]
+          },
+          {
+            "path": "alquimia/alquimia_util.c",
+            "batchIndex": 4,
+            "symbols": [
+              "AlquimiaCaseInsensitiveStringCompare",
+              "AlquimiaFindIndexFromName",
+              "CopyAlquimiaVectorDouble",
+              "CopyAlquimiaVectorInt",
+              "CopyAlquimiaVectorString",
+              "CopyAlquimiaSizes",
+              "CopyAlquimiaProblemMetaData",
+              "CopyAlquimiaProperties",
+              "CopyAlquimiaEngineFunctionality",
+              "CopyAlquimiaState",
+              "CopyAlquimiaAuxiliaryData",
+              "CopyAlquimiaAuxiliaryOutputData",
+              "CopyAlquimiaGeochemicalCondition",
+              "CopyAlquimiaGeochemicalConditionVector",
+              "CopyAlquimiaAqueousConstraint",
+              "CopyAlquimiaAqueousConstraintVector",
+              "CopyAlquimiaMineralConstraint",
+              "CopyAlquimiaMineralConstraintVector",
+              "ResizeAlquimiaVectorDouble",
+              "ResizeAlquimiaVectorInt",
+              "ResizeAlquimiaVectorString",
+              "ResizeAlquimiaGeochemicalConditionVector",
+              "ResizeAlquimiaAqueousConstraintVector",
+              "ResizeAlquimiaMineralConstraintVector",
+              "PrintAlquimiaVectorDouble",
+              "PrintAlquimiaVectorInt",
+              "PrintAlquimiaVectorString",
+              "PrintAlquimiaData",
+              "PrintAlquimiaSizes",
+              "PrintAlquimiaEngineFunctionality",
+              "PrintAlquimiaProblemMetaData",
+              "PrintAlquimiaProperties",
+              "PrintAlquimiaState",
+              "PrintAlquimiaAuxiliaryData",
+              "PrintAlquimiaAuxiliaryOutputData",
+              "PrintAlquimiaGeochemicalConditionVector",
+              "PrintAlquimiaGeochemicalCondition",
+              "PrintAlquimiaAqueousConstraint",
+              "PrintAlquimiaMineralConstraint"
+            ]
+          },
+          {
+            "path": "alquimia/onnx_alquimia_interface.c",
+            "batchIndex": 1,
+            "symbols": []
+          },
+          {
+            "path": "drivers/TransportDriver.c",
+            "batchIndex": 2,
+            "symbols": [
+              "TransportDriverInput_Free",
+              "TransportDriver",
+              "TransportDriver_Free",
+              "TransportDriver_Run",
+              "TransportDriver_GetSoluteAndAuxData"
+            ]
+          },
+          {
+            "path": "drivers/batch_chem.c",
+            "batchIndex": 2,
+            "symbols": [
+              "Usage",
+              "main"
+            ]
+          },
+          {
+            "path": "drivers/transport.c",
+            "batchIndex": 2,
+            "symbols": [
+              "Usage",
+              "main"
+            ]
+          }
+        ],
+        "drivers/BatchChemDriver.c": [
+          {
+            "path": "alquimia/alquimia_interface.h",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "alquimia/alquimia_memory.h",
+            "batchIndex": 2,
+            "symbols": []
+          }
+        ],
+        "drivers/BatchChemDriver.h": [
+          {
+            "path": "drivers/batch_chem.c",
+            "batchIndex": 2,
+            "symbols": [
+              "Usage",
+              "main"
+            ]
+          }
+        ],
+        "drivers/ini.h": [
+          {
+            "path": "drivers/TransportDriver.c",
+            "batchIndex": 2,
+            "symbols": [
+              "TransportDriverInput_Free",
+              "TransportDriver",
+              "TransportDriver_Free",
+              "TransportDriver_Run",
+              "TransportDriver_GetSoluteAndAuxData"
+            ]
+          }
+        ],
+        "drivers/input_util.c": [
+          {
+            "path": "alquimia/alquimia_constants.h",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "alquimia/alquimia_memory.h",
+            "batchIndex": 2,
+            "symbols": []
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 4,
+      "files": [
+        {
+          "path": "alquimia/alquimia_constants.c",
+          "language": "c",
+          "sizeLines": 57,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/alquimia_constants.h",
+          "language": "c",
+          "sizeLines": 65,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/alquimia_containers.h",
+          "language": "c",
+          "sizeLines": 194,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/alquimia_interface.h",
+          "language": "c",
+          "sizeLines": 124,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/alquimia_memory.c",
+          "language": "c",
+          "sizeLines": 528,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/alquimia_util.c",
+          "language": "c",
+          "sizeLines": 529,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "alquimia/alquimia_constants.c": [
+          "alquimia/alquimia_constants.h"
+        ],
+        "alquimia/alquimia_constants.h": [],
+        "alquimia/alquimia_containers.h": [],
+        "alquimia/alquimia_interface.h": [],
+        "alquimia/alquimia_memory.c": [
+          "alquimia/alquimia_constants.h",
+          "alquimia/alquimia_containers.h",
+          "alquimia/alquimia_interface.h",
+          "alquimia/alquimia_memory.h"
+        ],
+        "alquimia/alquimia_util.c": [
+          "alquimia/alquimia_constants.h",
+          "alquimia/alquimia_interface.h",
+          "alquimia/alquimia_memory.h",
+          "alquimia/alquimia_util.h"
+        ]
+      },
+      "neighborMap": {
+        "alquimia/alquimia_constants.h": [
+          {
+            "path": "alquimia/alquimia_interface.c",
+            "batchIndex": 1,
+            "symbols": [
+              "CreateAlquimiaInterface"
+            ]
+          },
+          {
+            "path": "alquimia/onnx_alquimia_interface.c",
+            "batchIndex": 1,
+            "symbols": []
+          },
+          {
+            "path": "drivers/input_util.c",
+            "batchIndex": 3,
+            "symbols": [
+              "Input_CreateAlquimiaInterface",
+              "Input_GetRegions",
+              "Input_GetRegionData",
+              "Input_GetGeochemicalConditions",
+              "Input_GetOutputParameters",
+              "Input_IsStateSection",
+              "Input_ParseState",
+              "Input_IsPropertiesSection",
+              "Input_ParseProperty",
+              "Input_IsGeochemicalConditionSection",
+              "Input_ParseGeochemicalCondition",
+              "Input_ParseAqueousConstraint",
+              "Input_ParseMineralConstraint"
+            ]
+          }
+        ],
+        "alquimia/alquimia_interface.h": [
+          {
+            "path": "alquimia/alquimia_interface.c",
+            "batchIndex": 1,
+            "symbols": [
+              "CreateAlquimiaInterface"
+            ]
+          },
+          {
+            "path": "drivers/BatchChemDriver.c",
+            "batchIndex": 3,
+            "symbols": [
+              "BatchChemDriverInput_Free",
+              "BatchChemDriver",
+              "BatchChemDriver_Free",
+              "BatchChemDriver_Run",
+              "BatchChemDriver_GetSoluteAndAuxData"
+            ]
+          },
+          {
+            "path": "drivers/TransportDriver.c",
+            "batchIndex": 2,
+            "symbols": [
+              "TransportDriverInput_Free",
+              "TransportDriver",
+              "TransportDriver_Free",
+              "TransportDriver_Run",
+              "TransportDriver_GetSoluteAndAuxData"
+            ]
+          }
+        ],
+        "alquimia/alquimia_memory.c": [
+          {
+            "path": "alquimia/alquimia_memory.h",
+            "batchIndex": 2,
+            "symbols": []
+          }
+        ],
+        "alquimia/alquimia_util.c": [
+          {
+            "path": "alquimia/alquimia_memory.h",
+            "batchIndex": 2,
+            "symbols": []
+          },
+          {
+            "path": "alquimia/alquimia_util.h",
+            "batchIndex": 3,
+            "symbols": []
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 5,
+      "files": [
+        {
+          "path": "alquimia/CMakeLists.txt",
+          "language": "txt",
+          "sizeLines": 99,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "alquimia/alquimia.c",
+          "language": "c",
+          "sizeLines": 101,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/alquimia.h.in",
+          "language": "in",
+          "sizeLines": 110,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/alquimia_containers.F90",
+          "language": "f90",
+          "sizeLines": 213,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/alquimia_fortran_interface_mod.F90",
+          "language": "f90",
+          "sizeLines": 380,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/c_f_interface_module.F90",
+          "language": "f90",
+          "sizeLines": 189,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/crunch_alquimia_interface.F90",
+          "language": "f90",
+          "sizeLines": 3314,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/crunch_alquimia_wrappers.F90",
+          "language": "f90",
+          "sizeLines": 210,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/mixed/Makefile",
+          "language": "makefile",
+          "sizeLines": 94,
+          "fileCategory": "infra"
+        },
+        {
+          "path": "alquimia/mixed/README",
+          "language": "unknown",
+          "sizeLines": 2,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/mixed/cc-f90-strings.F90",
+          "language": "f90",
+          "sizeLines": 54,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/mixed/cc-f90-strings.cc",
+          "language": "cpp",
+          "sizeLines": 79,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/mixed/cc-f90-strings.h",
+          "language": "c",
+          "sizeLines": 35,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/mixed/struct-array-pointer.F90",
+          "language": "f90",
+          "sizeLines": 162,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/mixed/struct-array-pointer.cc",
+          "language": "cpp",
+          "sizeLines": 144,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/mixed/struct-derived.F90",
+          "language": "f90",
+          "sizeLines": 41,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/mixed/struct-derived.cc",
+          "language": "cpp",
+          "sizeLines": 66,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/pflotran_alquimia_interface.F90",
+          "language": "f90",
+          "sizeLines": 2252,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/pflotran_alquimia_wrappers.F90",
+          "language": "f90",
+          "sizeLines": 211,
+          "fileCategory": "code"
+        },
+        {
+          "path": "alquimia/pflotran_petsc_stubs.F90",
+          "language": "f90",
+          "sizeLines": 36,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/CMakeLists.txt",
+          "language": "txt",
+          "sizeLines": 15,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "drivers/LICENSE.inih.txt",
+          "language": "txt",
+          "sizeLines": 27,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "drivers/fpe.c",
+          "language": "c",
+          "sizeLines": 94,
+          "fileCategory": "code"
+        },
+        {
+          "path": "drivers/fpe.h",
+          "language": "c",
+          "sizeLines": 54,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "alquimia/CMakeLists.txt": [],
+        "alquimia/alquimia.c": [],
+        "alquimia/alquimia.h.in": [],
+        "alquimia/alquimia_containers.F90": [],
+        "alquimia/alquimia_fortran_interface_mod.F90": [],
+        "alquimia/c_f_interface_module.F90": [],
+        "alquimia/crunch_alquimia_interface.F90": [],
+        "alquimia/crunch_alquimia_wrappers.F90": [],
+        "alquimia/mixed/Makefile": [],
+        "alquimia/mixed/README": [],
+        "alquimia/mixed/cc-f90-strings.F90": [],
+        "alquimia/mixed/cc-f90-strings.cc": [
+          "alquimia/mixed/cc-f90-strings.h"
+        ],
+        "alquimia/mixed/cc-f90-strings.h": [],
+        "alquimia/mixed/struct-array-pointer.F90": [],
+        "alquimia/mixed/struct-array-pointer.cc": [],
+        "alquimia/mixed/struct-derived.F90": [],
+        "alquimia/mixed/struct-derived.cc": [],
+        "alquimia/pflotran_alquimia_interface.F90": [],
+        "alquimia/pflotran_alquimia_wrappers.F90": [],
+        "alquimia/pflotran_petsc_stubs.F90": [],
+        "drivers/CMakeLists.txt": [],
+        "drivers/LICENSE.inih.txt": [],
+        "drivers/fpe.c": [],
+        "drivers/fpe.h": []
+      },
+      "neighborMap": {}
+    }
+  ]
+}

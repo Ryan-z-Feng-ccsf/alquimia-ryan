@@ -1,0 +1,2164 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 7,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 7,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 7,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "alquimia/alquimia_util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 119,
+      "nonEmptyLines": 107,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "drivers/BatchChemDriver.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 793,
+      "nonEmptyLines": 714,
+      "functions": [
+        {
+          "name": "Min",
+          "startLine": 36,
+          "endLine": 39,
+          "params": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "name": "Max",
+          "startLine": 41,
+          "endLine": 44,
+          "params": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "name": "ValueIsTrue",
+          "startLine": 47,
+          "endLine": 53,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "GetIndexLabel",
+          "startLine": 55,
+          "endLine": 65,
+          "params": [
+            "name",
+            "label"
+          ]
+        },
+        {
+          "name": "ParseInput",
+          "startLine": 102,
+          "endLine": 169,
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ]
+        },
+        {
+          "name": "BatchChemDriverInput_Free",
+          "startLine": 278,
+          "endLine": 298,
+          "params": [
+            "input"
+          ]
+        },
+        {
+          "name": "BatchChemDriver_Free",
+          "startLine": 468,
+          "endLine": 498,
+          "params": [
+            "driver"
+          ]
+        },
+        {
+          "name": "BatchChemDriver_RecordHistory",
+          "startLine": 500,
+          "endLine": 517,
+          "params": [
+            "driver"
+          ]
+        },
+        {
+          "name": "BatchChemDriver_Initialize",
+          "startLine": 519,
+          "endLine": 558,
+          "params": [
+            "driver"
+          ]
+        },
+        {
+          "name": "BatchChemDriver_Run",
+          "startLine": 560,
+          "endLine": 620,
+          "params": [
+            "driver"
+          ]
+        },
+        {
+          "name": "BatchChemDriver_GetSoluteAndAuxData",
+          "startLine": 622,
+          "endLine": 792,
+          "params": [
+            "driver",
+            "time",
+            "var_names",
+            "var_data"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "BatchChemDriver",
+          "startLine": 300,
+          "endLine": 341,
+          "methods": [],
+          "properties": [
+            "description",
+            "t_min",
+            "max_steps",
+            "verbose",
+            "water_density",
+            "volume",
+            "time",
+            "step",
+            "chem_properties",
+            "chem_state",
+            "chem_aux_data",
+            "chem_aux_output",
+            "chem",
+            "chem_engine",
+            "chem_status",
+            "chem_sizes",
+            "chem_metadata",
+            "chem_cond",
+            "history_size",
+            "history_times",
+            "chem_state_history",
+            "chem_aux_output_history"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "BatchChemDriverInput_Free",
+          "line": 278,
+          "isDefault": false
+        },
+        {
+          "name": "BatchChemDriver",
+          "line": 300,
+          "isDefault": false
+        },
+        {
+          "name": "BatchChemDriver_Free",
+          "line": 468,
+          "isDefault": false
+        },
+        {
+          "name": "BatchChemDriver_Run",
+          "line": 560,
+          "isDefault": false
+        },
+        {
+          "name": "BatchChemDriver_GetSoluteAndAuxData",
+          "line": 622,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ValueIsTrue",
+          "callee": "strcmp",
+          "lineNumber": 49
+        },
+        {
+          "caller": "ValueIsTrue",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 50
+        },
+        {
+          "caller": "ValueIsTrue",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 51
+        },
+        {
+          "caller": "ValueIsTrue",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 52
+        },
+        {
+          "caller": "GetIndexLabel",
+          "callee": "strstr",
+          "lineNumber": 57
+        },
+        {
+          "caller": "GetIndexLabel",
+          "callee": "strstr",
+          "lineNumber": 58
+        },
+        {
+          "caller": "GetIndexLabel",
+          "callee": "memcpy",
+          "lineNumber": 63
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 113
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 114
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 115
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "ValueIsTrue",
+          "lineNumber": 116
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 117
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atof",
+          "lineNumber": 118
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 119
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atof",
+          "lineNumber": 120
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 121
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atoi",
+          "lineNumber": 122
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 123
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atof",
+          "lineNumber": 124
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 127
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atof",
+          "lineNumber": 128
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 129
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atof",
+          "lineNumber": 130
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH_N",
+          "lineNumber": 131
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "GetIsothermValue",
+          "lineNumber": 132
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH_N",
+          "lineNumber": 133
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "GetIsothermValue",
+          "lineNumber": 134
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH_N",
+          "lineNumber": 135
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "GetIsothermValue",
+          "lineNumber": 136
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 139
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atof",
+          "lineNumber": 140
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 141
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atof",
+          "lineNumber": 142
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 143
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atof",
+          "lineNumber": 144
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 145
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "atof",
+          "lineNumber": 146
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH_N",
+          "lineNumber": 147
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "GetSurfaceSiteValue",
+          "lineNumber": 148
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH_N",
+          "lineNumber": 149
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "GetIonExchangeValue",
+          "lineNumber": 150
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 153
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 154
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 155
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 156
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 157
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 158
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 161
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "ValueIsTrue",
+          "lineNumber": 162
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 163
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 164
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "MATCH",
+          "lineNumber": 165
+        },
+        {
+          "caller": "ParseInput",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 166
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 280
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 282
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 284
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 286
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 288
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 290
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 292
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 294
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 296
+        },
+        {
+          "caller": "BatchChemDriverInput_Free",
+          "callee": "free",
+          "lineNumber": 297
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "free",
+          "lineNumber": 470
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "FreeAlquimiaGeochemicalCondition",
+          "lineNumber": 473
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "FreeAlquimiaState",
+          "lineNumber": 476
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "FreeAlquimiaProperties",
+          "lineNumber": 477
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "FreeAlquimiaAuxiliaryData",
+          "lineNumber": 478
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "FreeAlquimiaAuxiliaryOutputData",
+          "lineNumber": 479
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "FreeAlquimiaProblemMetaData",
+          "lineNumber": 480
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "FreeAlquimiaState",
+          "lineNumber": 485
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "FreeAlquimiaAuxiliaryOutputData",
+          "lineNumber": 486
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "free",
+          "lineNumber": 488
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "free",
+          "lineNumber": 489
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "free",
+          "lineNumber": 490
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "Shutdown",
+          "lineNumber": 493
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "FreeAlquimiaEngineStatus",
+          "lineNumber": 495
+        },
+        {
+          "caller": "BatchChemDriver_Free",
+          "callee": "free",
+          "lineNumber": 497
+        },
+        {
+          "caller": "BatchChemDriver_RecordHistory",
+          "callee": "realloc",
+          "lineNumber": 505
+        },
+        {
+          "caller": "BatchChemDriver_RecordHistory",
+          "callee": "realloc",
+          "lineNumber": 506
+        },
+        {
+          "caller": "BatchChemDriver_RecordHistory",
+          "callee": "realloc",
+          "lineNumber": 508
+        },
+        {
+          "caller": "BatchChemDriver_RecordHistory",
+          "callee": "AllocateAlquimiaState",
+          "lineNumber": 512
+        },
+        {
+          "caller": "BatchChemDriver_RecordHistory",
+          "callee": "CopyAlquimiaState",
+          "lineNumber": 513
+        },
+        {
+          "caller": "BatchChemDriver_RecordHistory",
+          "callee": "AllocateAlquimiaAuxiliaryOutputData",
+          "lineNumber": 514
+        },
+        {
+          "caller": "BatchChemDriver_RecordHistory",
+          "callee": "CopyAlquimiaAuxiliaryOutputData",
+          "lineNumber": 515
+        },
+        {
+          "caller": "BatchChemDriver_Initialize",
+          "callee": "printf",
+          "lineNumber": 522
+        },
+        {
+          "caller": "BatchChemDriver_Initialize",
+          "callee": "ProcessCondition",
+          "lineNumber": 537
+        },
+        {
+          "caller": "BatchChemDriver_Initialize",
+          "callee": "alquimia_error",
+          "lineNumber": 545
+        },
+        {
+          "caller": "BatchChemDriver_Initialize",
+          "callee": "BatchChemDriver_RecordHistory",
+          "lineNumber": 552
+        },
+        {
+          "caller": "BatchChemDriver_Initialize",
+          "callee": "printf",
+          "lineNumber": 555
+        },
+        {
+          "caller": "BatchChemDriver_Run",
+          "callee": "printf",
+          "lineNumber": 563
+        },
+        {
+          "caller": "BatchChemDriver_Run",
+          "callee": "BatchChemDriver_Initialize",
+          "lineNumber": 569
+        },
+        {
+          "caller": "BatchChemDriver_Run",
+          "callee": "printf",
+          "lineNumber": 578
+        },
+        {
+          "caller": "BatchChemDriver_Run",
+          "callee": "ReactionStepOperatorSplit",
+          "lineNumber": 582
+        },
+        {
+          "caller": "BatchChemDriver_Run",
+          "callee": "printf",
+          "lineNumber": 591
+        },
+        {
+          "caller": "BatchChemDriver_Run",
+          "callee": "GetAuxiliaryOutput",
+          "lineNumber": 596
+        },
+        {
+          "caller": "BatchChemDriver_Run",
+          "callee": "printf",
+          "lineNumber": 605
+        },
+        {
+          "caller": "BatchChemDriver_Run",
+          "callee": "BatchChemDriver_RecordHistory",
+          "lineNumber": 616
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "FreeAlquimiaVectorString",
+          "lineNumber": 629
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "FreeAlquimiaVectorDouble",
+          "lineNumber": 631
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AllocateAlquimiaVectorString",
+          "lineNumber": 658
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AllocateAlquimiaVectorDouble",
+          "lineNumber": 659
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 661
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 669
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 670
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 677
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 678
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 685
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 686
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 693
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 694
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 701
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 702
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 709
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 710
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 715
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 723
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 724
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 731
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 732
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 739
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 740
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 747
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 748
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 755
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 756
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 763
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 764
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 771
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 772
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 779
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 780
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "snprintf",
+          "lineNumber": 787
+        },
+        {
+          "caller": "BatchChemDriver_GetSoluteAndAuxData",
+          "callee": "AlquimiaStringDup",
+          "lineNumber": 788
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 5,
+        "functionCount": 11,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "drivers/BatchChemDriver.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 131,
+      "nonEmptyLines": 106,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "drivers/ini.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 187,
+      "nonEmptyLines": 162,
+      "functions": [
+        {
+          "name": "ini_parse_stream",
+          "startLine": 66,
+          "endLine": 167,
+          "params": [
+            "reader",
+            "stream",
+            "handler",
+            "user"
+          ]
+        },
+        {
+          "name": "ini_parse_file",
+          "startLine": 170,
+          "endLine": 173,
+          "params": [
+            "file",
+            "handler",
+            "user"
+          ]
+        },
+        {
+          "name": "ini_parse",
+          "startLine": 176,
+          "endLine": 187,
+          "params": [
+            "filename",
+            "handler",
+            "user"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ini_parse_stream",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "ini_parse_file",
+          "line": 170,
+          "isDefault": false
+        },
+        {
+          "name": "ini_parse",
+          "line": 176,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ini_parse_stream",
+          "callee": "malloc",
+          "lineNumber": 86
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "reader",
+          "lineNumber": 93
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "lskip",
+          "lineNumber": 104
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "rstrip",
+          "lineNumber": 104
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "handler",
+          "lineNumber": 113
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "find_char_or_comment",
+          "lineNumber": 119
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "strncpy0",
+          "lineNumber": 122
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "find_char_or_comment",
+          "lineNumber": 132
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "find_char_or_comment",
+          "lineNumber": 134
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "rstrip",
+          "lineNumber": 138
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "lskip",
+          "lineNumber": 139
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "find_char_or_comment",
+          "lineNumber": 140
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "rstrip",
+          "lineNumber": 143
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "strncpy0",
+          "lineNumber": 146
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "handler",
+          "lineNumber": 147
+        },
+        {
+          "caller": "ini_parse_stream",
+          "callee": "free",
+          "lineNumber": 163
+        },
+        {
+          "caller": "ini_parse_file",
+          "callee": "ini_parse_stream",
+          "lineNumber": 172
+        },
+        {
+          "caller": "ini_parse",
+          "callee": "fopen",
+          "lineNumber": 181
+        },
+        {
+          "caller": "ini_parse",
+          "callee": "ini_parse_file",
+          "lineNumber": 184
+        },
+        {
+          "caller": "ini_parse",
+          "callee": "fclose",
+          "lineNumber": 185
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "drivers/ini.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 83,
+      "nonEmptyLines": 63,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "drivers/input_util.c",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 555,
+      "nonEmptyLines": 497,
+      "functions": [
+        {
+          "name": "Min",
+          "startLine": 37,
+          "endLine": 40,
+          "params": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "name": "Max",
+          "startLine": 42,
+          "endLine": 45,
+          "params": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "name": "ValueIsTrue",
+          "startLine": 48,
+          "endLine": 54,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "ParseEngineData",
+          "startLine": 63,
+          "endLine": 79,
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ]
+        },
+        {
+          "name": "Input_CreateAlquimiaInterface",
+          "startLine": 81,
+          "endLine": 108,
+          "params": [
+            "input_file",
+            "engine_interface",
+            "engine_sizes",
+            "engine_functionality",
+            "engine_status"
+          ]
+        },
+        {
+          "name": "ParseRegionName",
+          "startLine": 110,
+          "endLine": 122,
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ]
+        },
+        {
+          "name": "Input_GetRegions",
+          "startLine": 124,
+          "endLine": 130,
+          "params": [
+            "input_file",
+            "region_names"
+          ]
+        },
+        {
+          "name": "ParseRegionCells",
+          "startLine": 132,
+          "endLine": 175,
+          "params": [
+            "name",
+            "value",
+            "cells"
+          ]
+        },
+        {
+          "name": "ParseRegionData",
+          "startLine": 187,
+          "endLine": 212,
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ]
+        },
+        {
+          "name": "Input_GetRegionData",
+          "startLine": 214,
+          "endLine": 231,
+          "params": [
+            "input_file",
+            "region_name",
+            "problem_metadata",
+            "region_state",
+            "region_properties",
+            "region_initial_condition",
+            "region_cells"
+          ]
+        },
+        {
+          "name": "ParseGeochemicalConditions",
+          "startLine": 233,
+          "endLine": 259,
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ]
+        },
+        {
+          "name": "Input_GetGeochemicalConditions",
+          "startLine": 261,
+          "endLine": 267,
+          "params": [
+            "input_file",
+            "conditions"
+          ]
+        },
+        {
+          "name": "ParseOutputParameters",
+          "startLine": 276,
+          "endLine": 290,
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ]
+        },
+        {
+          "name": "Input_GetOutputParameters",
+          "startLine": 292,
+          "endLine": 350,
+          "params": [
+            "input_file",
+            "output_type",
+            "output_file",
+            "verbose"
+          ]
+        },
+        {
+          "name": "Input_IsStateSection",
+          "startLine": 352,
+          "endLine": 360,
+          "params": [
+            "section",
+            "state_name"
+          ]
+        },
+        {
+          "name": "Input_ParseState",
+          "startLine": 362,
+          "endLine": 388,
+          "params": [
+            "section",
+            "name",
+            "value",
+            "metadata",
+            "state"
+          ]
+        },
+        {
+          "name": "Input_IsPropertiesSection",
+          "startLine": 390,
+          "endLine": 398,
+          "params": [
+            "section",
+            "properties_name"
+          ]
+        },
+        {
+          "name": "Input_ParseProperty",
+          "startLine": 400,
+          "endLine": 465,
+          "params": [
+            "section",
+            "name",
+            "value",
+            "metadata",
+            "properties"
+          ]
+        },
+        {
+          "name": "Input_IsGeochemicalConditionSection",
+          "startLine": 467,
+          "endLine": 473,
+          "params": [
+            "section",
+            "condition_name"
+          ]
+        },
+        {
+          "name": "Input_ParseGeochemicalCondition",
+          "startLine": 475,
+          "endLine": 489,
+          "params": [
+            "name",
+            "value",
+            "condition"
+          ]
+        },
+        {
+          "name": "Input_ParseAqueousConstraint",
+          "startLine": 491,
+          "endLine": 525,
+          "params": [
+            "primary_species",
+            "text",
+            "constraint"
+          ]
+        },
+        {
+          "name": "Input_ParseMineralConstraint",
+          "startLine": 527,
+          "endLine": 554,
+          "params": [
+            "mineral_name",
+            "text",
+            "constraint"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Input_CreateAlquimiaInterface",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "Input_GetRegions",
+          "line": 124,
+          "isDefault": false
+        },
+        {
+          "name": "Input_GetRegionData",
+          "line": 214,
+          "isDefault": false
+        },
+        {
+          "name": "Input_GetGeochemicalConditions",
+          "line": 261,
+          "isDefault": false
+        },
+        {
+          "name": "Input_GetOutputParameters",
+          "line": 292,
+          "isDefault": false
+        },
+        {
+          "name": "Input_IsStateSection",
+          "line": 352,
+          "isDefault": false
+        },
+        {
+          "name": "Input_ParseState",
+          "line": 362,
+          "isDefault": false
+        },
+        {
+          "name": "Input_IsPropertiesSection",
+          "line": 390,
+          "isDefault": false
+        },
+        {
+          "name": "Input_ParseProperty",
+          "line": 400,
+          "isDefault": false
+        },
+        {
+          "name": "Input_IsGeochemicalConditionSection",
+          "line": 467,
+          "isDefault": false
+        },
+        {
+          "name": "Input_ParseGeochemicalCondition",
+          "line": 475,
+          "isDefault": false
+        },
+        {
+          "name": "Input_ParseAqueousConstraint",
+          "line": 491,
+          "isDefault": false
+        },
+        {
+          "name": "Input_ParseMineralConstraint",
+          "line": 527,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ValueIsTrue",
+          "callee": "strcmp",
+          "lineNumber": 50
+        },
+        {
+          "caller": "ValueIsTrue",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 51
+        },
+        {
+          "caller": "ValueIsTrue",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 52
+        },
+        {
+          "caller": "ValueIsTrue",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 53
+        },
+        {
+          "caller": "ParseEngineData",
+          "callee": "MATCH",
+          "lineNumber": 71
+        },
+        {
+          "caller": "ParseEngineData",
+          "callee": "strncpy",
+          "lineNumber": 72
+        },
+        {
+          "caller": "ParseEngineData",
+          "callee": "MATCH",
+          "lineNumber": 73
+        },
+        {
+          "caller": "ParseEngineData",
+          "callee": "strncpy",
+          "lineNumber": 74
+        },
+        {
+          "caller": "ParseEngineData",
+          "callee": "MATCH",
+          "lineNumber": 75
+        },
+        {
+          "caller": "ParseEngineData",
+          "callee": "ValueIsTrue",
+          "lineNumber": 76
+        },
+        {
+          "caller": "Input_CreateAlquimiaInterface",
+          "callee": "ini_parse",
+          "lineNumber": 89
+        },
+        {
+          "caller": "Input_CreateAlquimiaInterface",
+          "callee": "alquimia_error",
+          "lineNumber": 91
+        },
+        {
+          "caller": "Input_CreateAlquimiaInterface",
+          "callee": "CreateAlquimiaInterface",
+          "lineNumber": 94
+        },
+        {
+          "caller": "Input_CreateAlquimiaInterface",
+          "callee": "alquimia_error",
+          "lineNumber": 96
+        },
+        {
+          "caller": "Input_CreateAlquimiaInterface",
+          "callee": "Setup",
+          "lineNumber": 99
+        },
+        {
+          "caller": "Input_CreateAlquimiaInterface",
+          "callee": "alquimia_error",
+          "lineNumber": 107
+        },
+        {
+          "caller": "ParseRegionName",
+          "callee": "strstr",
+          "lineNumber": 116
+        },
+        {
+          "caller": "ParseRegionName",
+          "callee": "ResizeAlquimiaVectorString",
+          "lineNumber": 118
+        },
+        {
+          "caller": "ParseRegionName",
+          "callee": "strncpy",
+          "lineNumber": 119
+        },
+        {
+          "caller": "Input_GetRegions",
+          "callee": "ini_parse",
+          "lineNumber": 127
+        },
+        {
+          "caller": "Input_GetRegions",
+          "callee": "alquimia_error",
+          "lineNumber": 129
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "ResizeAlquimiaVectorInt",
+          "lineNumber": 136
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "strstr",
+          "lineNumber": 138
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "ResizeAlquimiaVectorInt",
+          "lineNumber": 142
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "atoi",
+          "lineNumber": 143
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "strncpy",
+          "lineNumber": 148
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "atoi",
+          "lineNumber": 149
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "strstr",
+          "lineNumber": 151
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "atoi",
+          "lineNumber": 155
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "ResizeAlquimiaVectorInt",
+          "lineNumber": 158
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "strncpy",
+          "lineNumber": 166
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "atoi",
+          "lineNumber": 167
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "atoi",
+          "lineNumber": 167
+        },
+        {
+          "caller": "ParseRegionCells",
+          "callee": "ResizeAlquimiaVectorInt",
+          "lineNumber": 170
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "snprintf",
+          "lineNumber": 195
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "snprintf",
+          "lineNumber": 197
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "snprintf",
+          "lineNumber": 199
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "snprintf",
+          "lineNumber": 201
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "strcmp",
+          "lineNumber": 203
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "Input_ParseState",
+          "lineNumber": 204
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "strcmp",
+          "lineNumber": 205
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "Input_ParseProperty",
+          "lineNumber": 206
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "strcmp",
+          "lineNumber": 207
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "Input_ParseGeochemicalCondition",
+          "lineNumber": 208
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "strcmp",
+          "lineNumber": 209
+        },
+        {
+          "caller": "ParseRegionData",
+          "callee": "ParseRegionCells",
+          "lineNumber": 210
+        },
+        {
+          "caller": "Input_GetRegionData",
+          "callee": "strncpy",
+          "lineNumber": 227
+        },
+        {
+          "caller": "Input_GetRegionData",
+          "callee": "ini_parse",
+          "lineNumber": 228
+        },
+        {
+          "caller": "Input_GetRegionData",
+          "callee": "alquimia_error",
+          "lineNumber": 230
+        },
+        {
+          "caller": "ParseGeochemicalConditions",
+          "callee": "Input_IsGeochemicalConditionSection",
+          "lineNumber": 241
+        },
+        {
+          "caller": "ParseGeochemicalConditions",
+          "callee": "strcmp",
+          "lineNumber": 246
+        },
+        {
+          "caller": "ParseGeochemicalConditions",
+          "callee": "ResizeAlquimiaGeochemicalConditionVector",
+          "lineNumber": 251
+        },
+        {
+          "caller": "ParseGeochemicalConditions",
+          "callee": "strncpy",
+          "lineNumber": 252
+        },
+        {
+          "caller": "ParseGeochemicalConditions",
+          "callee": "Input_ParseGeochemicalCondition",
+          "lineNumber": 255
+        },
+        {
+          "caller": "Input_GetGeochemicalConditions",
+          "callee": "ini_parse",
+          "lineNumber": 264
+        },
+        {
+          "caller": "Input_GetGeochemicalConditions",
+          "callee": "alquimia_error",
+          "lineNumber": 266
+        },
+        {
+          "caller": "ParseOutputParameters",
+          "callee": "MATCH",
+          "lineNumber": 282
+        },
+        {
+          "caller": "ParseOutputParameters",
+          "callee": "ValueIsTrue",
+          "lineNumber": 283
+        },
+        {
+          "caller": "ParseOutputParameters",
+          "callee": "MATCH",
+          "lineNumber": 284
+        },
+        {
+          "caller": "ParseOutputParameters",
+          "callee": "strncpy",
+          "lineNumber": 285
+        },
+        {
+          "caller": "ParseOutputParameters",
+          "callee": "MATCH",
+          "lineNumber": 286
+        },
+        {
+          "caller": "ParseOutputParameters",
+          "callee": "strncpy",
+          "lineNumber": 287
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "ini_parse",
+          "lineNumber": 300
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "alquimia_error",
+          "lineNumber": 302
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "strlen",
+          "lineNumber": 304
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "strcpy",
+          "lineNumber": 305
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "strncpy",
+          "lineNumber": 307
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "strlen",
+          "lineNumber": 310
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "strlen",
+          "lineNumber": 313
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 319
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "sprintf",
+          "lineNumber": 320
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 321
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "sprintf",
+          "lineNumber": 322
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "sprintf",
+          "lineNumber": 326
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "memcpy",
+          "lineNumber": 329
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "strcat",
+          "lineNumber": 331
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "AlquimiaCaseInsensitiveStringCompare",
+          "lineNumber": 336
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "strlen",
+          "lineNumber": 338
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "strncpy",
+          "lineNumber": 346
+        },
+        {
+          "caller": "Input_GetOutputParameters",
+          "callee": "strncpy",
+          "lineNumber": 349
+        },
+        {
+          "caller": "Input_IsStateSection",
+          "callee": "strstr",
+          "lineNumber": 354
+        },
+        {
+          "caller": "Input_IsStateSection",
+          "callee": "strstr",
+          "lineNumber": 355
+        },
+        {
+          "caller": "Input_IsStateSection",
+          "callee": "strcpy",
+          "lineNumber": 356
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "strcmp",
+          "lineNumber": 368
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "atof",
+          "lineNumber": 370
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "alquimia_error",
+          "lineNumber": 372
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "strcmp",
+          "lineNumber": 374
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "atof",
+          "lineNumber": 376
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "alquimia_error",
+          "lineNumber": 378
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "strcmp",
+          "lineNumber": 380
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "atof",
+          "lineNumber": 382
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "alquimia_error",
+          "lineNumber": 384
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "strcmp",
+          "lineNumber": 386
+        },
+        {
+          "caller": "Input_ParseState",
+          "callee": "atof",
+          "lineNumber": 387
+        },
+        {
+          "caller": "Input_IsPropertiesSection",
+          "callee": "strstr",
+          "lineNumber": 392
+        },
+        {
+          "caller": "Input_IsPropertiesSection",
+          "callee": "strstr",
+          "lineNumber": 393
+        },
+        {
+          "caller": "Input_IsPropertiesSection",
+          "callee": "strcpy",
+          "lineNumber": 394
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strcmp",
+          "lineNumber": 406
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "atof",
+          "lineNumber": 408
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "alquimia_error",
+          "lineNumber": 410
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strcmp",
+          "lineNumber": 412
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "atof",
+          "lineNumber": 414
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "alquimia_error",
+          "lineNumber": 416
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strstr",
+          "lineNumber": 418
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strstr",
+          "lineNumber": 421
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strncpy",
+          "lineNumber": 423
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strstr",
+          "lineNumber": 424
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "AlquimiaFindIndexFromName",
+          "lineNumber": 427
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "alquimia_error",
+          "lineNumber": 429
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "atof",
+          "lineNumber": 430
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strstr",
+          "lineNumber": 432
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "AlquimiaFindIndexFromName",
+          "lineNumber": 435
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "alquimia_error",
+          "lineNumber": 437
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "atof",
+          "lineNumber": 438
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strstr",
+          "lineNumber": 440
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "AlquimiaFindIndexFromName",
+          "lineNumber": 443
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "alquimia_error",
+          "lineNumber": 445
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "atof",
+          "lineNumber": 446
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strstr",
+          "lineNumber": 448
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "AlquimiaFindIndexFromName",
+          "lineNumber": 451
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "alquimia_error",
+          "lineNumber": 453
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "atof",
+          "lineNumber": 454
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "strstr",
+          "lineNumber": 456
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "AlquimiaFindIndexFromName",
+          "lineNumber": 459
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "alquimia_error",
+          "lineNumber": 461
+        },
+        {
+          "caller": "Input_ParseProperty",
+          "callee": "atof",
+          "lineNumber": 462
+        },
+        {
+          "caller": "Input_IsGeochemicalConditionSection",
+          "callee": "strstr",
+          "lineNumber": 469
+        },
+        {
+          "caller": "Input_IsGeochemicalConditionSection",
+          "callee": "strcpy",
+          "lineNumber": 471
+        },
+        {
+          "caller": "Input_ParseGeochemicalCondition",
+          "callee": "strstr",
+          "lineNumber": 479
+        },
+        {
+          "caller": "Input_ParseGeochemicalCondition",
+          "callee": "ResizeAlquimiaAqueousConstraintVector",
+          "lineNumber": 481
+        },
+        {
+          "caller": "Input_ParseGeochemicalCondition",
+          "callee": "Input_ParseAqueousConstraint",
+          "lineNumber": 482
+        },
+        {
+          "caller": "Input_ParseGeochemicalCondition",
+          "callee": "strstr",
+          "lineNumber": 484
+        },
+        {
+          "caller": "Input_ParseGeochemicalCondition",
+          "callee": "ResizeAlquimiaMineralConstraintVector",
+          "lineNumber": 486
+        },
+        {
+          "caller": "Input_ParseGeochemicalCondition",
+          "callee": "Input_ParseMineralConstraint",
+          "lineNumber": 487
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "strstr",
+          "lineNumber": 495
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "strstr",
+          "lineNumber": 498
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "alquimia_error",
+          "lineNumber": 500
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "strstr",
+          "lineNumber": 503
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "strstr",
+          "lineNumber": 506
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "alquimia_error",
+          "lineNumber": 508
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "strcpy",
+          "lineNumber": 511
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "strncpy",
+          "lineNumber": 515
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "atof",
+          "lineNumber": 516
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "strncpy",
+          "lineNumber": 520
+        },
+        {
+          "caller": "Input_ParseAqueousConstraint",
+          "callee": "strncpy",
+          "lineNumber": 524
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "strstr",
+          "lineNumber": 531
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "strstr",
+          "lineNumber": 534
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "alquimia_error",
+          "lineNumber": 536
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "strstr",
+          "lineNumber": 538
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "alquimia_error",
+          "lineNumber": 540
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "strcpy",
+          "lineNumber": 543
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "strncpy",
+          "lineNumber": 547
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "atof",
+          "lineNumber": 548
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "strncpy",
+          "lineNumber": 552
+        },
+        {
+          "caller": "Input_ParseMineralConstraint",
+          "callee": "atof",
+          "lineNumber": 553
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 13,
+        "functionCount": 22,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "drivers/input_util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 136,
+      "nonEmptyLines": 114,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

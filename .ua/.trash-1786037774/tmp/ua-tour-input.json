@@ -1,0 +1,3356 @@
+{
+  "nodes": [
+    {
+      "id": "file:alquimia/alquimia_interface.c",
+      "name": "alquimia_interface.c",
+      "filePath": "alquimia/alquimia_interface.c",
+      "summary": "Creates the generic Alquimia engine interface by selecting the PFLOTRAN, CrunchFlow, or ONNX implementation and wiring its function table at runtime.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/crunch_alquimia_interface.h",
+      "name": "crunch_alquimia_interface.h",
+      "filePath": "alquimia/crunch_alquimia_interface.h",
+      "summary": "Declares the CrunchFlow implementation of the generic Alquimia engine lifecycle, condition processing, reaction stepping, auxiliary output, and metadata hooks.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_config.c",
+      "name": "onnx_alquimia_config.c",
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "summary": "Parses and validates ONNX adapter JSON config, including tensor-to-state mappings, model-path resolution, and named initial conditions, with centralized cleanup on failure.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_config.h",
+      "name": "onnx_alquimia_config.h",
+      "filePath": "alquimia/onnx_alquimia_config.h",
+      "summary": "Defines the private ONNX config ownership model for tensor mappings and named initial conditions, plus load and cleanup entry points.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_interface.c",
+      "name": "onnx_alquimia_interface.c",
+      "filePath": "alquimia/onnx_alquimia_interface.c",
+      "summary": "Implements the ONNX Runtime reaction-engine adapter: session and tensor setup, config mapping validation, condition routing, inference, state updates, metadata export, and ordered resource teardown.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/onnx_alquimia_interface.h",
+      "name": "onnx_alquimia_interface.h",
+      "filePath": "alquimia/onnx_alquimia_interface.h",
+      "summary": "Declares the ONNX implementation of the generic Alquimia setup, shutdown, condition, reaction-step, auxiliary-output, and metadata callbacks.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/pflotran_alquimia_interface.h",
+      "name": "pflotran_alquimia_interface.h",
+      "filePath": "alquimia/pflotran_alquimia_interface.h",
+      "summary": "Declares the PFLOTRAN implementation of the generic Alquimia engine lifecycle, condition processing, reaction stepping, auxiliary output, and metadata hooks.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_memory.h",
+      "name": "alquimia_memory.h",
+      "filePath": "alquimia/alquimia_memory.h",
+      "summary": "Declares the allocation and cleanup API for Alquimia vectors, chemistry state, metadata, properties, constraints, and aggregate data structures.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/DriverOutput.c",
+      "name": "DriverOutput.c",
+      "filePath": "drivers/DriverOutput.c",
+      "summary": "Implements pluggable Gnuplot and Python output writers for simulation vectors, including conversion of interleaved multi-component data into per-variable columns.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/DriverOutput.h",
+      "name": "DriverOutput.h",
+      "filePath": "drivers/DriverOutput.h",
+      "summary": "Defines the public opaque output interface, writer factories, and APIs for exporting ordinary and multi-component simulation vectors.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/TransportDriver.c",
+      "name": "TransportDriver.c",
+      "filePath": "drivers/TransportDriver.c",
+      "summary": "Implements a one-dimensional reactive transport driver that parses INI input, manages chemistry-engine state, advances mobile components with finite-volume advection and operator-split reactions, and assembles output fields.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/TransportDriver.h",
+      "name": "TransportDriver.h",
+      "filePath": "drivers/TransportDriver.h",
+      "summary": "Declares transport coupling modes, the complete user-input structure, and the lifecycle, execution, and output APIs for the reactive transport driver.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/batch_chem.c",
+      "name": "batch_chem.c",
+      "filePath": "drivers/batch_chem.c",
+      "summary": "Command-line entry point that runs a batch geochemistry simulation, selects Python or Gnuplot output, writes final state data, and releases driver resources.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/transport.c",
+      "name": "transport.c",
+      "filePath": "drivers/transport.c",
+      "summary": "Command-line entry point that configures and runs the reactive transport driver, exports its final solute and auxiliary fields, and performs optional PETSc shutdown.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_util.h",
+      "name": "alquimia_util.h",
+      "filePath": "alquimia/alquimia_util.h",
+      "summary": "Declares C-compatible utilities for strings, named-index lookup, deep copying, vector resizing, and diagnostic printing of Alquimia data structures.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/BatchChemDriver.c",
+      "name": "BatchChemDriver.c",
+      "filePath": "drivers/BatchChemDriver.c",
+      "summary": "Implements the standalone batch chemistry simulation driver, including INI parsing, engine setup, reaction stepping, state-history capture, cleanup, and output-vector assembly.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/BatchChemDriver.h",
+      "name": "BatchChemDriver.h",
+      "filePath": "drivers/BatchChemDriver.h",
+      "summary": "Defines batch chemistry input fields and the public lifecycle, execution, and result-retrieval API for the opaque BatchChemDriver.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/ini.c",
+      "name": "ini.c",
+      "filePath": "drivers/ini.c",
+      "summary": "Implements the embedded inih parser for INI sections, key-value pairs, comments, multiline values, stream callbacks, and file-backed parsing.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/ini.h",
+      "name": "ini.h",
+      "filePath": "drivers/ini.h",
+      "summary": "Declares the inih callback interfaces, parse entry points, and compile-time options for multiline input, BOM support, storage, and error handling.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/input_util.c",
+      "name": "input_util.c",
+      "filePath": "drivers/input_util.c",
+      "summary": "Implements reusable INI-driven construction and parsing for chemistry engines, regions, states, material properties, geochemical conditions, constraints, and output settings.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/input_util.h",
+      "name": "input_util.h",
+      "filePath": "drivers/input_util.h",
+      "summary": "Declares high-level input sweeps and low-level section parsers for engine setup, regions, state, properties, and geochemical constraints.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_constants.c",
+      "name": "alquimia_constants.c",
+      "filePath": "alquimia/alquimia_constants.c",
+      "summary": "Defines shared string limits, geochemical quantity names, engine identifiers, and error codes used throughout the Alquimia C interface.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_constants.h",
+      "name": "alquimia_constants.h",
+      "filePath": "alquimia/alquimia_constants.h",
+      "summary": "Declares the public constants for supported engines, geochemical quantities, string limits, and Alquimia error codes.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_containers.h",
+      "name": "alquimia_containers.h",
+      "filePath": "alquimia/alquimia_containers.h",
+      "summary": "Defines the C-compatible vectors and geochemical state, property, metadata, condition, constraint, and engine-status structures shared with reaction engines and Fortran bindings.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_interface.h",
+      "name": "alquimia_interface.h",
+      "filePath": "alquimia/alquimia_interface.h",
+      "summary": "Defines the engine-neutral AlquimiaData aggregate and the AlquimiaInterface function-pointer contract for setup, reaction stepping, condition processing, metadata, and auxiliary output.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_memory.c",
+      "name": "alquimia_memory.c",
+      "filePath": "alquimia/alquimia_memory.c",
+      "summary": "Implements allocation and release helpers for every dynamically sized Alquimia vector, state, metadata, condition, constraint, and aggregate data structure.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_util.c",
+      "name": "alquimia_util.c",
+      "filePath": "alquimia/alquimia_util.c",
+      "summary": "Provides shared comparison, lookup, deep-copy, resize, and diagnostic printing operations for Alquimia containers and geochemical data structures.",
+      "type": "file"
+    },
+    {
+      "id": "document:alquimia/CMakeLists.txt",
+      "name": "CMakeLists.txt",
+      "filePath": "alquimia/CMakeLists.txt",
+      "summary": "Defines the core Alquimia library build, conditionally adds PFLOTRAN, CrunchFlow, and ONNX engine sources and dependencies, and installs the library and public headers.",
+      "type": "document"
+    },
+    {
+      "id": "file:alquimia/alquimia.c",
+      "name": "alquimia.c",
+      "filePath": "alquimia/alquimia.c",
+      "summary": "Implements process-wide error and abort callbacks plus formatted version reporting for the public C API.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia.h.in",
+      "name": "alquimia.h.in",
+      "filePath": "alquimia/alquimia.h.in",
+      "summary": "CMake-configured public header template exposing version flags, engine availability macros, assertions, error callbacks, abort callbacks, and version output.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_containers.F90",
+      "name": "alquimia_containers.F90",
+      "filePath": "alquimia/alquimia_containers.F90",
+      "summary": "Defines ISO_C_BINDING-compatible Fortran mirrors of the public Alquimia sizes, state, properties, metadata, status, constraint, and auxiliary-data containers.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/alquimia_fortran_interface_mod.F90",
+      "name": "alquimia_fortran_interface_mod.F90",
+      "filePath": "alquimia/alquimia_fortran_interface_mod.F90",
+      "summary": "Provides an object-oriented Fortran facade over the C Alquimia interface, converting stored C function pointers into callable engine procedures and exposing allocation bindings.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/c_f_interface_module.F90",
+      "name": "c_f_interface_module.F90",
+      "filePath": "alquimia/c_f_interface_module.F90",
+      "summary": "Implements reusable C/Fortran string conversions and a case-insensitive Fortran string comparison used by chemistry-engine adapters.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/crunch_alquimia_interface.F90",
+      "name": "crunch_alquimia_interface.F90",
+      "filePath": "alquimia/crunch_alquimia_interface.F90",
+      "summary": "Implements the full CrunchFlow-backed Alquimia engine lifecycle, constraint processing, operator-split reaction stepping, metadata extraction, and state translation.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/crunch_alquimia_wrappers.F90",
+      "name": "crunch_alquimia_wrappers.F90",
+      "filePath": "alquimia/crunch_alquimia_wrappers.F90",
+      "summary": "Exports stable BIND(C) entry points that forward the generic Alquimia engine operations to the CrunchFlow Fortran module despite compiler-specific module symbol mangling.",
+      "type": "file"
+    },
+    {
+      "id": "service:alquimia/mixed/Makefile",
+      "name": "Makefile",
+      "filePath": "alquimia/mixed/Makefile",
+      "summary": "Builds standalone C++/Fortran interoperability experiments for derived types, strings, and pointer-backed structure arrays, with cleanup targets for generated artifacts.",
+      "type": "service"
+    },
+    {
+      "id": "file:alquimia/mixed/README",
+      "name": "README",
+      "filePath": "alquimia/mixed/README",
+      "summary": "Briefly identifies the mixed-language directory as a sandbox for C and Fortran interface experiments.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/mixed/cc-f90-strings.F90",
+      "name": "cc-f90-strings.F90",
+      "filePath": "alquimia/mixed/cc-f90-strings.F90",
+      "summary": "Fortran side of a mixed-language string experiment that reverses a fixed-length C-compatible character buffer.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/mixed/cc-f90-strings.cc",
+      "name": "cc-f90-strings.cc",
+      "filePath": "alquimia/mixed/cc-f90-strings.cc",
+      "summary": "C++ driver for testing fixed-buffer string exchange with Fortran, including buffer clearing and invocation of the Fortran reversal routine.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/mixed/cc-f90-strings.h",
+      "name": "cc-f90-strings.h",
+      "filePath": "alquimia/mixed/cc-f90-strings.h",
+      "summary": "Declares shared constants and the external Fortran string-reversal symbol used by the mixed C++/Fortran example.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/mixed/struct-array-pointer.F90",
+      "name": "struct-array-pointer.F90",
+      "filePath": "alquimia/mixed/struct-array-pointer.F90",
+      "summary": "Fortran half of an interoperability experiment that maps a C structure array and nested pointer fields, creates output arrays, and writes results back through C pointers.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/mixed/struct-array-pointer.cc",
+      "name": "struct-array-pointer.cc",
+      "filePath": "alquimia/mixed/struct-array-pointer.cc",
+      "summary": "C++ half of a C/Fortran structure-array experiment that allocates nested buffers, invokes Fortran processing, prints results, and frees owned memory.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/mixed/struct-derived.F90",
+      "name": "struct-derived.F90",
+      "filePath": "alquimia/mixed/struct-derived.F90",
+      "summary": "Fortran routine used to verify layout compatibility by mutating numeric fields in a derived type passed from C++.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/mixed/struct-derived.cc",
+      "name": "struct-derived.cc",
+      "filePath": "alquimia/mixed/struct-derived.cc",
+      "summary": "C++ driver that constructs a plain numeric structure, passes it to Fortran for mutation, and prints values before and after the call.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/pflotran_alquimia_interface.F90",
+      "name": "pflotran_alquimia_interface.F90",
+      "filePath": "alquimia/pflotran_alquimia_interface.F90",
+      "summary": "Implements the PFLOTRAN-backed Alquimia engine, including setup, conditions, operator-split reaction solves, auxiliary output, metadata, and bidirectional state packing.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/pflotran_alquimia_wrappers.F90",
+      "name": "pflotran_alquimia_wrappers.F90",
+      "filePath": "alquimia/pflotran_alquimia_wrappers.F90",
+      "summary": "Exports stable BIND(C) wrappers for PFLOTRAN-backed setup, shutdown, condition processing, reaction stepping, auxiliary output, and metadata operations.",
+      "type": "file"
+    },
+    {
+      "id": "file:alquimia/pflotran_petsc_stubs.F90",
+      "name": "pflotran_petsc_stubs.F90",
+      "filePath": "alquimia/pflotran_petsc_stubs.F90",
+      "summary": "Provides a no-op PETSc logging entry point required when linking the PFLOTRAN adapter in configurations without the full logging implementation.",
+      "type": "file"
+    },
+    {
+      "id": "document:drivers/CMakeLists.txt",
+      "name": "CMakeLists.txt",
+      "filePath": "drivers/CMakeLists.txt",
+      "summary": "Defines and installs the batch-chemistry and one-dimensional reactive-transport driver executables linked against Alquimia.",
+      "type": "document"
+    },
+    {
+      "id": "document:drivers/LICENSE.inih.txt",
+      "name": "LICENSE.inih.txt",
+      "filePath": "drivers/LICENSE.inih.txt",
+      "summary": "Records the BSD license terms for the bundled inih configuration parser used by the driver programs.",
+      "type": "document"
+    },
+    {
+      "id": "file:drivers/fpe.c",
+      "name": "fpe.c",
+      "filePath": "drivers/fpe.c",
+      "summary": "Implements portable helpers for enabling, disabling, suspending, and restoring floating-point exception trapping across Apple and GNU environments.",
+      "type": "file"
+    },
+    {
+      "id": "file:drivers/fpe.h",
+      "name": "fpe.h",
+      "filePath": "drivers/fpe.h",
+      "summary": "Declares the driver-facing floating-point exception control API with C++ linkage compatibility.",
+      "type": "file"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:alquimia/alquimia_interface.c",
+      "target": "file:alquimia/alquimia_constants.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_interface.c",
+      "target": "file:alquimia/alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_interface.c",
+      "target": "file:alquimia/alquimia_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_interface.c",
+      "target": "file:alquimia/crunch_alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_interface.c",
+      "target": "file:alquimia/onnx_alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_interface.c",
+      "target": "file:alquimia/pflotran_alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "file:alquimia/onnx_alquimia_config.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_interface.c",
+      "target": "file:alquimia/alquimia_constants.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_interface.c",
+      "target": "file:alquimia/alquimia_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_interface.c",
+      "target": "file:alquimia/onnx_alquimia_config.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_interface.c",
+      "target": "file:alquimia/onnx_alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_interface.c",
+      "target": "function:alquimia/alquimia_interface.c:CreateAlquimiaInterface",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_interface.c",
+      "target": "function:alquimia/alquimia_interface.c:CreateAlquimiaInterface",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:IsAllowedProperty",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:ValidateProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:GetRequiredString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:GetRequiredInteger",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:ResolveModelPath",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:ParseMappings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:ValidateUniqueMember",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:ValidateConditionFeature",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:ParseConditions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:ReadConfigjson_contents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:PopulateConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:FreeMappings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaFreeConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaFreeConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/onnx_alquimia_config.c",
+      "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaFreeConfig",
+      "target": "function:alquimia/onnx_alquimia_config.c:FreeMappings",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig",
+      "target": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaFreeConfig",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig",
+      "target": "function:alquimia/onnx_alquimia_config.c:PopulateConfig",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:OnnxAlquimiaLoadConfig",
+      "target": "function:alquimia/onnx_alquimia_config.c:ReadConfigjson_contents",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:ParseConditions",
+      "target": "function:alquimia/onnx_alquimia_config.c:ValidateConditionFeature",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:ParseConditions",
+      "target": "function:alquimia/onnx_alquimia_config.c:ValidateUniqueMember",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:PopulateConfig",
+      "target": "function:alquimia/onnx_alquimia_config.c:ParseConditions",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:PopulateConfig",
+      "target": "function:alquimia/onnx_alquimia_config.c:ParseMappings",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:PopulateConfig",
+      "target": "function:alquimia/onnx_alquimia_config.c:ResolveModelPath",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/onnx_alquimia_config.c:PopulateConfig",
+      "target": "function:alquimia/onnx_alquimia_config.c:ValidateProperties",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "file:drivers/DriverOutput.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "file:alquimia/alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "file:alquimia/alquimia_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "file:drivers/TransportDriver.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "file:drivers/ini.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/batch_chem.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/batch_chem.c",
+      "target": "file:alquimia/alquimia_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/batch_chem.c",
+      "target": "file:drivers/BatchChemDriver.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/batch_chem.c",
+      "target": "file:drivers/DriverOutput.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/transport.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/transport.c",
+      "target": "file:alquimia/alquimia_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/transport.c",
+      "target": "file:drivers/DriverOutput.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/transport.c",
+      "target": "file:drivers/TransportDriver.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "class:drivers/DriverOutput.c:DriverOutput",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "function:drivers/DriverOutput.c:GnuplotWrite",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "function:drivers/DriverOutput.c:PythonWrite",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "function:drivers/DriverOutput.c:DriverOutput_WriteVectors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "function:drivers/DriverOutput.c:DriverOutput_WriteMulticompVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:ParseInput",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:TransportDriverInput_Free",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "class:drivers/TransportDriver.c:TransportDriver",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_Initialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:ComputeAdvectiveFluxes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:Run_OperatorSplit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_Run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_GetSoluteAndAuxData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/batch_chem.c",
+      "target": "function:drivers/batch_chem.c:Usage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/batch_chem.c",
+      "target": "function:drivers/batch_chem.c:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/transport.c",
+      "target": "function:drivers/transport.c:Usage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/transport.c",
+      "target": "function:drivers/transport.c:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "class:drivers/DriverOutput.c:DriverOutput",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "function:drivers/DriverOutput.c:DriverOutput_WriteVectors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/DriverOutput.c",
+      "target": "function:drivers/DriverOutput.c:DriverOutput_WriteMulticompVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:TransportDriverInput_Free",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "class:drivers/TransportDriver.c:TransportDriver",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_Run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/TransportDriver.c",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_GetSoluteAndAuxData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/batch_chem.c",
+      "target": "function:drivers/batch_chem.c:Usage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/batch_chem.c",
+      "target": "function:drivers/batch_chem.c:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/transport.c",
+      "target": "function:drivers/transport.c:Usage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/transport.c",
+      "target": "function:drivers/transport.c:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/DriverOutput.c:DriverOutput_WriteMulticompVector",
+      "target": "function:drivers/DriverOutput.c:DriverOutput_WriteVectors",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/DriverOutput.c:DriverOutput_WriteMulticompVector",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorDouble",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/DriverOutput.c:DriverOutput_WriteMulticompVector",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorDouble",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Initialize",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaProperties",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Initialize",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaState",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Initialize",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryData",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:Run_OperatorSplit",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_Initialize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:Run_OperatorSplit",
+      "target": "function:drivers/TransportDriver.c:ComputeAdvectiveFluxes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:Run_OperatorSplit",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaState",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:Run_OperatorSplit",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryData",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Run",
+      "target": "function:drivers/TransportDriver.c:Run_OperatorSplit",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaState",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryData",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalCondition",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProperties",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryOutputData",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProblemMetaData",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaEngineStatus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_GetSoluteAndAuxData",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorString",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_GetSoluteAndAuxData",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorDouble",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_GetSoluteAndAuxData",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorString",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/TransportDriver.c:TransportDriver_GetSoluteAndAuxData",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorDouble",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/batch_chem.c:main",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_Run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/batch_chem.c:main",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_GetSoluteAndAuxData",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/batch_chem.c:main",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriverInput_Free",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/batch_chem.c:main",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_Free",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/batch_chem.c:main",
+      "target": "function:drivers/DriverOutput.c:DriverOutput_WriteMulticompVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/batch_chem.c:main",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorString",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/batch_chem.c:main",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorDouble",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/transport.c:main",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_Run",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/transport.c:main",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_GetSoluteAndAuxData",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/transport.c:main",
+      "target": "function:drivers/TransportDriver.c:TransportDriverInput_Free",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/transport.c:main",
+      "target": "function:drivers/TransportDriver.c:TransportDriver_Free",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/transport.c:main",
+      "target": "function:drivers/DriverOutput.c:DriverOutput_WriteMulticompVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/transport.c:main",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorString",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/transport.c:main",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorDouble",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "file:alquimia/alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "file:alquimia/alquimia_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "file:drivers/BatchChemDriver.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "file:drivers/ini.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/ini.c",
+      "target": "file:drivers/ini.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "file:alquimia/alquimia_constants.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "file:alquimia/alquimia_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "file:drivers/ini.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "file:drivers/input_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:GetIndexLabel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:ParseInput",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriverInput_Free",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "class:drivers/BatchChemDriver.c:BatchChemDriver",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_Free",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_RecordHistory",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_Initialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_Run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_GetSoluteAndAuxData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/ini.c",
+      "target": "function:drivers/ini.c:ini_parse_stream",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/ini.c",
+      "target": "function:drivers/ini.c:ini_parse_file",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/ini.c",
+      "target": "function:drivers/ini.c:ini_parse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:ParseEngineData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_CreateAlquimiaInterface",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:ParseRegionName",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_GetRegions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:ParseRegionCells",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:ParseRegionData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_GetRegionData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:ParseGeochemicalConditions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_GetGeochemicalConditions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:ParseOutputParameters",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_GetOutputParameters",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_IsStateSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_IsPropertiesSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseProperty",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_IsGeochemicalConditionSection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseGeochemicalCondition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseAqueousConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseMineralConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriverInput_Free",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "class:drivers/BatchChemDriver.c:BatchChemDriver",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_Free",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_Run",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/BatchChemDriver.c",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_GetSoluteAndAuxData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/ini.c",
+      "target": "function:drivers/ini.c:ini_parse_stream",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/ini.c",
+      "target": "function:drivers/ini.c:ini_parse_file",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/ini.c",
+      "target": "function:drivers/ini.c:ini_parse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_CreateAlquimiaInterface",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_GetRegions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_GetRegionData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_GetGeochemicalConditions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_GetOutputParameters",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_IsStateSection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_IsPropertiesSection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseProperty",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_IsGeochemicalConditionSection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseGeochemicalCondition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseAqueousConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:drivers/input_util.c",
+      "target": "function:drivers/input_util.c:Input_ParseMineralConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/BatchChemDriver.c:BatchChemDriver_RecordHistory",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaState",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/BatchChemDriver.c:BatchChemDriver_RecordHistory",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryOutputData",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/BatchChemDriver.c:BatchChemDriver_Initialize",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_RecordHistory",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/BatchChemDriver.c:BatchChemDriver_Run",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_Initialize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/BatchChemDriver.c:BatchChemDriver_Run",
+      "target": "function:drivers/BatchChemDriver.c:BatchChemDriver_RecordHistory",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/ini.c:ini_parse_file",
+      "target": "function:drivers/ini.c:ini_parse_stream",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/ini.c:ini_parse",
+      "target": "function:drivers/ini.c:ini_parse_file",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_CreateAlquimiaInterface",
+      "target": "function:drivers/ini.c:ini_parse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_CreateAlquimiaInterface",
+      "target": "function:alquimia/alquimia_interface.c:CreateAlquimiaInterface",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:ParseRegionName",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorString",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_GetRegions",
+      "target": "function:drivers/ini.c:ini_parse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:ParseRegionCells",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorInt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:ParseRegionData",
+      "target": "function:drivers/input_util.c:Input_ParseState",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:ParseRegionData",
+      "target": "function:drivers/input_util.c:Input_ParseProperty",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:ParseRegionData",
+      "target": "function:drivers/input_util.c:Input_ParseGeochemicalCondition",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:ParseRegionData",
+      "target": "function:drivers/input_util.c:ParseRegionCells",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_GetRegionData",
+      "target": "function:drivers/ini.c:ini_parse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:ParseGeochemicalConditions",
+      "target": "function:drivers/input_util.c:Input_IsGeochemicalConditionSection",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:ParseGeochemicalConditions",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaGeochemicalConditionVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:ParseGeochemicalConditions",
+      "target": "function:drivers/input_util.c:Input_ParseGeochemicalCondition",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_GetGeochemicalConditions",
+      "target": "function:drivers/ini.c:ini_parse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_GetOutputParameters",
+      "target": "function:drivers/ini.c:ini_parse",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_ParseProperty",
+      "target": "function:alquimia/alquimia_util.c:AlquimiaFindIndexFromName",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_ParseGeochemicalCondition",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaAqueousConstraintVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_ParseGeochemicalCondition",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaMineralConstraintVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_ParseGeochemicalCondition",
+      "target": "function:drivers/input_util.c:Input_ParseAqueousConstraint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:drivers/input_util.c:Input_ParseGeochemicalCondition",
+      "target": "function:drivers/input_util.c:Input_ParseMineralConstraint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_constants.c",
+      "target": "file:alquimia/alquimia_constants.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProperties",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProperties",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProblemMetaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaProblemMetaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProblemMetaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaProblemMetaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryOutputData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAuxiliaryOutputData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryOutputData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAuxiliaryOutputData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaEngineStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaEngineStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaEngineStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaEngineStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalCondition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalCondition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalCondition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaGeochemicalCondition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaAqueousConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaMineralConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "function:alquimia/alquimia_memory.c:FreeAlquimiaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:AlquimiaCaseInsensitiveStringCompare",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:AlquimiaCaseInsensitiveStringCompare",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:AlquimiaFindIndexFromName",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:AlquimiaFindIndexFromName",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaSizes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaSizes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaProblemMetaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaProblemMetaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaProperties",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaEngineFunctionality",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaEngineFunctionality",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryOutputData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAuxiliaryOutputData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalCondition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalCondition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaAqueousConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:CopyAlquimiaMineralConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaAqueousConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaAqueousConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaMineralConstraintVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:ResizeAlquimiaMineralConstraintVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorDouble",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorDouble",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorInt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorInt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorString",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaVectorString",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaSizes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaSizes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaEngineFunctionality",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaEngineFunctionality",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaProblemMetaData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaProblemMetaData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaProperties",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaProperties",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryOutputData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAuxiliaryOutputData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalConditionVector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalConditionVector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalCondition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaGeochemicalCondition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAqueousConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaAqueousConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaMineralConstraint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "function:alquimia/alquimia_util.c:PrintAlquimiaMineralConstraint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "file:alquimia/alquimia_constants.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "file:alquimia/alquimia_containers.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "file:alquimia/alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_memory.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "file:alquimia/alquimia_constants.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "file:alquimia/alquimia_interface.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "file:alquimia/alquimia_memory.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia_util.c",
+      "target": "file:alquimia/alquimia_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorDouble",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorDouble",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorInt",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorInt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaVectorString",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaVectorString",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaGeochemicalConditionVector",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaGeochemicalConditionVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaAqueousConstraintVector",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaAqueousConstraintVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:alquimia/alquimia_util.c:ResizeAlquimiaMineralConstraintVector",
+      "target": "function:alquimia/alquimia_memory.c:AllocateAlquimiaMineralConstraintVector",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/cc-f90-strings.cc",
+      "target": "file:alquimia/mixed/cc-f90-strings.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_set_error_handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_abort",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_set_abort_function",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_version_fprintf",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_set_error_handler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_abort",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_set_abort_function",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "function:alquimia/alquimia.c:alquimia_version_fprintf",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/cc-f90-strings.cc",
+      "target": "function:alquimia/mixed/cc-f90-strings.cc:clear_string",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/cc-f90-strings.cc",
+      "target": "function:alquimia/mixed/cc-f90-strings.cc:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/cc-f90-strings.cc",
+      "target": "function:alquimia/mixed/cc-f90-strings.cc:clear_string",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/cc-f90-strings.cc",
+      "target": "function:alquimia/mixed/cc-f90-strings.cc:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "class:alquimia/mixed/struct-array-pointer.cc:container",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "class:alquimia/mixed/struct-array-pointer.cc:data",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "function:alquimia/mixed/struct-array-pointer.cc:initialize_container",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "function:alquimia/mixed/struct-array-pointer.cc:free_container",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "function:alquimia/mixed/struct-array-pointer.cc:print_container",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "function:alquimia/mixed/struct-array-pointer.cc:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "class:alquimia/mixed/struct-array-pointer.cc:container",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "class:alquimia/mixed/struct-array-pointer.cc:data",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "function:alquimia/mixed/struct-array-pointer.cc:initialize_container",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "function:alquimia/mixed/struct-array-pointer.cc:free_container",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "function:alquimia/mixed/struct-array-pointer.cc:print_container",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "function:alquimia/mixed/struct-array-pointer.cc:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/struct-derived.cc",
+      "target": "class:alquimia/mixed/struct-derived.cc:point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/struct-derived.cc",
+      "target": "function:alquimia/mixed/struct-derived.cc:print_point",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/struct-derived.cc",
+      "target": "function:alquimia/mixed/struct-derived.cc:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:alquimia/mixed/struct-derived.cc",
+      "target": "class:alquimia/mixed/struct-derived.cc:point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/struct-derived.cc",
+      "target": "function:alquimia/mixed/struct-derived.cc:print_point",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/mixed/struct-derived.cc",
+      "target": "function:alquimia/mixed/struct-derived.cc:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:alquimia/alquimia.c",
+      "target": "file:alquimia/alquimia.h.in",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:alquimia/alquimia_fortran_interface_mod.F90",
+      "target": "file:alquimia/alquimia_containers.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:alquimia/crunch_alquimia_interface.F90",
+      "target": "file:alquimia/alquimia_containers.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:alquimia/crunch_alquimia_interface.F90",
+      "target": "file:alquimia/c_f_interface_module.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:alquimia/crunch_alquimia_wrappers.F90",
+      "target": "file:alquimia/crunch_alquimia_interface.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:alquimia/pflotran_alquimia_interface.F90",
+      "target": "file:alquimia/alquimia_containers.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:alquimia/pflotran_alquimia_interface.F90",
+      "target": "file:alquimia/c_f_interface_module.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:alquimia/pflotran_alquimia_wrappers.F90",
+      "target": "file:alquimia/pflotran_alquimia_interface.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:alquimia/mixed/cc-f90-strings.cc",
+      "target": "file:alquimia/mixed/cc-f90-strings.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:alquimia/mixed/struct-array-pointer.cc",
+      "target": "file:alquimia/mixed/struct-array-pointer.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:alquimia/mixed/struct-derived.cc",
+      "target": "file:alquimia/mixed/struct-derived.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:drivers/fpe.c",
+      "target": "file:drivers/fpe.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:alquimia/mixed/Makefile",
+      "target": "file:alquimia/mixed/cc-f90-strings.cc",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:alquimia/mixed/Makefile",
+      "target": "file:alquimia/mixed/cc-f90-strings.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:alquimia/mixed/Makefile",
+      "target": "file:alquimia/mixed/struct-array-pointer.cc",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:alquimia/mixed/Makefile",
+      "target": "file:alquimia/mixed/struct-array-pointer.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:alquimia/mixed/Makefile",
+      "target": "file:alquimia/mixed/struct-derived.cc",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:alquimia/mixed/Makefile",
+      "target": "file:alquimia/mixed/struct-derived.F90",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:alquimia/CMakeLists.txt",
+      "target": "file:alquimia/alquimia.c",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:alquimia/CMakeLists.txt",
+      "target": "file:alquimia/alquimia_containers.F90",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:alquimia/CMakeLists.txt",
+      "target": "file:alquimia/pflotran_alquimia_interface.F90",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:alquimia/CMakeLists.txt",
+      "target": "file:alquimia/crunch_alquimia_interface.F90",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:alquimia/mixed/README",
+      "target": "service:alquimia/mixed/Makefile",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:core-c-api",
+      "name": "Core C API and Runtime",
+      "description": "Engine-neutral C interfaces, shared geochemical containers, lifecycle helpers, constants, diagnostics, and process-wide error handling form the foundation used by every adapter and driver."
+    },
+    {
+      "id": "layer:engine-adapters",
+      "name": "Reaction Engine Adapters",
+      "description": "PFLOTRAN, CrunchFlow, and ONNX implementations translate the generic Alquimia contract into engine setup, reaction stepping, state conversion, metadata, and inference operations."
+    },
+    {
+      "id": "layer:fortran-bindings",
+      "name": "Fortran Bindings",
+      "description": "ISO_C_BINDING container mirrors, string conversion utilities, and an object-oriented Fortran facade expose the core C contract safely to Fortran callers."
+    },
+    {
+      "id": "layer:mixed-language-examples",
+      "name": "Mixed-Language Examples",
+      "description": "Focused C++ and Fortran experiments demonstrate string exchange, derived-type layout compatibility, and pointer-backed structure-array ownership across the language boundary."
+    },
+    {
+      "id": "layer:driver-applications",
+      "name": "Driver Applications",
+      "description": "Standalone batch-chemistry and reactive-transport programs coordinate input parsing, engine execution, numerical transport, output serialization, and runtime diagnostics."
+    },
+    {
+      "id": "layer:build-project-support",
+      "name": "Build and Project Support",
+      "description": "CMake and Make rules select engine integrations, build and install libraries and drivers, compile interoperability experiments, and preserve third-party licensing terms."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "issues": [],
+  "warnings": [
+    "Node 'file:alquimia/pflotran_petsc_stubs.F90' has no edges (orphan)",
+    "Node 'document:drivers/CMakeLists.txt' has no edges (orphan)",
+    "Node 'document:drivers/LICENSE.inih.txt' has no edges (orphan)"
+  ],
+  "stats": {
+    "totalNodes": 202,
+    "totalEdges": 423,
+    "totalLayers": 6,
+    "tourSteps": 11,
+    "nodeTypes": {
+      "file": 47,
+      "function": 145,
+      "class": 6,
+      "document": 3,
+      "service": 1
+    },
+    "edgeTypes": {
+      "imports": 47,
+      "contains": 151,
+      "exports": 123,
+      "calls": 79,
+      "related": 2,
+      "depends_on": 17,
+      "documents": 4
+    }
+  }
+}

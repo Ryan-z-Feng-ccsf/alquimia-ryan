@@ -1,0 +1,2971 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "06aa511b3d66711e226ada5243cb63c6012a349b",
+  "generatedAt": "2026-08-06T17:36:03.243Z",
+  "files": {
+    "alquimia/CMakeLists.txt": {
+      "filePath": "alquimia/CMakeLists.txt",
+      "contentHash": "68ab536bae154cd64f8b72561c66a1d29f2a69d693c81bb3ca0434ac82853c71",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 100,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/alquimia.c": {
+      "filePath": "alquimia/alquimia.c",
+      "contentHash": "c53c6283d8e26e6bcbce18fb30c08f8689ae3e88606588691318977442603389",
+      "functions": [
+        {
+          "name": "default_error_handler",
+          "params": [
+            "message"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "alquimia_error",
+          "params": [
+            "message"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "alquimia_set_error_handler",
+          "params": [
+            "handler"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "default_abort_function",
+          "params": [
+            "message"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "alquimia_abort",
+          "params": [
+            "message"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "alquimia_set_abort_function",
+          "params": [
+            "function"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "alquimia_version_fprintf",
+          "params": [
+            "exe_name",
+            "stream"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "stdarg.h",
+          "specifiers": [
+            "stdarg.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia.h",
+          "specifiers": [
+            "alquimia/alquimia.h"
+          ]
+        }
+      ],
+      "exports": [
+        "alquimia_error",
+        "alquimia_set_error_handler",
+        "alquimia_abort",
+        "alquimia_set_abort_function",
+        "alquimia_version_fprintf"
+      ],
+      "totalLines": 102,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/alquimia.h.in": {
+      "filePath": "alquimia/alquimia.h.in",
+      "contentHash": "e438afaee002e9daed9db2d0b6b836b57e47cff0b3f817634c21e133172dee57",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 111,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/alquimia_constants.c": {
+      "filePath": "alquimia/alquimia_constants.c",
+      "contentHash": "59755eba6a8ff3807fd2b5b4f30362000018ec8a86954155e0586aefabe82f95",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "alquimia/alquimia_constants.h",
+          "specifiers": [
+            "alquimia/alquimia_constants.h"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/alquimia_constants.h": {
+      "filePath": "alquimia/alquimia_constants.h",
+      "contentHash": "d4bf06a2b946a74b37ba94360ee47d37229f887aff161ae8bac81982d49b420d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 66,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/alquimia_containers.F90": {
+      "filePath": "alquimia/alquimia_containers.F90",
+      "contentHash": "f0dbd615e1b7b0f2f97316ddf5e159e98b56999049f1618abb5d2e5797e6f212",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 214,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/alquimia_containers.h": {
+      "filePath": "alquimia/alquimia_containers.h",
+      "contentHash": "920648abb09fcd4d832ab23e72a642482756c17d74d0f0fd678cd9385356122e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 195,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/alquimia_fortran_interface_mod.F90": {
+      "filePath": "alquimia/alquimia_fortran_interface_mod.F90",
+      "contentHash": "79361d4865acd0569355494c093226588e334733141c5dd3ca30cce27acd1ecc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 381,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/alquimia_interface.c": {
+      "filePath": "alquimia/alquimia_interface.c",
+      "contentHash": "861b906f275f1793549d50322813d331d79f035a631d7d853d64b4ceb16a5124",
+      "functions": [
+        {
+          "name": "CreateAlquimiaInterface",
+          "params": [
+            "engine_name",
+            "interface",
+            "status"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 73
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "alquimia/alquimia_interface.h",
+          "specifiers": [
+            "alquimia/alquimia_interface.h"
+          ]
+        },
+        {
+          "source": "alquimia/pflotran_alquimia_interface.h",
+          "specifiers": [
+            "alquimia/pflotran_alquimia_interface.h"
+          ]
+        },
+        {
+          "source": "alquimia/crunch_alquimia_interface.h",
+          "specifiers": [
+            "alquimia/crunch_alquimia_interface.h"
+          ]
+        },
+        {
+          "source": "alquimia/onnx_alquimia_interface.h",
+          "specifiers": [
+            "alquimia/onnx_alquimia_interface.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_util.h",
+          "specifiers": [
+            "alquimia/alquimia_util.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_constants.h",
+          "specifiers": [
+            "alquimia/alquimia_constants.h"
+          ]
+        }
+      ],
+      "exports": [
+        "CreateAlquimiaInterface"
+      ],
+      "totalLines": 112,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/alquimia_interface.h": {
+      "filePath": "alquimia/alquimia_interface.h",
+      "contentHash": "0c1572c425ea458d5de7a70f5bfc001340e73da0e59e9cdd84505220e676337b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 125,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/alquimia_memory.c": {
+      "filePath": "alquimia/alquimia_memory.c",
+      "contentHash": "b3462cd9e61f0a987bdb63daf2bf5ca1f0f2d0d97e2e4e0dcf3a9799c9df3a46",
+      "functions": [
+        {
+          "name": "nearest_power_of_2",
+          "params": [
+            "n"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 8
+        },
+        {
+          "name": "AllocateAlquimiaVectorDouble",
+          "params": [
+            "size",
+            "vector"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "FreeAlquimiaVectorDouble",
+          "params": [
+            "vector"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "AllocateAlquimiaVectorInt",
+          "params": [
+            "size",
+            "vector"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "FreeAlquimiaVectorInt",
+          "params": [
+            "vector"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "AllocateAlquimiaVectorString",
+          "params": [
+            "size",
+            "vector"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "FreeAlquimiaVectorString",
+          "params": [
+            "vector"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "AllocateAlquimiaState",
+          "params": [
+            "sizes",
+            "state"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "FreeAlquimiaState",
+          "params": [
+            "state"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "AllocateAlquimiaAuxiliaryData",
+          "params": [
+            "sizes",
+            "aux_data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "FreeAlquimiaAuxiliaryData",
+          "params": [
+            "aux_data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "AllocateAlquimiaProperties",
+          "params": [
+            "sizes",
+            "props"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "FreeAlquimiaProperties",
+          "params": [
+            "props"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "AllocateAlquimiaProblemMetaData",
+          "params": [
+            "sizes",
+            "meta_data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "FreeAlquimiaProblemMetaData",
+          "params": [
+            "meta_data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "AllocateAlquimiaAuxiliaryOutputData",
+          "params": [
+            "sizes",
+            "aux_output"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 26
+        },
+        {
+          "name": "FreeAlquimiaAuxiliaryOutputData",
+          "params": [
+            "aux_output"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "AllocateAlquimiaEngineStatus",
+          "params": [
+            "status"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "FreeAlquimiaEngineStatus",
+          "params": [
+            "status"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "AllocateAlquimiaGeochemicalConditionVector",
+          "params": [
+            "num_conditions",
+            "condition_list"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "AllocateAlquimiaGeochemicalCondition",
+          "params": [
+            "size_name",
+            "num_aqueous_constraints",
+            "num_mineral_constraints",
+            "condition"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "AllocateAlquimiaAqueousConstraint",
+          "params": [
+            "constraint"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "AllocateAlquimiaAqueousConstraintVector",
+          "params": [
+            "num_constraints",
+            "constraint_list"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "AllocateAlquimiaMineralConstraint",
+          "params": [
+            "constraint"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "AllocateAlquimiaMineralConstraintVector",
+          "params": [
+            "num_constraints",
+            "constraint_list"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "FreeAlquimiaGeochemicalConditionVector",
+          "params": [
+            "condition_list"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "FreeAlquimiaGeochemicalCondition",
+          "params": [
+            "condition"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "FreeAlquimiaAqueousConstraintVector",
+          "params": [
+            "vector"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "FreeAlquimiaAqueousConstraint",
+          "params": [
+            "constraint"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "FreeAlquimiaMineralConstraintVector",
+          "params": [
+            "vector"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "FreeAlquimiaMineralConstraint",
+          "params": [
+            "constraint"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "AllocateAlquimiaData",
+          "params": [
+            "data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "FreeAlquimiaData",
+          "params": [
+            "data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "alquimia/alquimia_memory.h",
+          "specifiers": [
+            "alquimia/alquimia_memory.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_interface.h",
+          "specifiers": [
+            "alquimia/alquimia_interface.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_constants.h",
+          "specifiers": [
+            "alquimia/alquimia_constants.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_containers.h",
+          "specifiers": [
+            "alquimia/alquimia_containers.h"
+          ]
+        }
+      ],
+      "exports": [
+        "AllocateAlquimiaVectorDouble",
+        "FreeAlquimiaVectorDouble",
+        "AllocateAlquimiaVectorInt",
+        "FreeAlquimiaVectorInt",
+        "AllocateAlquimiaVectorString",
+        "FreeAlquimiaVectorString",
+        "AllocateAlquimiaState",
+        "FreeAlquimiaState",
+        "AllocateAlquimiaAuxiliaryData",
+        "FreeAlquimiaAuxiliaryData",
+        "AllocateAlquimiaProperties",
+        "FreeAlquimiaProperties",
+        "AllocateAlquimiaProblemMetaData",
+        "FreeAlquimiaProblemMetaData",
+        "AllocateAlquimiaAuxiliaryOutputData",
+        "FreeAlquimiaAuxiliaryOutputData",
+        "AllocateAlquimiaEngineStatus",
+        "FreeAlquimiaEngineStatus",
+        "AllocateAlquimiaGeochemicalConditionVector",
+        "AllocateAlquimiaGeochemicalCondition",
+        "AllocateAlquimiaAqueousConstraint",
+        "AllocateAlquimiaAqueousConstraintVector",
+        "AllocateAlquimiaMineralConstraint",
+        "AllocateAlquimiaMineralConstraintVector",
+        "FreeAlquimiaGeochemicalConditionVector",
+        "FreeAlquimiaGeochemicalCondition",
+        "FreeAlquimiaAqueousConstraintVector",
+        "FreeAlquimiaAqueousConstraint",
+        "FreeAlquimiaMineralConstraintVector",
+        "FreeAlquimiaMineralConstraint",
+        "AllocateAlquimiaData",
+        "FreeAlquimiaData"
+      ],
+      "totalLines": 529,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/alquimia_memory.h": {
+      "filePath": "alquimia/alquimia_memory.h",
+      "contentHash": "f5332c0f2d847cb4ca1d8ae7b5b26ce2be673f3827bacf7c0a813d9a7399cfda",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 113,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/alquimia_util.c": {
+      "filePath": "alquimia/alquimia_util.c",
+      "contentHash": "c9ca422963112af95c27540f139b6bf44dbeaa397f6cec3e95df35235e3a3f87",
+      "functions": [
+        {
+          "name": "AlquimiaCaseInsensitiveStringCompare",
+          "params": [
+            "str1",
+            "str2"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "AlquimiaFindIndexFromName",
+          "params": [
+            "name",
+            "names",
+            "index"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "CopyAlquimiaVectorDouble",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "CopyAlquimiaVectorInt",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "CopyAlquimiaVectorString",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "CopyAlquimiaSizes",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "CopyAlquimiaProblemMetaData",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "CopyAlquimiaProperties",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "CopyAlquimiaEngineFunctionality",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "CopyAlquimiaState",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "CopyAlquimiaAuxiliaryData",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "CopyAlquimiaAuxiliaryOutputData",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "CopyAlquimiaGeochemicalCondition",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "CopyAlquimiaGeochemicalConditionVector",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "CopyAlquimiaAqueousConstraint",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "CopyAlquimiaAqueousConstraintVector",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "CopyAlquimiaMineralConstraint",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "CopyAlquimiaMineralConstraintVector",
+          "params": [
+            "source",
+            "destination"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "ResizeAlquimiaVectorDouble",
+          "params": [
+            "vec",
+            "new_size"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "ResizeAlquimiaVectorInt",
+          "params": [
+            "vec",
+            "new_size"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "ResizeAlquimiaVectorString",
+          "params": [
+            "vec",
+            "new_size"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "ResizeAlquimiaGeochemicalConditionVector",
+          "params": [
+            "vec",
+            "new_size"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "ResizeAlquimiaAqueousConstraintVector",
+          "params": [
+            "vec",
+            "new_size"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "ResizeAlquimiaMineralConstraintVector",
+          "params": [
+            "vec",
+            "new_size"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "PrintAlquimiaVectorDouble",
+          "params": [
+            "name",
+            "vector",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "PrintAlquimiaVectorInt",
+          "params": [
+            "name",
+            "vector",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "PrintAlquimiaVectorString",
+          "params": [
+            "name",
+            "vector",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "PrintAlquimiaData",
+          "params": [
+            "data",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "PrintAlquimiaSizes",
+          "params": [
+            "sizes",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "PrintAlquimiaEngineFunctionality",
+          "params": [
+            "functionality",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "PrintAlquimiaProblemMetaData",
+          "params": [
+            "meta_data",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "PrintAlquimiaProperties",
+          "params": [
+            "mat_prop",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "PrintAlquimiaState",
+          "params": [
+            "state",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 20
+        },
+        {
+          "name": "PrintAlquimiaAuxiliaryData",
+          "params": [
+            "aux_data",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "PrintAlquimiaAuxiliaryOutputData",
+          "params": [
+            "aux_output",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 20
+        },
+        {
+          "name": "PrintAlquimiaGeochemicalConditionVector",
+          "params": [
+            "condition_list",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "PrintAlquimiaGeochemicalCondition",
+          "params": [
+            "condition",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "PrintAlquimiaAqueousConstraint",
+          "params": [
+            "constraint",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "PrintAlquimiaMineralConstraint",
+          "params": [
+            "constraint",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "alquimia/alquimia_util.h",
+          "specifiers": [
+            "alquimia/alquimia_util.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_memory.h",
+          "specifiers": [
+            "alquimia/alquimia_memory.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_interface.h",
+          "specifiers": [
+            "alquimia/alquimia_interface.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_constants.h",
+          "specifiers": [
+            "alquimia/alquimia_constants.h"
+          ]
+        }
+      ],
+      "exports": [
+        "AlquimiaCaseInsensitiveStringCompare",
+        "AlquimiaFindIndexFromName",
+        "CopyAlquimiaVectorDouble",
+        "CopyAlquimiaVectorInt",
+        "CopyAlquimiaVectorString",
+        "CopyAlquimiaSizes",
+        "CopyAlquimiaProblemMetaData",
+        "CopyAlquimiaProperties",
+        "CopyAlquimiaEngineFunctionality",
+        "CopyAlquimiaState",
+        "CopyAlquimiaAuxiliaryData",
+        "CopyAlquimiaAuxiliaryOutputData",
+        "CopyAlquimiaGeochemicalCondition",
+        "CopyAlquimiaGeochemicalConditionVector",
+        "CopyAlquimiaAqueousConstraint",
+        "CopyAlquimiaAqueousConstraintVector",
+        "CopyAlquimiaMineralConstraint",
+        "CopyAlquimiaMineralConstraintVector",
+        "ResizeAlquimiaVectorDouble",
+        "ResizeAlquimiaVectorInt",
+        "ResizeAlquimiaVectorString",
+        "ResizeAlquimiaGeochemicalConditionVector",
+        "ResizeAlquimiaAqueousConstraintVector",
+        "ResizeAlquimiaMineralConstraintVector",
+        "PrintAlquimiaVectorDouble",
+        "PrintAlquimiaVectorInt",
+        "PrintAlquimiaVectorString",
+        "PrintAlquimiaData",
+        "PrintAlquimiaSizes",
+        "PrintAlquimiaEngineFunctionality",
+        "PrintAlquimiaProblemMetaData",
+        "PrintAlquimiaProperties",
+        "PrintAlquimiaState",
+        "PrintAlquimiaAuxiliaryData",
+        "PrintAlquimiaAuxiliaryOutputData",
+        "PrintAlquimiaGeochemicalConditionVector",
+        "PrintAlquimiaGeochemicalCondition",
+        "PrintAlquimiaAqueousConstraint",
+        "PrintAlquimiaMineralConstraint"
+      ],
+      "totalLines": 530,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/alquimia_util.h": {
+      "filePath": "alquimia/alquimia_util.h",
+      "contentHash": "e46f434df98aa7748764cafde471a0ad1195ff69a083443a55b387fbba50af9d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 120,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/c_f_interface_module.F90": {
+      "filePath": "alquimia/c_f_interface_module.F90",
+      "contentHash": "ca80e47edf09e5af57b28319cbc2496d2b818f6a7e90cb1d423941a0fc07e193",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 190,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/crunch_alquimia_interface.F90": {
+      "filePath": "alquimia/crunch_alquimia_interface.F90",
+      "contentHash": "3951dabb3a51beb9c1d97e0845c92c1faf72a36a7831ed15e24b6b1bd51c16f4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3315,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/crunch_alquimia_interface.h": {
+      "filePath": "alquimia/crunch_alquimia_interface.h",
+      "contentHash": "6bb0c07cb68cb260295a1cbd464d11b1667b5bfa8e694c5bbb5a0a2658b16790",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 91,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/crunch_alquimia_wrappers.F90": {
+      "filePath": "alquimia/crunch_alquimia_wrappers.F90",
+      "contentHash": "5e8ca3da1f8956f02985c41b2b50ef8e35aeaeefc7500b94e408c65f9cbd6c96",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 211,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/mixed/Makefile": {
+      "filePath": "alquimia/mixed/Makefile",
+      "contentHash": "9962d0fc4810df9c02d3d29c4140766b4033a332ac0701765456d481f3f8bbfe",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 95,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/mixed/README": {
+      "filePath": "alquimia/mixed/README",
+      "contentHash": "b7459efb1a2c4bb812341cb12d7fbf440d124605633246a3b2cbd61419f8113d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/mixed/cc-f90-strings.F90": {
+      "filePath": "alquimia/mixed/cc-f90-strings.F90",
+      "contentHash": "5813f05a2578211902d607e416aa1816b6ea01d8eb2387d397120cfc0c762e5c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 55,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/mixed/cc-f90-strings.cc": {
+      "filePath": "alquimia/mixed/cc-f90-strings.cc",
+      "contentHash": "169712e07eec3bfa23cfecb738a87f6732a9908950862bce2a35e7fb97c2ab50",
+      "functions": [
+        {
+          "name": "clear_string",
+          "params": [
+            "str"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "main",
+          "params": [
+            "argc",
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 27
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "cstdlib",
+          "specifiers": [
+            "cstdlib"
+          ]
+        },
+        {
+          "source": "iostream",
+          "specifiers": [
+            "iostream"
+          ]
+        },
+        {
+          "source": "fstream",
+          "specifiers": [
+            "fstream"
+          ]
+        },
+        {
+          "source": "vector",
+          "specifiers": [
+            "vector"
+          ]
+        },
+        {
+          "source": "iomanip",
+          "specifiers": [
+            "iomanip"
+          ]
+        },
+        {
+          "source": "string",
+          "specifiers": [
+            "string"
+          ]
+        },
+        {
+          "source": "cstring",
+          "specifiers": [
+            "cstring"
+          ]
+        },
+        {
+          "source": "cc-f90-strings.h",
+          "specifiers": [
+            "cc-f90-strings.h"
+          ]
+        }
+      ],
+      "exports": [
+        "clear_string",
+        "main"
+      ],
+      "totalLines": 80,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/mixed/cc-f90-strings.h": {
+      "filePath": "alquimia/mixed/cc-f90-strings.h",
+      "contentHash": "fcff3d713759140f0d5d1c2e35442a1281439688298bfce7952fc54319301d32",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 36,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/mixed/struct-array-pointer.F90": {
+      "filePath": "alquimia/mixed/struct-array-pointer.F90",
+      "contentHash": "8267e45a5f906aca8fe9b48770fc8d6231137af6028003686c70b4f51ff18ffd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 163,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/mixed/struct-array-pointer.cc": {
+      "filePath": "alquimia/mixed/struct-array-pointer.cc",
+      "contentHash": "b05334e4d5cf8daacfba615e2d87d71e9f0382d26e2e2f995cae6712a4199ec9",
+      "functions": [
+        {
+          "name": "initialize_container",
+          "params": [
+            "c",
+            "num",
+            "length"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "free_container",
+          "params": [
+            "c"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "print_container",
+          "params": [
+            "c"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "main",
+          "params": [
+            "argc",
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 28
+        }
+      ],
+      "classes": [
+        {
+          "name": "container",
+          "methods": [],
+          "properties": [
+            "num",
+            "d"
+          ],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "data",
+          "methods": [],
+          "properties": [
+            "name",
+            "outstr",
+            "xlength",
+            "x",
+            "ylength",
+            "y"
+          ],
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "imports": [
+        {
+          "source": "cstdlib",
+          "specifiers": [
+            "cstdlib"
+          ]
+        },
+        {
+          "source": "cstring",
+          "specifiers": [
+            "cstring"
+          ]
+        },
+        {
+          "source": "iostream",
+          "specifiers": [
+            "iostream"
+          ]
+        },
+        {
+          "source": "sstream",
+          "specifiers": [
+            "sstream"
+          ]
+        },
+        {
+          "source": "vector",
+          "specifiers": [
+            "vector"
+          ]
+        },
+        {
+          "source": "iomanip",
+          "specifiers": [
+            "iomanip"
+          ]
+        },
+        {
+          "source": "limits",
+          "specifiers": [
+            "limits"
+          ]
+        }
+      ],
+      "exports": [
+        "container",
+        "data",
+        "initialize_container",
+        "free_container",
+        "print_container",
+        "main"
+      ],
+      "totalLines": 145,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/mixed/struct-derived.F90": {
+      "filePath": "alquimia/mixed/struct-derived.F90",
+      "contentHash": "fe284906790a9894d1ccea5b0d590f5c553fc6ff68601842c97d15e98fd50efc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 42,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/mixed/struct-derived.cc": {
+      "filePath": "alquimia/mixed/struct-derived.cc",
+      "contentHash": "110600ca49a6fef1e9ee4baccbf4e3fe84989a929107aacd266c7b378c7a2357",
+      "functions": [
+        {
+          "name": "print_point",
+          "params": [
+            "p"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "main",
+          "params": [
+            "argc",
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 12
+        }
+      ],
+      "classes": [
+        {
+          "name": "point",
+          "methods": [],
+          "properties": [
+            "w",
+            "x",
+            "y",
+            "z"
+          ],
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "imports": [
+        {
+          "source": "cstdlib",
+          "specifiers": [
+            "cstdlib"
+          ]
+        },
+        {
+          "source": "iostream",
+          "specifiers": [
+            "iostream"
+          ]
+        },
+        {
+          "source": "fstream",
+          "specifiers": [
+            "fstream"
+          ]
+        },
+        {
+          "source": "vector",
+          "specifiers": [
+            "vector"
+          ]
+        },
+        {
+          "source": "iomanip",
+          "specifiers": [
+            "iomanip"
+          ]
+        },
+        {
+          "source": "limits",
+          "specifiers": [
+            "limits"
+          ]
+        }
+      ],
+      "exports": [
+        "point",
+        "print_point",
+        "main"
+      ],
+      "totalLines": 67,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/onnx_alquimia_config.c": {
+      "filePath": "alquimia/onnx_alquimia_config.c",
+      "contentHash": "eb922f0d98c306d4c99f1038e8f3e9471b0daf17e7eb5ab9d0a9fe2e42862786",
+      "functions": [
+        {
+          "name": "SetError",
+          "params": [
+            "error_message",
+            "error_message_size",
+            "error_detail"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "IsAllowedProperty",
+          "params": [
+            "name",
+            "allowed_schema_fields",
+            "num_allowed_schema_fields"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "ValidateProperties",
+          "params": [
+            "cjson_object",
+            "allowed_schema_fields",
+            "num_allowed_schema_fields",
+            "context",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 60
+        },
+        {
+          "name": "GetRequiredString",
+          "params": [
+            "cjson_object",
+            "name",
+            "context",
+            "str_value",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 26
+        },
+        {
+          "name": "GetRequiredInteger",
+          "params": [
+            "cjson_object",
+            "name",
+            "context",
+            "int_value",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 21
+        },
+        {
+          "name": "ResolveModelPath",
+          "params": [
+            "config_path",
+            "model",
+            "model_path",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 49
+        },
+        {
+          "name": "ParseMappings",
+          "params": [
+            "cjson_array",
+            "mapping_role",
+            "mappings",
+            "num_mappings",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 87
+        },
+        {
+          "name": "ValidateUniqueMember",
+          "params": [
+            "cjson_object",
+            "context",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 36
+        },
+        {
+          "name": "ValidateConditionFeature",
+          "params": [
+            "onnx_config",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 39
+        },
+        {
+          "name": "ParseConditions",
+          "params": [
+            "cjson_conditions",
+            "onnx_config",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 153
+        },
+        {
+          "name": "ReadConfigjson_contents",
+          "params": [
+            "config_path",
+            "json_contents",
+            "file_length",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 66
+        },
+        {
+          "name": "PopulateConfig",
+          "params": [
+            "config_path",
+            "cjson_root",
+            "onnx_config",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 70
+        },
+        {
+          "name": "FreeMappings",
+          "params": [
+            "mappings",
+            "num_mappings"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 14
+        },
+        {
+          "name": "OnnxAlquimiaFreeConfig",
+          "params": [
+            "onnx_config"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "OnnxAlquimiaLoadConfig",
+          "params": [
+            "config_path",
+            "onnx_config",
+            "error_message",
+            "error_message_size"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 53
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "alquimia/onnx_alquimia_config.h",
+          "specifiers": [
+            "alquimia/onnx_alquimia_config.h"
+          ]
+        },
+        {
+          "source": "limits.h",
+          "specifiers": [
+            "limits.h"
+          ]
+        },
+        {
+          "source": "math.h",
+          "specifiers": [
+            "math.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        },
+        {
+          "source": "stdio.h",
+          "specifiers": [
+            "stdio.h"
+          ]
+        },
+        {
+          "source": "stdlib.h",
+          "specifiers": [
+            "stdlib.h"
+          ]
+        },
+        {
+          "source": "string.h",
+          "specifiers": [
+            "string.h"
+          ]
+        },
+        {
+          "source": "cJSON.h",
+          "specifiers": [
+            "cJSON.h"
+          ]
+        }
+      ],
+      "exports": [
+        "OnnxAlquimiaFreeConfig",
+        "OnnxAlquimiaLoadConfig"
+      ],
+      "totalLines": 919,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/onnx_alquimia_config.h": {
+      "filePath": "alquimia/onnx_alquimia_config.h",
+      "contentHash": "3c627e37c3441d760e6e498c6c955b76b9ee154b3de751f85eb0d81b8b7edcbe",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 73,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/onnx_alquimia_interface.c": {
+      "filePath": "alquimia/onnx_alquimia_interface.c",
+      "contentHash": "4348e91565a7467bafaa835588445219cf31afafa932b9e3e64df8a62dce890c",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "alquimia/onnx_alquimia_interface.h",
+          "specifiers": [
+            "alquimia/onnx_alquimia_interface.h"
+          ]
+        },
+        {
+          "source": "limits.h",
+          "specifiers": [
+            "limits.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        },
+        {
+          "source": "stdio.h",
+          "specifiers": [
+            "stdio.h"
+          ]
+        },
+        {
+          "source": "stdlib.h",
+          "specifiers": [
+            "stdlib.h"
+          ]
+        },
+        {
+          "source": "string.h",
+          "specifiers": [
+            "string.h"
+          ]
+        },
+        {
+          "source": "onnxruntime_c_api.h",
+          "specifiers": [
+            "onnxruntime_c_api.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_constants.h",
+          "specifiers": [
+            "alquimia/alquimia_constants.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_util.h",
+          "specifiers": [
+            "alquimia/alquimia_util.h"
+          ]
+        },
+        {
+          "source": "alquimia/onnx_alquimia_config.h",
+          "specifiers": [
+            "alquimia/onnx_alquimia_config.h"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 2349,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/onnx_alquimia_interface.h": {
+      "filePath": "alquimia/onnx_alquimia_interface.h",
+      "contentHash": "8a2d69754dcb0c23bb7dac4e53f631a9e1060054112507c83ef4b12a40c7ce4b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 59,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/pflotran_alquimia_interface.F90": {
+      "filePath": "alquimia/pflotran_alquimia_interface.F90",
+      "contentHash": "68d385964e4fbdfcae54d8fdd5f136ac6726dd485261511f46b18998e93629ef",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2253,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/pflotran_alquimia_interface.h": {
+      "filePath": "alquimia/pflotran_alquimia_interface.h",
+      "contentHash": "c1f7a1412b0b71edfb04a2f108ad0055b43150a9a502e6f70670830676ffb061",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 91,
+      "hasStructuralAnalysis": true
+    },
+    "alquimia/pflotran_alquimia_wrappers.F90": {
+      "filePath": "alquimia/pflotran_alquimia_wrappers.F90",
+      "contentHash": "a577059b9e036df548544b66d61456a390872e05df0ede932b59ac3e8615c50d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 212,
+      "hasStructuralAnalysis": false
+    },
+    "alquimia/pflotran_petsc_stubs.F90": {
+      "filePath": "alquimia/pflotran_petsc_stubs.F90",
+      "contentHash": "eb5fe8ea49f6512dbf73c76e4a192773cd2e3f753dcac7efb68b534e95630e09",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 37,
+      "hasStructuralAnalysis": false
+    },
+    "drivers/BatchChemDriver.c": {
+      "filePath": "drivers/BatchChemDriver.c",
+      "contentHash": "a18af2ba5a825c89c242817295fef2ecf5c3ea01b90d78f8444cd8ea40fa3c26",
+      "functions": [
+        {
+          "name": "Min",
+          "params": [
+            "a",
+            "b"
+          ],
+          "returnType": "double",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "Max",
+          "params": [
+            "a",
+            "b"
+          ],
+          "returnType": "double",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "ValueIsTrue",
+          "params": [
+            "value"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "GetIndexLabel",
+          "params": [
+            "name",
+            "label"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 11
+        },
+        {
+          "name": "ParseInput",
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 68
+        },
+        {
+          "name": "BatchChemDriverInput_Free",
+          "params": [
+            "input"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 21
+        },
+        {
+          "name": "BatchChemDriver_Free",
+          "params": [
+            "driver"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 31
+        },
+        {
+          "name": "BatchChemDriver_RecordHistory",
+          "params": [
+            "driver"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 18
+        },
+        {
+          "name": "BatchChemDriver_Initialize",
+          "params": [
+            "driver"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 40
+        },
+        {
+          "name": "BatchChemDriver_Run",
+          "params": [
+            "driver"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 61
+        },
+        {
+          "name": "BatchChemDriver_GetSoluteAndAuxData",
+          "params": [
+            "driver",
+            "time",
+            "var_names",
+            "var_data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 171
+        }
+      ],
+      "classes": [
+        {
+          "name": "BatchChemDriver",
+          "methods": [],
+          "properties": [
+            "description",
+            "t_min",
+            "max_steps",
+            "verbose",
+            "water_density",
+            "volume",
+            "time",
+            "step",
+            "chem_properties",
+            "chem_state",
+            "chem_aux_data",
+            "chem_aux_output",
+            "chem",
+            "chem_engine",
+            "chem_status",
+            "chem_sizes",
+            "chem_metadata",
+            "chem_cond",
+            "history_size",
+            "history_times",
+            "chem_state_history",
+            "chem_aux_output_history"
+          ],
+          "exported": true,
+          "lineCount": 42
+        }
+      ],
+      "imports": [
+        {
+          "source": "limits.h",
+          "specifiers": [
+            "limits.h"
+          ]
+        },
+        {
+          "source": "float.h",
+          "specifiers": [
+            "float.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_interface.h",
+          "specifiers": [
+            "alquimia/alquimia_interface.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_memory.h",
+          "specifiers": [
+            "alquimia/alquimia_memory.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_util.h",
+          "specifiers": [
+            "alquimia/alquimia_util.h"
+          ]
+        },
+        {
+          "source": "ini.h",
+          "specifiers": [
+            "ini.h"
+          ]
+        },
+        {
+          "source": "BatchChemDriver.h",
+          "specifiers": [
+            "BatchChemDriver.h"
+          ]
+        }
+      ],
+      "exports": [
+        "BatchChemDriverInput_Free",
+        "BatchChemDriver",
+        "BatchChemDriver_Free",
+        "BatchChemDriver_Run",
+        "BatchChemDriver_GetSoluteAndAuxData"
+      ],
+      "totalLines": 794,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/BatchChemDriver.h": {
+      "filePath": "drivers/BatchChemDriver.h",
+      "contentHash": "3d98c6581d73923bcfb2fd4409e57accfe4f2b43e627b144484ad3a6f50c65d5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 132,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/CMakeLists.txt": {
+      "filePath": "drivers/CMakeLists.txt",
+      "contentHash": "fbf0143b1d3b968db61b97e3597167141daa98dc9fc7119bf875f957352e6edc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 16,
+      "hasStructuralAnalysis": false
+    },
+    "drivers/DriverOutput.c": {
+      "filePath": "drivers/DriverOutput.c",
+      "contentHash": "f59226dd5c4138aec7139ca2dffc0ea67cf58caac6fc507117ba7256d2c749f7",
+      "functions": [
+        {
+          "name": "GnuplotWrite",
+          "params": [
+            "var_names",
+            "var_vectors",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 19
+        },
+        {
+          "name": "PythonWrite",
+          "params": [
+            "var_names",
+            "var_vectors",
+            "file"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 18
+        },
+        {
+          "name": "DriverOutput_WriteVectors",
+          "params": [
+            "output",
+            "filename",
+            "var_names",
+            "var_vectors"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "DriverOutput_WriteMulticompVector",
+          "params": [
+            "output",
+            "filename",
+            "comp_names",
+            "multicomp_vector"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 23
+        }
+      ],
+      "classes": [
+        {
+          "name": "DriverOutput",
+          "methods": [],
+          "properties": [
+            "Write"
+          ],
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "imports": [
+        {
+          "source": "DriverOutput.h",
+          "specifiers": [
+            "DriverOutput.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_memory.h",
+          "specifiers": [
+            "alquimia/alquimia_memory.h"
+          ]
+        }
+      ],
+      "exports": [
+        "DriverOutput",
+        "DriverOutput_WriteVectors",
+        "DriverOutput_WriteMulticompVector"
+      ],
+      "totalLines": 139,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/DriverOutput.h": {
+      "filePath": "drivers/DriverOutput.h",
+      "contentHash": "6bd17ffbd988ba4ed07a54cea7bf355e9fb04774ef9d645a22bb3efa8d258bc7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/LICENSE.inih.txt": {
+      "filePath": "drivers/LICENSE.inih.txt",
+      "contentHash": "9ae3b39e83e9158e44b67733baa3bb2d84e80efdcfb14a5820210a42c7abdf7f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": false
+    },
+    "drivers/TransportDriver.c": {
+      "filePath": "drivers/TransportDriver.c",
+      "contentHash": "107989e9ed6306e7296cfd905e7508631eb3bd99fe7949f3bd23236d4c23989b",
+      "functions": [
+        {
+          "name": "Min",
+          "params": [
+            "a",
+            "b"
+          ],
+          "returnType": "double",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "Max",
+          "params": [
+            "a",
+            "b"
+          ],
+          "returnType": "double",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "ValueIsTrue",
+          "params": [
+            "value"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "ParseInput",
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 70
+        },
+        {
+          "name": "TransportDriverInput_Free",
+          "params": [
+            "input"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "TransportDriver_Free",
+          "params": [
+            "driver"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 40
+        },
+        {
+          "name": "TransportDriver_Initialize",
+          "params": [
+            "driver"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 120
+        },
+        {
+          "name": "ComputeAdvectiveFluxes",
+          "params": [
+            "driver",
+            "dx",
+            "advective_fluxes"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 66
+        },
+        {
+          "name": "Run_OperatorSplit",
+          "params": [
+            "driver"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 92
+        },
+        {
+          "name": "Run_GlobalImplicit",
+          "params": [
+            "driver"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "TransportDriver_Run",
+          "params": [
+            "driver"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "TransportDriver_GetSoluteAndAuxData",
+          "params": [
+            "driver",
+            "time",
+            "var_names",
+            "var_data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 152
+        }
+      ],
+      "classes": [
+        {
+          "name": "TransportDriver",
+          "methods": [],
+          "properties": [
+            "description",
+            "coupling",
+            "t_min",
+            "max_steps",
+            "verbose",
+            "num_cells",
+            "x_min",
+            "vx",
+            "porosity",
+            "time",
+            "step",
+            "chem_properties",
+            "chem_state",
+            "chem_aux_data",
+            "chem_aux_output",
+            "chem",
+            "chem_engine",
+            "chem_status",
+            "chem_sizes",
+            "chem_metadata",
+            "chem_ic",
+            "chem_left_bc",
+            "chem_left_state",
+            "chem_left_aux_data",
+            "advected_chem_state",
+            "advected_chem_aux_data",
+            "advective_fluxes"
+          ],
+          "exported": true,
+          "lineCount": 49
+        }
+      ],
+      "imports": [
+        {
+          "source": "limits.h",
+          "specifiers": [
+            "limits.h"
+          ]
+        },
+        {
+          "source": "float.h",
+          "specifiers": [
+            "float.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_interface.h",
+          "specifiers": [
+            "alquimia/alquimia_interface.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_memory.h",
+          "specifiers": [
+            "alquimia/alquimia_memory.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_util.h",
+          "specifiers": [
+            "alquimia/alquimia_util.h"
+          ]
+        },
+        {
+          "source": "ini.h",
+          "specifiers": [
+            "ini.h"
+          ]
+        },
+        {
+          "source": "TransportDriver.h",
+          "specifiers": [
+            "TransportDriver.h"
+          ]
+        }
+      ],
+      "exports": [
+        "TransportDriverInput_Free",
+        "TransportDriver",
+        "TransportDriver_Free",
+        "TransportDriver_Run",
+        "TransportDriver_GetSoluteAndAuxData"
+      ],
+      "totalLines": 929,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/TransportDriver.h": {
+      "filePath": "drivers/TransportDriver.h",
+      "contentHash": "4bad09d18544edabf00b866660ec8266403f9b167d1f97f4a9889714550b204c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 138,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/batch_chem.c": {
+      "filePath": "drivers/batch_chem.c",
+      "contentHash": "f992ddd6f69dce9f40c2743c91de31b7e6d0833ba4321f84364aacd6f43e9092",
+      "functions": [
+        {
+          "name": "Usage",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "main",
+          "params": [
+            "argc",
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 64
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "alquimia/alquimia_memory.h",
+          "specifiers": [
+            "alquimia/alquimia_memory.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_util.h",
+          "specifiers": [
+            "alquimia/alquimia_util.h"
+          ]
+        },
+        {
+          "source": "BatchChemDriver.h",
+          "specifiers": [
+            "BatchChemDriver.h"
+          ]
+        },
+        {
+          "source": "DriverOutput.h",
+          "specifiers": [
+            "DriverOutput.h"
+          ]
+        }
+      ],
+      "exports": [
+        "Usage",
+        "main"
+      ],
+      "totalLines": 108,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/fpe.c": {
+      "filePath": "drivers/fpe.c",
+      "contentHash": "769e96e4f9f14d65d1016c3c17e037b417fe2ae348e12c879b880b752bffb36d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 95,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/fpe.h": {
+      "filePath": "drivers/fpe.h",
+      "contentHash": "66daa7c0dc4f4de904ca75ee0c75fc779a39ee19b091460ded4fc9ffd085a742",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 55,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/ini.c": {
+      "filePath": "drivers/ini.c",
+      "contentHash": "9f8b23c5c5280c2840afc3b7a14d3aa91ee4b55466ab9c1e9a102f57e84521be",
+      "functions": [
+        {
+          "name": "ini_parse_stream",
+          "params": [
+            "reader",
+            "stream",
+            "handler",
+            "user"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 102
+        },
+        {
+          "name": "ini_parse_file",
+          "params": [
+            "file",
+            "handler",
+            "user"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "ini_parse",
+          "params": [
+            "filename",
+            "handler",
+            "user"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 12
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "stdio.h",
+          "specifiers": [
+            "stdio.h"
+          ]
+        },
+        {
+          "source": "ctype.h",
+          "specifiers": [
+            "ctype.h"
+          ]
+        },
+        {
+          "source": "string.h",
+          "specifiers": [
+            "string.h"
+          ]
+        },
+        {
+          "source": "ini.h",
+          "specifiers": [
+            "ini.h"
+          ]
+        }
+      ],
+      "exports": [
+        "ini_parse_stream",
+        "ini_parse_file",
+        "ini_parse"
+      ],
+      "totalLines": 188,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/ini.h": {
+      "filePath": "drivers/ini.h",
+      "contentHash": "238f2d243066d5066a2a9e6b6ac16d5c7f5794244628966f540a66dbba8e6fa2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 84,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/input_util.c": {
+      "filePath": "drivers/input_util.c",
+      "contentHash": "928c210f9a312b9dcd439ca50773b06462fd99df3a7b0e8aed9a29f7b10ab3fe",
+      "functions": [
+        {
+          "name": "Min",
+          "params": [
+            "a",
+            "b"
+          ],
+          "returnType": "double",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "Max",
+          "params": [
+            "a",
+            "b"
+          ],
+          "returnType": "double",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "ValueIsTrue",
+          "params": [
+            "value"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "ParseEngineData",
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 17
+        },
+        {
+          "name": "Input_CreateAlquimiaInterface",
+          "params": [
+            "input_file",
+            "engine_interface",
+            "engine_sizes",
+            "engine_functionality",
+            "engine_status"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "ParseRegionName",
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 13
+        },
+        {
+          "name": "Input_GetRegions",
+          "params": [
+            "input_file",
+            "region_names"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "ParseRegionCells",
+          "params": [
+            "name",
+            "value",
+            "cells"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 44
+        },
+        {
+          "name": "ParseRegionData",
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 26
+        },
+        {
+          "name": "Input_GetRegionData",
+          "params": [
+            "input_file",
+            "region_name",
+            "problem_metadata",
+            "region_state",
+            "region_properties",
+            "region_initial_condition",
+            "region_cells"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "ParseGeochemicalConditions",
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 27
+        },
+        {
+          "name": "Input_GetGeochemicalConditions",
+          "params": [
+            "input_file",
+            "conditions"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "ParseOutputParameters",
+          "params": [
+            "user",
+            "section",
+            "name",
+            "value"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "Input_GetOutputParameters",
+          "params": [
+            "input_file",
+            "output_type",
+            "output_file",
+            "verbose"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 59
+        },
+        {
+          "name": "Input_IsStateSection",
+          "params": [
+            "section",
+            "state_name"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "Input_ParseState",
+          "params": [
+            "section",
+            "name",
+            "value",
+            "metadata",
+            "state"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 27
+        },
+        {
+          "name": "Input_IsPropertiesSection",
+          "params": [
+            "section",
+            "properties_name"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "Input_ParseProperty",
+          "params": [
+            "section",
+            "name",
+            "value",
+            "metadata",
+            "properties"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 66
+        },
+        {
+          "name": "Input_IsGeochemicalConditionSection",
+          "params": [
+            "section",
+            "condition_name"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Input_ParseGeochemicalCondition",
+          "params": [
+            "name",
+            "value",
+            "condition"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "Input_ParseAqueousConstraint",
+          "params": [
+            "primary_species",
+            "text",
+            "constraint"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 35
+        },
+        {
+          "name": "Input_ParseMineralConstraint",
+          "params": [
+            "mineral_name",
+            "text",
+            "constraint"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 28
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "string.h",
+          "specifiers": [
+            "string.h"
+          ]
+        },
+        {
+          "source": "ini.h",
+          "specifiers": [
+            "ini.h"
+          ]
+        },
+        {
+          "source": "input_util.h",
+          "specifiers": [
+            "input_util.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_constants.h",
+          "specifiers": [
+            "alquimia/alquimia_constants.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_util.h",
+          "specifiers": [
+            "alquimia/alquimia_util.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_memory.h",
+          "specifiers": [
+            "alquimia/alquimia_memory.h"
+          ]
+        }
+      ],
+      "exports": [
+        "Input_CreateAlquimiaInterface",
+        "Input_GetRegions",
+        "Input_GetRegionData",
+        "Input_GetGeochemicalConditions",
+        "Input_GetOutputParameters",
+        "Input_IsStateSection",
+        "Input_ParseState",
+        "Input_IsPropertiesSection",
+        "Input_ParseProperty",
+        "Input_IsGeochemicalConditionSection",
+        "Input_ParseGeochemicalCondition",
+        "Input_ParseAqueousConstraint",
+        "Input_ParseMineralConstraint"
+      ],
+      "totalLines": 556,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/input_util.h": {
+      "filePath": "drivers/input_util.h",
+      "contentHash": "26e548701bb0af73c502b08eab56187449862194c65091878f61f90e4b95fed8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 137,
+      "hasStructuralAnalysis": true
+    },
+    "drivers/transport.c": {
+      "filePath": "drivers/transport.c",
+      "contentHash": "247e68edd797ae1ff083ff9fa6f551557d0cd103fb381ef981433e76ff969bde",
+      "functions": [
+        {
+          "name": "Usage",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "main",
+          "params": [
+            "argc",
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 65
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "alquimia/alquimia_memory.h",
+          "specifiers": [
+            "alquimia/alquimia_memory.h"
+          ]
+        },
+        {
+          "source": "alquimia/alquimia_util.h",
+          "specifiers": [
+            "alquimia/alquimia_util.h"
+          ]
+        },
+        {
+          "source": "TransportDriver.h",
+          "specifiers": [
+            "TransportDriver.h"
+          ]
+        },
+        {
+          "source": "DriverOutput.h",
+          "specifiers": [
+            "DriverOutput.h"
+          ]
+        }
+      ],
+      "exports": [
+        "Usage",
+        "main"
+      ],
+      "totalLines": 109,
+      "hasStructuralAnalysis": true
+    }
+  }
+}

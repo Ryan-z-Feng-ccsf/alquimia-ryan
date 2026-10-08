@@ -12,6 +12,8 @@ cd build
 cmake ..
 make -j$(nproc)
 ```
+Python env for ML:
+conda activate alquimia_env
 
 **Key CMake Options:**
 - `ALQUIMIA_SUPERBUILD`: Set to `ON` to automatically download and build dependencies (PETSc, etc.).
@@ -63,6 +65,8 @@ The codebase generally follows the **Google C++ Style Guide**, but with C idioms
 - **Indentation:** 2 spaces. No tabs.
 - **File Encoding:** UTF-8.
 - **Line Length:** Try to keep lines under 80-100 characters, though not strictly enforced.
+- **File and folder names:** Use descriptive names that identify the component's role and, for case-specific code, the chemistry engine and scenario. For example, use `subprocess_client.py`, `run_pflotran_calcite.py`, and `engine_process/alquimia_engine_process.c` instead of generic names such as `helpers.py`, `calcite.py`, and `native/`.
+- **Generated artifacts:** Keep MCP executables and test reports under the repository's `build/mcp_alquimia/` directory, outside the `mcp_alquimia/` source package.
 
 ### C / C++
 - **Naming:**
@@ -80,6 +84,10 @@ The codebase generally follows the **Google C++ Style Guide**, but with C idioms
   - Most functions return `void` but accept a pointer to `AlquimiaEngineStatus`.
   - Check `status->error != kAlquimiaNoError` after function calls.
   - Set helpful error messages in `status->message`.
+
+### Python
+- **Docstrings:** Use Google-style docstrings for Python modules, classes, functions,and methods. Start with a concise summary; add `Args:`, `Returns:` (or `Yields:`), `Raises:`, and `Attributes:` sections where applicable. Omit empty sections and keep simple, self-explanatory functions to a one-line docstring.
+- Document parameter units, return structure, side effects, and important errors where they affect callers. Keep inline comments focused on implementation rationale.
 
 ### Fortran
 - **Style:** Modern Fortran (free form).

@@ -1,0 +1,21 @@
+{
+  "projectRoot": "/home/zfeng3/alquimia-ryan",
+  "batchFiles": [
+    {"path": "alquimia/alquimia_memory.h", "language": "c", "sizeLines": 112, "fileCategory": "code"},
+    {"path": "drivers/DriverOutput.c", "language": "c", "sizeLines": 138, "fileCategory": "code"},
+    {"path": "drivers/DriverOutput.h", "language": "c", "sizeLines": 57, "fileCategory": "code"},
+    {"path": "drivers/TransportDriver.c", "language": "c", "sizeLines": 928, "fileCategory": "code"},
+    {"path": "drivers/TransportDriver.h", "language": "c", "sizeLines": 137, "fileCategory": "code"},
+    {"path": "drivers/batch_chem.c", "language": "c", "sizeLines": 107, "fileCategory": "code"},
+    {"path": "drivers/transport.c", "language": "c", "sizeLines": 108, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "alquimia/alquimia_memory.h": [],
+    "drivers/DriverOutput.c": ["alquimia/alquimia_memory.h", "drivers/DriverOutput.h"],
+    "drivers/DriverOutput.h": [],
+    "drivers/TransportDriver.c": ["alquimia/alquimia_interface.h", "alquimia/alquimia_memory.h", "alquimia/alquimia_util.h", "drivers/TransportDriver.h", "drivers/ini.h"],
+    "drivers/TransportDriver.h": [],
+    "drivers/batch_chem.c": ["alquimia/alquimia_memory.h", "alquimia/alquimia_util.h", "drivers/BatchChemDriver.h", "drivers/DriverOutput.h"],
+    "drivers/transport.c": ["alquimia/alquimia_memory.h", "alquimia/alquimia_util.h", "drivers/DriverOutput.h", "drivers/TransportDriver.h"]
+  }
+}
