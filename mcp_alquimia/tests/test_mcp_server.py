@@ -196,14 +196,17 @@ async def test_cleanup_continues_after_one_close_failure(manager, monkeypatch):
 @pytest.mark.anyio
 async def test_cancelled_setup_does_not_orphan_process(manager, monkeypatch):
     """An in-flight setup remains owned when its client cancels and disconnects."""
+    
+    # Flags to pause and resume the background thread
     started = threading.Event()
     release = threading.Event()
-    request = FakeEngineProcess.request
+    request = FakeEngineProcess.request # Backup the original normal execution
 
+    # Intercept the 'setup' operation to freeze it mid-flight
     def delayed_request(self, operation, **parameters):
         if operation == "setup":
-            started.set()
-            assert release.wait(timeout=5)
+            started.set()   # 1. Notify main thread that setup has begun
+            assert release.wait(timeout=5)  # 2. Freeze here until main thread releases it
         return request(self, operation, **parameters)
 
     monkeypatch.setattr(FakeEngineProcess, "request", delayed_request)
@@ -211,12 +214,22 @@ async def test_cancelled_setup_does_not_orphan_process(manager, monkeypatch):
         async with anyio.create_task_group() as group:
             async def setup():
                 await client.call_tool("setup", {"case": "calcite-pflotran"})
+            
+            # Start the setup request in the background (another thread)
+            # main thread continues
             group.start_soon(setup)
+            
+            # Wait until the background thread gets stuck at our freeze point
             with anyio.fail_after(5):
                 while not started.is_set():
                     await anyio.sleep(0.001)
+                    
+            # Simulate a client disconnect by cancelling the task mid-flight
             group.cancel_scope.cancel()
+            
+            # Unfreeze the thread so the system can handle the cancellation and clean up
             release.set()
+    # Verify the system cleaned up properly
     assert len(FakeEngineProcess.instances) == 1
     assert FakeEngineProcess.instances[0].closed
     assert not manager._sessions
