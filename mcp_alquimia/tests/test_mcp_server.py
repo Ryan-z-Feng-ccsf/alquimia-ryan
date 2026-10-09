@@ -173,7 +173,7 @@ async def test_native_failure_releases_session_and_keeps_diagnosis(manager, monk
         assert "engine_output.log" in result.content[0].text
         assert all(process.closed for process in FakeEngineProcess.instances)
         assert not manager._sessions
-        failures = list(manager.run_root.glob("simulation_failure.json"))
+        failures = list(manager.run_root.glob("*/simulation_failure.json"))
         assert len(failures) == 1
         assert json.loads(failures[0].read_text())["operation"] == operation
 
